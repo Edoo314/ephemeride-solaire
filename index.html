@@ -1,15 +1,8 @@
-
 <meta name="claude:viewport-fit-sides" content="cover">
 <title>Éphéméride Solaire</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap">
 
 <style>
-/* ============================================================
-   DESIGN TOKENS
-   Layout : deux colonnes sur desktop, une sur mobile
-   Color  : ardoise profonde + or solaire + ivoire chaud
-   Type   : Crimson Pro (titres/valeurs) · DM Sans (labels/UI)
-   ============================================================ */
 :root {
   --bg:        #F7F4EE;
   --bg-card:   #FFFFFF;
@@ -35,47 +28,28 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg:        #1A1714;
-    --bg-card:   #242019;
-    --bg-muted:  #2D2924;
-    --fg:        #EDE8E0;
-    --fg-2:      #A8A29E;
-    --fg-3:      #78716C;
-    --accent:    #D4923F;
-    --accent-lt: #3D2A0E;
-    --accent-dk: #F0C87A;
-    --blue:      #5B9DC8;
-    --blue-lt:   #112233;
-    --success:   #4EAD7B;
-    --danger:    #E05C6D;
-    --border:    rgba(237,232,224,.09);
-    --border-md: rgba(237,232,224,.16);
-    --shadow:    0 1px 6px rgba(0,0,0,.25);
+    --bg:#1A1714; --bg-card:#242019; --bg-muted:#2D2924;
+    --fg:#EDE8E0; --fg-2:#A8A29E; --fg-3:#78716C;
+    --accent:#D4923F; --accent-lt:#3D2A0E; --accent-dk:#F0C87A;
+    --blue:#5B9DC8; --blue-lt:#112233;
+    --success:#4EAD7B; --danger:#E05C6D;
+    --border:rgba(237,232,224,.09); --border-md:rgba(237,232,224,.16);
+    --shadow:0 1px 6px rgba(0,0,0,.25);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg:        #1A1714;
-  --bg-card:   #242019;
-  --bg-muted:  #2D2924;
-  --fg:        #EDE8E0;
-  --fg-2:      #A8A29E;
-  --fg-3:      #78716C;
-  --accent:    #D4923F;
-  --accent-lt: #3D2A0E;
-  --accent-dk: #F0C87A;
-  --blue:      #5B9DC8;
-  --blue-lt:   #112233;
-  --success:   #4EAD7B;
-  --danger:    #E05C6D;
-  --border:    rgba(237,232,224,.09);
-  --border-md: rgba(237,232,224,.16);
-  --shadow:    0 1px 6px rgba(0,0,0,.25);
+  --bg:#1A1714; --bg-card:#242019; --bg-muted:#2D2924;
+  --fg:#EDE8E0; --fg-2:#A8A29E; --fg-3:#78716C;
+  --accent:#D4923F; --accent-lt:#3D2A0E; --accent-dk:#F0C87A;
+  --blue:#5B9DC8; --blue-lt:#112233;
+  --success:#4EAD7B; --danger:#E05C6D;
+  --border:rgba(237,232,224,.09); --border-md:rgba(237,232,224,.16);
+  --shadow:0 1px 6px rgba(0,0,0,.25);
   color-scheme: dark;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
   font-family: var(--font-ui);
   font-size: 15px;
@@ -87,1284 +61,1549 @@ body {
   padding-block: 0;
 }
 
-/* ── Header ── */
+/* Header */
 .site-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding-block: 18px;
-  border-bottom: 0.5px solid var(--border);
-  margin-bottom: 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding-block: 18px;
+  border-bottom: 0.5px solid var(--border); margin-bottom: 0;
 }
-.site-logo {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
+.site-logo { display: flex; align-items: baseline; gap: 8px; }
+.sun-icon { width: 28px; height: 28px; flex-shrink: 0; }
+.site-title { font-family: var(--font-disp); font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
+.site-subtitle { font-size: 12px; color: var(--fg-3); letter-spacing: .04em; text-transform: uppercase; }
+.theme-btn {
+  background: none; border: 0.5px solid var(--border-md);
+  border-radius: 20px; padding: 5px 11px; cursor: pointer;
+  font-size: 12px; color: var(--fg-2); font-family: var(--font-ui);
+  transition: background .15s;
 }
-.site-logo .sun-icon {
-  width: 28px; height: 28px;
-  flex-shrink: 0;
-}
-.site-title {
-  font-family: var(--font-disp);
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: -.01em;
-  color: var(--fg);
-}
-.site-subtitle {
-  font-size: 12px;
-  color: var(--fg-3);
-  letter-spacing: .04em;
-  text-transform: uppercase;
-}
+.theme-btn:hover { background: var(--bg-muted); }
 
-/* ── Tabs ── */
+/* Tabs */
 .tabs {
-  display: flex;
-  gap: 0;
-  border-bottom: 0.5px solid var(--border);
-  margin-bottom: 24px;
-  overflow-x: auto;
-  scrollbar-width: none;
+  display: flex; gap: 0; border-bottom: 0.5px solid var(--border);
+  margin-bottom: 24px; overflow-x: auto; scrollbar-width: none;
 }
 .tabs::-webkit-scrollbar { display: none; }
 .tab-btn {
-  font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 400;
-  color: var(--fg-3);
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  padding: 10px 18px;
-  cursor: pointer;
-  white-space: nowrap;
-  letter-spacing: .02em;
-  transition: color .15s, border-color .15s;
-  margin-bottom: -1px;
+  font-family: var(--font-ui); font-size: 13px; font-weight: 400;
+  color: var(--fg-3); background: none; border: none;
+  border-bottom: 2px solid transparent; padding: 10px 16px;
+  cursor: pointer; white-space: nowrap; letter-spacing: .02em;
+  transition: color .15s, border-color .15s; margin-bottom: -1px;
 }
 .tab-btn:hover { color: var(--fg-2); }
 .tab-btn.active { color: var(--fg); border-bottom-color: var(--accent); font-weight: 500; }
 .panel { display: none; }
 .panel.active { display: block; }
 
-/* ── Date row ── */
+/* Date row */
 .date-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 20px; flex-wrap: wrap;
 }
 .date-row label { font-size: 13px; color: var(--fg-2); }
-input[type="date"] {
-  font-family: var(--font-ui);
-  font-size: 13px;
-  color: var(--fg);
-  background: var(--bg-card);
-  border: 0.5px solid var(--border-md);
-  border-radius: var(--radius);
-  padding: 7px 10px;
-  outline: none;
+input[type="date"], input[type="text"], input[type="number"] {
+  font-family: var(--font-ui); font-size: 13px; color: var(--fg);
+  background: var(--bg-card); border: 0.5px solid var(--border-md);
+  border-radius: var(--radius); padding: 7px 10px; outline: none;
 }
-input[type="date"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-lt); }
+input[type="date"]:focus, input[type="text"]:focus, input[type="number"]:focus {
+  border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-lt);
+}
 
-/* ── Buttons ── */
+/* Buttons */
 .btn {
-  font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--fg);
-  background: var(--bg-card);
-  border: 0.5px solid var(--border-md);
-  border-radius: var(--radius);
-  padding: 7px 14px;
-  cursor: pointer;
-  transition: background .15s, border-color .15s;
-  white-space: nowrap;
+  font-family: var(--font-ui); font-size: 13px; font-weight: 500;
+  color: var(--fg); background: var(--bg-card);
+  border: 0.5px solid var(--border-md); border-radius: var(--radius);
+  padding: 7px 14px; cursor: pointer;
+  transition: background .15s, border-color .15s; white-space: nowrap;
 }
-.btn:hover { background: var(--bg-muted); border-color: var(--border-md); }
+.btn:hover { background: var(--bg-muted); }
 .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent-dk); }
 .btn.primary:hover { filter: brightness(1.08); }
 .btn-sm { padding: 5px 10px; font-size: 12px; }
 
-/* ── Location prompt ── */
+/* Location prompt */
 .prompt-card {
-  background: var(--bg-card);
-  border: 0.5px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  margin-bottom: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  background: var(--bg-card); border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 20px;
+  display: flex; flex-direction: column; gap: 14px;
 }
 .prompt-card p { font-size: 14px; color: var(--fg-2); line-height: 1.6; }
 .prompt-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
-/* ── Location tag ── */
+/* Location tag */
 .location-tag {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--fg-2);
-  margin-bottom: 20px;
-  flex-wrap: wrap;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--fg-2); margin-bottom: 20px; flex-wrap: wrap;
 }
 .location-tag .place { font-weight: 500; color: var(--fg); }
 
-/* ── Two clocks ── */
+/* Two clocks */
 .two-clocks {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 16px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin-bottom: 16px;
 }
 .clock-card {
-  background: var(--bg-card);
-  border: 0.5px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.1rem 1.25rem;
-  text-align: center;
-  box-shadow: var(--shadow);
+  background: var(--bg-card); border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1.1rem 1.25rem;
+  text-align: center; box-shadow: var(--shadow);
 }
 .clock-card.solar { border-color: var(--accent); background: var(--accent-lt); }
 .clock-label {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--fg-3);
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
+  font-size: 11px; font-weight: 500; color: var(--fg-3);
+  text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
 }
 .clock-card.solar .clock-label { color: var(--accent-dk); }
 .clock-time {
-  font-family: var(--font-disp);
-  font-size: 36px;
-  font-weight: 300;
-  letter-spacing: -.02em;
-  font-variant-numeric: tabular-nums;
-  color: var(--fg);
-  line-height: 1;
+  font-family: var(--font-disp); font-size: 36px; font-weight: 300;
+  letter-spacing: -.02em; font-variant-numeric: tabular-nums;
+  color: var(--fg); line-height: 1;
 }
 .clock-card.solar .clock-time { color: var(--accent); }
 .clock-sub { font-size: 11px; color: var(--fg-3); margin-top: 5px; }
 .clock-card.solar .clock-sub { color: var(--accent-dk); opacity: .8; }
 
-/* ── Arc SVG card ── */
-.arc-card {
-  background: var(--bg-card);
-  border: 0.5px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1rem 1.25rem .75rem;
-  margin-bottom: 16px;
-  box-shadow: var(--shadow);
+/* Sundial canvas card */
+.sundial-card {
+  background: var(--bg-card); border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1rem 1.25rem .75rem;
+  margin-bottom: 16px; box-shadow: var(--shadow);
 }
-.arc-svg { width: 100%; height: 160px; display: block; }
+.sundial-canvas { width: 100%; height: 220px; display: block; cursor: default; }
+.sundial-legend {
+  display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px;
+  font-size: 11px; color: var(--fg-3);
+}
+.sdl-item { display: flex; align-items: center; gap: 5px; }
+.sdl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-/* ── Metrics grid ── */
+/* Metrics grid */
 .metric-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
-  gap: 10px;
-  margin-bottom: 14px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 10px; margin-bottom: 14px;
 }
 .metric {
-  background: var(--bg-card);
-  border: 0.5px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: .9rem 1rem;
-  box-shadow: var(--shadow);
-  position: relative;
+  background: var(--bg-card); border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: .9rem 1rem;
+  box-shadow: var(--shadow); position: relative;
 }
 .metric-label {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--fg-3);
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
+  font-size: 11px; font-weight: 500; color: var(--fg-3);
+  text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px;
+  display: flex; align-items: center; gap: 5px;
 }
 .metric-value {
-  font-family: var(--font-disp);
-  font-size: 22px;
-  font-weight: 400;
-  color: var(--fg);
-  font-variant-numeric: tabular-nums;
-  line-height: 1.1;
+  font-family: var(--font-disp); font-size: 22px; font-weight: 400;
+  color: var(--fg); font-variant-numeric: tabular-nums; line-height: 1.1;
 }
-.metric-sub {
-  font-size: 11px;
-  color: var(--fg-3);
-  margin-top: 3px;
-}
-.metric-az {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--accent);
-  margin-top: 3px;
-}
+.metric-sub { font-size: 11px; color: var(--fg-3); margin-top: 3px; }
+.metric-az { font-size: 12px; font-weight: 500; color: var(--accent); margin-top: 3px; }
 
-/* ── Timeline ── */
+/* Timeline */
 .timeline-card {
-  background: var(--bg-card);
-  border: 0.5px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1rem 1.25rem;
-  margin-bottom: 14px;
-  box-shadow: var(--shadow);
+  background: var(--bg-card); border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1rem 1.25rem;
+  margin-bottom: 14px; box-shadow: var(--shadow);
 }
 .timeline-title {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--fg-3);
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  margin-bottom: 10px;
+  font-size: 12px; font-weight: 500; color: var(--fg-3);
+  text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px;
 }
-.timeline-bar-wrap { position: relative; }
-.timeline-bar {
-  height: 8px;
-  border-radius: 4px;
-  background: var(--bg-muted);
-  overflow: hidden;
-  position: relative;
-}
+.timeline-bar { height: 8px; border-radius: 4px; background: var(--bg-muted); overflow: hidden; position: relative; }
 .tl-night { position: absolute; top: 0; height: 100%; background: #1E2D4A; }
-.tl-day   { position: absolute; top: 0; height: 100%; background: linear-gradient(90deg, #E8961A, #F5BD47, #E8961A); }
-.tl-now   { position: absolute; top: -4px; width: 2px; height: calc(100% + 8px); background: var(--danger); border-radius: 1px; }
-.tl-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  color: var(--fg-3);
-  margin-top: 5px;
-  font-variant-numeric: tabular-nums;
-}
-.tl-legend {
-  display: flex;
-  gap: 16px;
-  margin-top: 10px;
-  flex-wrap: wrap;
-}
-.tl-legend-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  color: var(--fg-3);
-}
-.tl-dot {
-  width: 8px; height: 8px;
-  border-radius: 2px;
-  flex-shrink: 0;
-}
+.tl-day { position: absolute; top: 0; height: 100%; background: linear-gradient(90deg, #E8961A, #F5BD47, #E8961A); }
+.tl-now { position: absolute; top: -4px; width: 2px; height: calc(100% + 8px); background: var(--danger); border-radius: 1px; }
+.tl-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--fg-3); margin-top: 5px; font-variant-numeric: tabular-nums; }
+.tl-legend { display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
+.tl-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--fg-3); }
+.tl-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
 
-/* ── Coords card ── */
+/* Coords */
 .coords-card {
-  background: var(--bg-card);
-  border: 0.5px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1rem 1.25rem;
-  margin-bottom: 14px;
-  box-shadow: var(--shadow);
+  background: var(--bg-card); border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1rem 1.25rem;
+  margin-bottom: 14px; box-shadow: var(--shadow);
 }
-.coords-grid {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
+.coords-grid { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 8px; }
 .coord-item { font-size: 13px; color: var(--fg-2); }
 .coord-val { font-family: var(--font-disp); font-size: 16px; font-weight: 400; color: var(--fg); }
 .coord-note { font-size: 11px; color: var(--fg-3); margin-top: 8px; line-height: 1.5; }
 
-/* ── Info button / popups ── */
+/* Info button */
 .info-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 15px; height: 15px;
-  border-radius: 50%;
-  background: var(--bg-muted);
-  border: 0.5px solid var(--border-md);
-  font-size: 9px;
-  font-weight: 600;
-  cursor: pointer;
-  color: var(--fg-3);
-  flex-shrink: 0;
-  transition: background .12s;
-  font-family: var(--font-ui);
-  line-height: 1;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 15px; height: 15px; border-radius: 50%;
+  background: var(--bg-muted); border: 0.5px solid var(--border-md);
+  font-size: 9px; font-weight: 600; cursor: pointer; color: var(--fg-3);
+  flex-shrink: 0; transition: background .12s; font-family: var(--font-ui); line-height: 1;
 }
 .info-btn:hover { background: var(--accent-lt); color: var(--accent-dk); }
 
+/* Popup */
 .popup-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(28,25,23,.45);
-  z-index: 200;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+  display: none; position: fixed; inset: 0;
+  background: rgba(28,25,23,.45); z-index: 200;
+  align-items: center; justify-content: center; padding: 20px;
 }
 .popup-overlay.open { display: flex; }
 .popup-box {
-  background: var(--bg-card);
-  border: 0.5px solid var(--border-md);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  max-width: 460px;
-  width: 100%;
-  position: relative;
-  max-height: 80vh;
-  overflow-y: auto;
+  background: var(--bg-card); border: 0.5px solid var(--border-md);
+  border-radius: var(--radius-lg); padding: 1.5rem; max-width: 460px;
+  width: 100%; position: relative; max-height: 80vh; overflow-y: auto;
 }
-.popup-close {
-  position: absolute;
-  top: 12px; right: 14px;
-  background: none; border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: var(--fg-3);
-  line-height: 1;
-  padding: 2px;
-}
-.popup-title {
-  font-family: var(--font-disp);
-  font-size: 19px;
-  font-weight: 600;
-  color: var(--fg);
-  margin-bottom: .75rem;
-  padding-right: 24px;
-  line-height: 1.2;
-}
-.popup-body {
-  font-size: 13px;
-  color: var(--fg-2);
-  line-height: 1.75;
-}
+.popup-close { position: absolute; top: 12px; right: 14px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--fg-3); line-height: 1; padding: 2px; }
+.popup-title { font-family: var(--font-disp); font-size: 19px; font-weight: 600; color: var(--fg); margin-bottom: .75rem; padding-right: 24px; line-height: 1.2; }
+.popup-body { font-size: 13px; color: var(--fg-2); line-height: 1.75; }
 .popup-body p + p { margin-top: .7rem; }
 .popup-body ul { margin: .5rem 0 .5rem 1.2rem; display: flex; flex-direction: column; gap: 5px; }
-.popup-formula {
-  background: var(--bg-muted);
-  padding: 7px 11px;
-  border-radius: 6px;
-  font-family: monospace;
-  font-size: 12px;
-  margin: 8px 0;
-  color: var(--fg);
-  border-left: 2px solid var(--accent);
-}
-.popup-callout {
-  background: var(--accent-lt);
-  border-radius: 8px;
-  padding: .6rem .9rem;
-  font-size: 13px;
-  color: var(--fg-2);
-  margin: .75rem 0;
-  border-left: 3px solid var(--accent);
-}
+.popup-formula { background: var(--bg-muted); padding: 7px 11px; border-radius: 6px; font-family: monospace; font-size: 12px; margin: 8px 0; color: var(--fg); border-left: 2px solid var(--accent); }
+.popup-callout { background: var(--accent-lt); border-radius: 8px; padding: .6rem .9rem; font-size: 13px; color: var(--fg-2); margin: .75rem 0; border-left: 3px solid var(--accent); }
 
-/* ── Lieu panel ── */
+/* Lieu panel */
 .lieu-section { margin-bottom: 20px; }
-.section-title {
-  font-family: var(--font-disp);
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--fg);
-  margin-bottom: 14px;
-}
+.section-title { font-family: var(--font-disp); font-size: 17px; font-weight: 600; color: var(--fg); margin-bottom: 14px; }
 .country-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 .country-btn {
-  font-size: 12px;
-  padding: 5px 11px;
-  border: 0.5px solid var(--border-md);
-  border-radius: 20px;
-  background: var(--bg-card);
-  color: var(--fg-2);
-  cursor: pointer;
-  transition: all .12s;
+  font-size: 12px; padding: 5px 11px;
+  border: 0.5px solid var(--border-md); border-radius: 20px;
+  background: var(--bg-card); color: var(--fg-2);
+  cursor: pointer; transition: all .12s;
 }
-.country-btn:hover { border-color: var(--accent); color: var(--accent); }
-.country-btn.selected { background: var(--accent); color: #fff; border-color: var(--accent-dk); font-weight: 500; }
-.city-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+.country-btn:hover,.country-btn.active { background: var(--accent); color: #fff; border-color: var(--accent-dk); }
+.city-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 .city-btn {
-  font-size: 12px;
-  padding: 5px 11px;
-  border: 0.5px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--bg-card);
-  color: var(--fg-2);
-  cursor: pointer;
-  transition: all .12s;
+  font-size: 12px; padding: 5px 11px;
+  border: 0.5px solid var(--border-md); border-radius: 20px;
+  background: var(--bg-muted); color: var(--fg-2);
+  cursor: pointer; transition: all .12s;
 }
-.city-btn:hover { border-color: var(--accent); color: var(--fg); background: var(--accent-lt); }
-.search-input {
-  width: 100%;
-  font-family: var(--font-ui);
-  font-size: 13px;
-  color: var(--fg);
-  background: var(--bg-card);
-  border: 0.5px solid var(--border-md);
-  border-radius: var(--radius);
-  padding: 9px 12px;
-  margin-bottom: 12px;
-  outline: none;
+.city-btn:hover { background: var(--accent-lt); border-color: var(--accent); color: var(--accent-dk); }
+.search-box { width: 100%; max-width: 320px; margin-bottom: 14px; }
+.manual-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px; margin-bottom: 14px;
 }
-.search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-lt); }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-@media (max-width: 500px) { .form-grid { grid-template-columns: 1fr 1fr; } }
-.form-group { display: flex; flex-direction: column; gap: 5px; }
-.form-group label { font-size: 12px; color: var(--fg-2); }
-.form-input {
-  font-family: var(--font-ui);
-  font-size: 13px;
-  color: var(--fg);
-  background: var(--bg-card);
-  border: 0.5px solid var(--border-md);
-  border-radius: var(--radius);
-  padding: 8px 10px;
-  outline: none;
-  width: 100%;
-}
-.form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-lt); }
+.manual-grid label { font-size: 12px; color: var(--fg-2); display: block; margin-bottom: 4px; }
+.manual-grid input { width: 100%; }
 .status-msg { font-size: 12px; margin-top: 6px; }
-.status-ok  { color: var(--success); }
+.status-ok { color: var(--success); }
 .status-err { color: var(--danger); }
 
-/* ── Explanations ── */
-.expl-section { margin-bottom: 2rem; }
-.expl-title {
-  font-family: var(--font-disp);
-  font-size: 19px;
-  font-weight: 600;
-  color: var(--fg);
-  margin-bottom: .5rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-wrap: balance;
+/* ── ANNUAL CHART PANEL ── */
+.annual-controls {
+  display: flex; align-items: center; gap: 10px;
+  flex-wrap: wrap; margin-bottom: 16px;
 }
-.expl-text { font-size: 14px; color: var(--fg-2); line-height: 1.75; }
-.expl-text + .expl-text { margin-top: .6rem; }
-.callout {
-  background: var(--accent-lt);
-  border-left: 3px solid var(--accent);
-  border-radius: 0 8px 8px 0;
-  padding: .75rem 1rem;
-  margin: .9rem 0;
-  font-size: 13px;
-  color: var(--fg-2);
-  line-height: 1.7;
+.annual-controls label { font-size: 13px; color: var(--fg-2); }
+.annual-chart-wrap {
+  background: var(--bg-card); border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1rem 1.25rem .75rem;
+  margin-bottom: 16px; box-shadow: var(--shadow); overflow-x: auto;
 }
-.callout.blue { background: var(--blue-lt); border-left-color: var(--blue); }
-.formula-block {
-  background: var(--bg-muted);
-  border-left: 2px solid var(--accent);
-  border-radius: 0 6px 6px 0;
-  padding: 8px 12px;
-  font-family: monospace;
-  font-size: 12px;
-  margin: 8px 0;
-  color: var(--fg);
+.annual-canvas { display: block; min-width: 480px; }
+.annual-legend {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  font-size: 11px; color: var(--fg-3); margin-top: 10px;
 }
-.source-list { list-style: none; }
-.source-item {
-  display: flex;
-  gap: 10px;
-  padding: 10px 0;
-  border-bottom: 0.5px solid var(--border);
-  font-size: 13px;
-  color: var(--fg-2);
-  line-height: 1.6;
-}
-.source-item:last-child { border-bottom: none; }
-.source-num { font-weight: 600; color: var(--accent); min-width: 18px; }
+.al-item { display: flex; align-items: center; gap: 5px; }
+.al-line { width: 18px; height: 2px; flex-shrink: 0; border-radius: 1px; }
 
-/* ── Diff colors ── */
-.pos { color: var(--success); }
-.neg { color: var(--danger); }
+/* ── COMPARATEUR ── */
+.comparator-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-bottom: 16px;
+}
+@media(max-width:600px){ .comparator-row { grid-template-columns: 1fr; } }
+.comp-col {
+  background: var(--bg-card); border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1rem 1.1rem;
+  box-shadow: var(--shadow);
+}
+.comp-col-title {
+  font-size: 12px; font-weight: 500; color: var(--fg-3);
+  text-transform: uppercase; letter-spacing: .05em; margin-bottom: 10px;
+}
+.comp-search { width: 100%; margin-bottom: 8px; }
+.comp-select {
+  width: 100%; font-family: var(--font-ui); font-size: 13px;
+  color: var(--fg); background: var(--bg-muted);
+  border: 0.5px solid var(--border-md); border-radius: var(--radius);
+  padding: 6px 8px; outline: none; margin-bottom: 8px;
+}
+.comp-metric { font-size: 13px; color: var(--fg-2); line-height: 2; }
+.comp-metric span { font-family: var(--font-disp); font-size: 16px; color: var(--fg); }
+.comp-diff {
+  background: var(--bg-muted); border-radius: var(--radius);
+  padding: .75rem 1rem; margin-top: 10px;
+  font-size: 13px; color: var(--fg-2); line-height: 1.8;
+}
+.comp-diff strong { color: var(--accent); }
 
-/* ── Responsive ── */
-@media (max-width: 520px) {
-  .two-clocks { grid-template-columns: 1fr 1fr; }
+/* ── WIDGET IFRAME ── */
+.widget-preview-wrap {
+  background: var(--bg-card); border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1.25rem;
+  margin-bottom: 16px; box-shadow: var(--shadow);
+}
+.widget-preview-wrap iframe {
+  width: 100%; height: 340px; border: none;
+  border-radius: var(--radius); background: var(--bg-muted);
+}
+.code-block {
+  background: var(--bg-muted); border: 0.5px solid var(--border-md);
+  border-radius: var(--radius); padding: 1rem;
+  font-family: monospace; font-size: 12px; color: var(--fg-2);
+  line-height: 1.7; overflow-x: auto; margin-bottom: 12px;
+  position: relative; white-space: pre; word-break: break-all; white-space: pre-wrap;
+}
+.copy-btn {
+  position: absolute; top: 8px; right: 8px;
+  background: var(--bg-card); border: 0.5px solid var(--border-md);
+  border-radius: 6px; padding: 4px 8px; font-size: 11px; cursor: pointer;
+  color: var(--fg-2); font-family: var(--font-ui);
+}
+.copy-btn:hover { background: var(--accent-lt); }
+
+/* Explication */
+.explic-section { margin-bottom: 24px; }
+.explic-h2 { font-family: var(--font-disp); font-size: 20px; font-weight: 600; color: var(--fg); margin-bottom: 12px; }
+.explic-h3 { font-family: var(--font-disp); font-size: 16px; font-weight: 600; color: var(--fg); margin-bottom: 8px; margin-top: 14px; }
+.explic-p { font-size: 13px; color: var(--fg-2); line-height: 1.8; margin-bottom: 10px; }
+.explic-formula { background: var(--bg-muted); padding: 8px 12px; border-radius: 6px; font-family: monospace; font-size: 12px; margin: 10px 0; color: var(--fg); border-left: 2px solid var(--accent); }
+.explic-callout { background: var(--accent-lt); border-radius: 8px; padding: .75rem 1rem; font-size: 13px; color: var(--fg-2); margin: 10px 0; border-left: 3px solid var(--accent); line-height: 1.7; }
+.explic-sources { margin-top: 8px; }
+.explic-sources li { font-size: 13px; color: var(--fg-2); line-height: 2.2; }
+.explic-sources a { color: var(--blue); text-decoration: none; }
+.explic-sources a:hover { text-decoration: underline; }
+
+/* Status badge for DST */
+.dst-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 500; padding: 3px 8px;
+  border-radius: 20px; background: var(--blue-lt); color: var(--blue);
+  border: 0.5px solid var(--blue);
+}
+
+@media (max-width: 500px) {
+  .two-clocks { grid-template-columns: 1fr 1fr; gap: 8px; }
   .clock-time { font-size: 28px; }
-  .metric-value { font-size: 19px; }
-  .metric-grid { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
-  .site-subtitle { display: none; }
-}
-@media (max-width: 380px) {
-  .two-clocks { grid-template-columns: 1fr; }
+  .metric-grid { grid-template-columns: 1fr 1fr; }
 }
 </style>
 
-<!-- ── POPUP OVERLAY ── -->
-<div class="popup-overlay" id="popup-overlay" onclick="closePopupBg(event)">
-  <div class="popup-box" id="popup-box">
-    <button class="popup-close" onclick="closePopup()" aria-label="Fermer">×</button>
+<!-- POPUP OVERLAY -->
+<div class="popup-overlay" id="popup-overlay" onclick="if(event.target===this)closePopup()">
+  <div class="popup-box">
+    <button class="popup-close" onclick="closePopup()">×</button>
     <div class="popup-title" id="popup-title"></div>
     <div class="popup-body" id="popup-body"></div>
   </div>
 </div>
 
-<!-- ── HEADER ── -->
+<!-- HEADER -->
 <header class="site-header">
   <div class="site-logo">
-    <svg class="sun-icon" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-      <circle cx="14" cy="14" r="5.5" fill="var(--accent)" opacity=".9"/>
-      <g stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" opacity=".7">
-        <line x1="14" y1="2" x2="14" y2="5.5"/>
-        <line x1="14" y1="22.5" x2="14" y2="26"/>
-        <line x1="2" y1="14" x2="5.5" y2="14"/>
-        <line x1="22.5" y1="14" x2="26" y2="14"/>
-        <line x1="5.76" y1="5.76" x2="8.28" y2="8.28"/>
-        <line x1="19.72" y1="19.72" x2="22.24" y2="22.24"/>
-        <line x1="22.24" y1="5.76" x2="19.72" y2="8.28"/>
-        <line x1="8.28" y1="19.72" x2="5.76" y2="22.24"/>
+    <svg class="sun-icon" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="14" cy="14" r="5.5" fill="var(--accent)" opacity=".85"/>
+      <g stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" opacity=".6">
+        <line x1="14" y1="2" x2="14" y2="5"/>
+        <line x1="14" y1="23" x2="14" y2="26"/>
+        <line x1="2" y1="14" x2="5" y2="14"/>
+        <line x1="23" y1="14" x2="26" y2="14"/>
+        <line x1="5.5" y1="5.5" x2="7.6" y2="7.6"/>
+        <line x1="20.4" y1="20.4" x2="22.5" y2="22.5"/>
+        <line x1="22.5" y1="5.5" x2="20.4" y2="7.6"/>
+        <line x1="7.6" y1="20.4" x2="5.5" y2="22.5"/>
       </g>
     </svg>
-    <span class="site-title">Éphéméride Solaire</span>
+    <div>
+      <div class="site-title">Éphéméride Solaire</div>
+      <div class="site-subtitle">Temps solaire vrai · Lever &amp; coucher</div>
+    </div>
   </div>
-  <span class="site-subtitle">Temps solaire vrai</span>
+  <button class="theme-btn" onclick="toggleTheme()">☀︎ / ☽</button>
 </header>
 
-<!-- ── TABS ── -->
-<nav class="tabs" role="tablist">
-  <button class="tab-btn active" role="tab" aria-selected="true" onclick="switchTab('main')">Éphéméride</button>
-  <button class="tab-btn" role="tab" onclick="switchTab('lieu')">Lieu</button>
-  <button class="tab-btn" role="tab" onclick="switchTab('expl')">Explications</button>
+<!-- TABS -->
+<nav class="tabs" id="main-tabs">
+  <button class="tab-btn active" onclick="switchTab('main')">Éphéméride</button>
+  <button class="tab-btn" onclick="switchTab('annuel')">Graphique annuel</button>
+  <button class="tab-btn" onclick="switchTab('comparateur')">Comparateur</button>
+  <button class="tab-btn" onclick="switchTab('widget')">Widget</button>
+  <button class="tab-btn" onclick="switchTab('lieu')">Lieu</button>
+  <button class="tab-btn" onclick="switchTab('explication')">Explications</button>
 </nav>
 
-<!-- ════════════════════════════════════════
-     PANEL — ÉPHÉMÉRIDE
-════════════════════════════════════════ -->
+<!-- ═══════════════════════════════ PANEL: MAIN ═══════════════════════════════ -->
 <div class="panel active" id="panel-main">
-
   <div class="date-row">
-    <label for="date-picker">Date :</label>
-    <input type="date" id="date-picker">
+    <label for="date-input">Date</label>
+    <input type="date" id="date-input" onchange="compute()">
     <button class="btn btn-sm" onclick="setToday()">Aujourd'hui</button>
   </div>
 
-  <!-- Prompt de lieu -->
-  <div class="prompt-card" id="location-prompt">
-    <p>Pour calculer l'heure solaire vraie, indiquez votre position :</p>
+  <div id="main-prompt" class="prompt-card">
+    <p>Pour calculer l'heure solaire, indiquez votre position géographique.</p>
     <div class="prompt-actions">
-      <button class="btn primary" onclick="geolocate()">Me géolocaliser</button>
-      <button class="btn" onclick="switchTab('lieu')">Choisir une ville</button>
+      <button class="btn primary" onclick="geolocate()">📍 Me géolocaliser</button>
+      <button class="btn" onclick="switchTab('lieu')">Choisir un lieu</button>
     </div>
+    <div id="geo-status" class="status-msg"></div>
   </div>
 
-  <!-- Résultats -->
-  <div id="results" hidden>
+  <div id="main-result" style="display:none">
+    <div class="location-tag">
+      <span>📍</span>
+      <span class="place" id="loc-name"></span>
+      <span id="dst-badge-el"></span>
+      <button class="btn btn-sm" onclick="switchTab('lieu')">Changer</button>
+    </div>
 
-    <div class="location-tag" id="location-tag"></div>
-
-    <!-- Deux horloges -->
     <div class="two-clocks">
       <div class="clock-card">
-        <div class="clock-label">Heure de la montre <span class="info-btn" onclick="showPopup('watch')" tabindex="0" role="button" aria-label="Explication heure légale">i</span></div>
-        <div class="clock-time" id="m-watch">—</div>
-        <div class="clock-sub" id="m-watch-zone">heure légale locale</div>
+        <div class="clock-label">🕐 Heure légale <button class="info-btn" onclick="showPopup('watch')">i</button></div>
+        <div class="clock-time" id="m-watch">--:--:--</div>
+        <div class="clock-sub" id="m-watch-tz"></div>
       </div>
       <div class="clock-card solar">
-        <div class="clock-label">Heure solaire vraie <span class="info-btn" onclick="showPopup('solar')" tabindex="0" role="button" aria-label="Explication heure solaire">i</span></div>
-        <div class="clock-time" id="m-solar">—</div>
-        <div class="clock-sub">temps solaire vrai · cadran solaire</div>
+        <div class="clock-label">☀️ Heure solaire vraie <button class="info-btn" onclick="showPopup('solar')">i</button></div>
+        <div class="clock-time" id="m-solar">--:--:--</div>
+        <div class="clock-sub" id="m-eqt-sub"></div>
       </div>
     </div>
 
-    <!-- Arc SVG -->
-    <div class="arc-card">
-      <svg class="arc-svg" id="arc-svg" viewBox="0 0 600 155" xmlns="http://www.w3.org/2000/svg" aria-label="Arc de la course solaire"></svg>
+    <!-- Cadran solaire animé -->
+    <div class="sundial-card">
+      <canvas class="sundial-canvas" id="sundial-canvas"></canvas>
+      <div class="sundial-legend">
+        <div class="sdl-item"><div class="sdl-dot" style="background:#F5BD47"></div>Arc du jour</div>
+        <div class="sdl-item"><div class="sdl-dot" style="background:var(--accent)"></div>Position actuelle</div>
+        <div class="sdl-item"><div class="sdl-dot" style="background:var(--fg-3)"></div>Horizon</div>
+      </div>
     </div>
 
-    <!-- Métriques lever / méridien / coucher -->
     <div class="metric-grid">
       <div class="metric">
-        <div class="metric-label">Lever du soleil <span class="info-btn" onclick="showPopup('rise')" role="button" aria-label="Explication azimut lever">i</span></div>
-        <div class="metric-value" id="m-rise">—</div>
+        <div class="metric-label">🌅 Lever <button class="info-btn" onclick="showPopup('rise')">i</button></div>
+        <div class="metric-value" id="m-rise">--</div>
         <div class="metric-az" id="m-rise-az"></div>
-        <div class="metric-sub" id="m-rise-dir"></div>
       </div>
       <div class="metric">
-        <div class="metric-label">Passage méridien <span class="info-btn" onclick="showPopup('noon')" role="button" aria-label="Explication midi solaire">i</span></div>
-        <div class="metric-value" id="m-noon">—</div>
-        <div class="metric-az" id="m-noon-alt"></div>
-        <div class="metric-sub">vrai midi solaire</div>
-      </div>
-      <div class="metric">
-        <div class="metric-label">Coucher du soleil <span class="info-btn" onclick="showPopup('set')" role="button" aria-label="Explication azimut coucher">i</span></div>
-        <div class="metric-value" id="m-set">—</div>
+        <div class="metric-label">🌇 Coucher <button class="info-btn" onclick="showPopup('set')">i</button></div>
+        <div class="metric-value" id="m-set">--</div>
         <div class="metric-az" id="m-set-az"></div>
-        <div class="metric-sub" id="m-set-dir"></div>
-      </div>
-    </div>
-
-    <!-- Métriques durées / écarts -->
-    <div class="metric-grid">
-      <div class="metric">
-        <div class="metric-label">Durée du jour <span class="info-btn" onclick="showPopup('daylen')" role="button">i</span></div>
-        <div class="metric-value" id="m-day">—</div>
       </div>
       <div class="metric">
-        <div class="metric-label">Durée de la nuit</div>
-        <div class="metric-value" id="m-night">—</div>
+        <div class="metric-label">🔆 Midi solaire <button class="info-btn" onclick="showPopup('noon')">i</button></div>
+        <div class="metric-value" id="m-noon">--</div>
+        <div class="metric-sub" id="m-noon-alt"></div>
       </div>
       <div class="metric">
-        <div class="metric-label">Écart équinoxe (12h) <span class="info-btn" onclick="showPopup('delta')" role="button">i</span></div>
-        <div class="metric-value" id="m-delta">—</div>
-        <div class="metric-sub" id="m-delta-sub"></div>
+        <div class="metric-label">📐 Éq. du temps <button class="info-btn" onclick="showPopup('eqt')">i</button></div>
+        <div class="metric-value" id="m-eqt">--</div>
+        <div class="metric-sub">min</div>
       </div>
       <div class="metric">
-        <div class="metric-label">Équation du temps <span class="info-btn" onclick="showPopup('eqt')" role="button">i</span></div>
-        <div class="metric-value" id="m-eq">—</div>
-        <div class="metric-sub">correction solaire</div>
+        <div class="metric-label">⏱ Durée du jour <button class="info-btn" onclick="showPopup('daylen')">i</button></div>
+        <div class="metric-value" id="m-daylen">--</div>
+        <div class="metric-sub" id="m-daylen-sub"></div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">📊 Vs équinoxe <button class="info-btn" onclick="showPopup('delta')">i</button></div>
+        <div class="metric-value" id="m-delta">--</div>
+        <div class="metric-sub">min vs 12h</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">🌐 Déclinaison <button class="info-btn" onclick="showPopup('decl')">i</button></div>
+        <div class="metric-value" id="m-decl">--</div>
+        <div class="metric-sub">degrés</div>
       </div>
     </div>
 
     <!-- Timeline -->
     <div class="timeline-card">
-      <div class="timeline-title">Frise du jour — 0h à 24h</div>
-      <div class="timeline-bar-wrap">
-        <div class="timeline-bar" id="timeline-bar"></div>
-        <div class="tl-labels"><span>0h</span><span>6h</span><span>12h</span><span>18h</span><span>24h</span></div>
+      <div class="timeline-title">Frise du jour</div>
+      <div class="timeline-bar" id="tl-bar">
+        <div class="tl-night" id="tl-n1"></div>
+        <div class="tl-day" id="tl-d"></div>
+        <div class="tl-night" id="tl-n2"></div>
+        <div class="tl-now" id="tl-now"></div>
       </div>
+      <div class="tl-labels"><span>0h</span><span>6h</span><span>12h</span><span>18h</span><span>24h</span></div>
       <div class="tl-legend">
         <div class="tl-legend-item"><div class="tl-dot" style="background:#1E2D4A"></div>Nuit</div>
         <div class="tl-legend-item"><div class="tl-dot" style="background:#F5BD47"></div>Jour</div>
-        <div class="tl-legend-item"><div class="tl-dot" style="background:var(--danger);border-radius:50%"></div>Maintenant</div>
+        <div class="tl-legend-item"><div class="tl-dot" style="background:var(--danger)"></div>Maintenant</div>
       </div>
     </div>
 
-    <!-- Coordonnées -->
+    <!-- Coords -->
     <div class="coords-card">
-      <div class="timeline-title">Coordonnées géographiques <span class="info-btn" onclick="showPopup('coords')" role="button">i</span></div>
+      <div class="timeline-title">Coordonnées <button class="info-btn" onclick="showPopup('coords')">i</button></div>
       <div class="coords-grid">
-        <div class="coord-item">Latitude<br><span class="coord-val" id="c-lat">—</span></div>
-        <div class="coord-item">Longitude<br><span class="coord-val" id="c-lon">—</span></div>
-        <div class="coord-item">UTC<br><span class="coord-val" id="c-utc">—</span></div>
+        <div class="coord-item">Latitude<br><span class="coord-val" id="c-lat">--</span></div>
+        <div class="coord-item">Longitude<br><span class="coord-val" id="c-lon">--</span></div>
+        <div class="coord-item">Fuseau<br><span class="coord-val" id="c-utc">--</span></div>
       </div>
-      <div class="coord-note" id="c-desc"></div>
+      <div class="coord-note" id="c-note"></div>
     </div>
+  </div>
+</div>
 
-  </div><!-- /results -->
-</div><!-- /panel-main -->
+<!-- ═══════════════════════════════ PANEL: ANNUEL ═══════════════════════════════ -->
+<div class="panel" id="panel-annuel">
+  <div class="annual-controls">
+    <label>Courbes pour</label>
+    <span id="annual-loc-name" style="font-weight:500;color:var(--fg)">—</span>
+    <button class="btn btn-sm" onclick="switchTab('lieu')">Changer de lieu</button>
+    <button class="btn btn-sm primary" onclick="drawAnnual()">Recalculer</button>
+  </div>
+  <div class="annual-chart-wrap">
+    <canvas class="annual-canvas" id="annual-canvas" width="700" height="260"></canvas>
+  </div>
+  <div class="annual-legend">
+    <div class="al-item"><div class="al-line" style="background:#F5BD47"></div>Durée du jour (h)</div>
+    <div class="al-item"><div class="al-line" style="background:var(--accent)"></div>Équation du temps (min)</div>
+    <div class="al-item"><div class="al-line" style="background:var(--blue)"></div>Heure du coucher (TSV)</div>
+    <div class="al-item"><div class="al-line" style="background:#5BAD7A"></div>Heure du lever (TSV)</div>
+  </div>
+  <div id="annual-noloc" style="display:none;padding:20px;color:var(--fg-3);font-size:13px">
+    Veuillez d'abord sélectionner un lieu dans l'onglet <strong>Lieu</strong>.
+  </div>
+</div>
 
-<!-- ════════════════════════════════════════
-     PANEL — LIEU
-════════════════════════════════════════ -->
+<!-- ═══════════════════════════════ PANEL: COMPARATEUR ═══════════════════════════════ -->
+<div class="panel" id="panel-comparateur">
+  <div class="comparator-row">
+    <!-- City A -->
+    <div class="comp-col">
+      <div class="comp-col-title">Lieu A</div>
+      <input type="text" class="comp-search" id="comp-search-a" placeholder="Rechercher une ville…" oninput="filterCompCity('a')">
+      <select class="comp-select" id="comp-select-a" size="6" onchange="computeComp()"></select>
+      <div class="comp-metric" id="comp-metrics-a"></div>
+    </div>
+    <!-- City B -->
+    <div class="comp-col">
+      <div class="comp-col-title">Lieu B</div>
+      <input type="text" class="comp-search" id="comp-search-b" placeholder="Rechercher une ville…" oninput="filterCompCity('b')">
+      <select class="comp-select" id="comp-select-b" size="6" onchange="computeComp()"></select>
+      <div class="comp-metric" id="comp-metrics-b"></div>
+    </div>
+  </div>
+  <div class="comp-diff" id="comp-diff">Sélectionnez deux villes pour voir les différences.</div>
+</div>
+
+<!-- ═══════════════════════════════ PANEL: WIDGET ═══════════════════════════════ -->
+<div class="panel" id="panel-widget">
+  <p style="font-size:13px;color:var(--fg-2);margin-bottom:16px;line-height:1.7">
+    Intégrez l'éphéméride solaire sur n'importe quel site (école, observatoire, camping…) via une balise <code>&lt;iframe&gt;</code>.
+    Le widget s'adapte à la largeur et utilise les coordonnées que vous fournissez.
+  </p>
+  <div class="widget-preview-wrap">
+    <div style="font-size:12px;color:var(--fg-3);margin-bottom:8px">Aperçu (Paris) :</div>
+    <iframe id="widget-iframe" src="about:blank" title="Widget éphéméride solaire"></iframe>
+  </div>
+  <div style="font-size:13px;color:var(--fg-2);margin-bottom:10px">Code à copier :</div>
+  <div class="code-block" id="widget-code"><button class="copy-btn" onclick="copyCode()">Copier</button></div>
+  <div style="font-size:12px;color:var(--fg-3);line-height:1.7;margin-top:8px">
+    Remplacez <code>lat</code>, <code>lon</code>, <code>utc</code> et <code>name</code> par vos valeurs.
+    Pour un affichage pleine largeur : <code>width="100%"</code>.<br>
+    La géolocalisation automatique ne fonctionne pas dans un iframe ; passez les coordonnées en paramètres URL.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PANEL: LIEU ═══════════════════════════════ -->
 <div class="panel" id="panel-lieu">
-
   <div class="lieu-section">
-    <div class="section-title">Géolocalisation GPS</div>
-    <p style="font-size:13px;color:var(--fg-2);margin-bottom:12px">Autorisez l'accès à votre position pour une précision maximale.</p>
-    <button class="btn primary" onclick="geolocate()">Me géolocaliser</button>
-    <div class="status-msg" id="geo-status"></div>
+    <div class="section-title">Géolocalisation</div>
+    <button class="btn primary" onclick="geolocate()">📍 Utiliser ma position GPS</button>
+    <div id="geo-status-lieu" class="status-msg" style="margin-top:8px"></div>
   </div>
 
   <div class="lieu-section">
-    <div class="section-title">Villes européennes</div>
-    <input type="text" class="search-input" id="city-search" placeholder="Rechercher une ville…" oninput="filterCities()" autocomplete="off">
-    <div id="country-tabs" class="country-grid"></div>
-    <div id="city-list" class="city-grid" style="margin-top:10px"></div>
+    <div class="section-title">Choisir une ville</div>
+    <input type="text" class="search-box" id="city-search" placeholder="Rechercher…" oninput="filterCities()">
+    <div class="country-grid" id="country-grid"></div>
+    <div class="city-list" id="city-list"></div>
   </div>
 
   <div class="lieu-section">
     <div class="section-title">Saisie manuelle</div>
-    <div class="form-grid">
-      <div class="form-group"><label>Latitude (°)</label><input type="number" class="form-input" id="lat-input" placeholder="48.8566" step="0.0001"></div>
-      <div class="form-group"><label>Longitude (°)</label><input type="number" class="form-input" id="lon-input" placeholder="2.3522" step="0.0001"></div>
-      <div class="form-group"><label>Décalage UTC (h)</label><input type="number" class="form-input" id="utc-input" placeholder="2" step="0.5"></div>
-    </div>
-    <div class="form-group" style="margin-bottom:12px">
-      <label>Nom du lieu (optionnel)</label>
-      <input type="text" class="form-input" id="name-input" placeholder="ex : Paris, France">
+    <div class="manual-grid">
+      <div>
+        <label for="lat-input">Latitude (°)</label>
+        <input type="number" id="lat-input" step="0.0001" min="-90" max="90" placeholder="48.8566">
+      </div>
+      <div>
+        <label for="lon-input">Longitude (°)</label>
+        <input type="number" id="lon-input" step="0.0001" min="-180" max="180" placeholder="2.3522">
+      </div>
+      <div>
+        <label for="utc-input">Décalage UTC</label>
+        <input type="number" id="utc-input" step="0.5" min="-12" max="14" placeholder="1">
+      </div>
+      <div>
+        <label for="name-input">Nom du lieu</label>
+        <input type="text" id="name-input" placeholder="Mon lieu">
+      </div>
     </div>
     <button class="btn primary" onclick="applyManual()">Rechercher le temps solaire de ce lieu</button>
-    <div class="status-msg" id="manual-status"></div>
+    <div id="manual-status" class="status-msg"></div>
   </div>
+</div>
 
-</div><!-- /panel-lieu -->
+<!-- ═══════════════════════════════ PANEL: EXPLICATION ═══════════════════════════════ -->
+<div class="panel" id="panel-explication">
+  <div class="explic-section">
+    <div class="explic-h2">Qu'est-ce que l'heure solaire vraie ?</div>
+    <p class="explic-p">L'heure solaire vraie (TSV) est l'heure lue directement sur un cadran solaire. Elle indique l'angle horaire du Soleil dans le ciel local. Contrairement à l'heure légale — définie par des fuseaux horaires fixes — la TSV varie à chaque degré de longitude et change légèrement chaque jour de l'année.</p>
+    <div class="explic-callout">☀️ Midi solaire vrai est le moment exact où le Soleil est au plus haut dans le ciel et passe au méridien local. Il correspond à 12h00 TSV, mais peut s'écarter de plus de 16 minutes du midi légal.</div>
 
-<!-- ════════════════════════════════════════
-     PANEL — EXPLICATIONS
-════════════════════════════════════════ -->
-<div class="panel" id="panel-expl">
+    <div class="explic-h3">Pourquoi l'heure solaire vraie n'est-elle pas uniforme ?</div>
+    <p class="explic-p">Deux phénomènes astronomiques font que la durée réelle d'un jour solaire vrai varie tout au long de l'année — c'est l'<em>équation du temps</em> :</p>
+    <p class="explic-p"><strong>1. L'excentricité de l'orbite</strong> — La Terre ne décrit pas un cercle parfait mais une ellipse. Selon la deuxième loi de Kepler, elle se déplace plus vite quand elle est proche du Soleil (en janvier : périhélie) et plus lentement quand elle en est éloignée (en juillet : aphélie). La vitesse angulaire varie donc, ce qui accélère ou ralentit le rythme des midis solaires. Contribution : ±8 min.</p>
+    <p class="explic-p"><strong>2. L'obliquité de l'axe</strong> — L'axe terrestre est incliné de 23,45° par rapport au plan de l'écliptique. Le Soleil se déplace sur l'écliptique, mais le midi solaire est défini par rapport à l'équateur céleste. Lors des solstices (Soleil loin de l'équateur), la projection sur l'équateur varie plus lentement ; lors des équinoxes, plus rapidement. Contribution : ±10 min.</p>
+    <div class="explic-formula">EqT ≈ 9.87·sin(2B) − 7.53·cos(B) − 1.5·sin(B)    où B = 360/365 × (N−81)°</div>
+    <p class="explic-p">Combinées, ces deux causes donnent une variation annuelle de ±16 minutes environ.</p>
 
-  <div class="expl-section">
-    <div class="expl-title">Heure solaire vraie (TSV) <span class="info-btn" onclick="showPopup('solar')" role="button">i</span></div>
-    <div class="expl-text">L'heure solaire vraie est l'heure indiquée par un cadran solaire. Il est exactement midi solaire vrai lorsque le Soleil passe au méridien du lieu — à son point le plus haut dans le ciel.</div>
-    <div class="callout">
-      <strong>L'heure solaire vraie n'est pas uniforme.</strong> La vitesse de la Terre sur son orbite elliptique varie (loi des aires de Kepler) : elle va plus vite près du Soleil (janvier) et plus lentement en été (juillet). De plus, l'inclinaison de l'axe terrestre à 23,45° (obliquité) projette le mouvement du Soleil sur l'écliptique de façon irrégulière. Ces deux effets combinés font que la durée des jours solaires vrais fluctue jusqu'à ±30 secondes d'un jour à l'autre. Sur l'année, ces écarts s'accumulent et peuvent atteindre <strong>±16 minutes</strong> par rapport à une horloge régulière.
-    </div>
-    <div class="formula-block">TSV = Heure_UTC + Longitude / 15 + Équation_du_temps (en heures)</div>
-  </div>
+    <div class="explic-h3">Formule de l'heure solaire vraie</div>
+    <div class="explic-formula">TSV = UTC + Longitude/15 + EqT/60</div>
+    <p class="explic-p">Avec la longitude en degrés (est positif), l'équation du temps EqT en minutes, et l'heure UTC en heures décimales.</p>
 
-  <div class="expl-section">
-    <div class="expl-title">Heure légale vs heure solaire <span class="info-btn" onclick="showPopup('watch')" role="button">i</span></div>
-    <div class="expl-text">L'heure légale est une convention administrative. Elle découpe le globe en fuseaux horaires d'environ 15° de large (1 heure de décalage par fuseau), mais les frontières politiques distordent ces fuseaux. En France, le fuseau UTC+1 (hiver) et UTC+2 (été) couvre des longitudes allant de −5° à +8°, soit jusqu'à <strong>1h50 d'écart avec le vrai midi solaire à Brest</strong>. C'est pourquoi le Soleil peut se coucher après 22h en été en France métropolitaine.</div>
-  </div>
+    <div class="explic-h3">Lever et coucher du soleil</div>
+    <div class="explic-formula">cos(H₀) = (sin(−0.833°) − sin(φ)·sin(δ)) / (cos(φ)·cos(δ))</div>
+    <p class="explic-p">H₀ est l'angle horaire au lever/coucher (−0.833° tient compte de la réfraction atmosphérique et du diamètre apparent du Soleil). φ est la latitude, δ la déclinaison.</p>
 
-  <div class="expl-section">
-    <div class="expl-title">Équation du temps <span class="info-btn" onclick="showPopup('eqt')" role="button">i</span></div>
-    <div class="expl-text">L'équation du temps mesure la différence entre le Soleil moyen (fictif, se déplaçant à vitesse constante sur l'équateur céleste) et le Soleil vrai (réel). Elle résulte de deux effets physiques distincts :</div>
-    <div class="callout" style="border-color:var(--blue);background:var(--blue-lt)">
-      <strong>1. Excentricité de l'orbite terrestre</strong><br>
-      L'orbite de la Terre est une ellipse. Près du périhélie (3 janvier), la Terre se déplace plus vite — les jours solaires vrais sont plus longs. Près de l'aphélie (4 juillet), elle va plus lentement — les jours sont un peu plus courts. Cet effet crée une variation d'environ ±8 minutes sur l'année.
-    </div>
-    <div class="callout">
-      <strong>2. Obliquité de l'écliptique (23,45°)</strong><br>
-      L'axe terrestre est incliné. Le Soleil suit l'écliptique, mais les heures se comptent selon l'équateur céleste. Cette projection crée une variation sinusoïdale qui s'annule aux solstices et équinoxes, avec des extremes de ±10 minutes.
-    </div>
-    <div class="formula-block">EqT ≈ 9,87 · sin(2B) − 4,14 · sin(B + 77°) − 7,53 · cos(B) [en minutes]</div>
-    <div class="expl-text">où B = 360/365 × (N − 81), N étant le numéro du jour de l'année. L'équation du temps atteint ses extremes vers le 3 novembre (−16 min) et le 12 février (+14 min).</div>
-  </div>
+    <div class="explic-h3">Azimut du lever et coucher</div>
+    <div class="explic-formula">cos(Az) = (sin(δ) − sin(φ)·sin(h)) / (cos(φ)·cos(h))</div>
+    <p class="explic-p">h = −0.833° à l'horizon. L'azimut se mesure depuis le Nord (0°), en sens horaire. Le coucher est symétrique : Az_coucher = 360° − Az_lever.</p>
 
-  <div class="expl-section">
-    <div class="expl-title">Déclinaison solaire <span class="info-btn" onclick="showPopup('decl')" role="button">i</span></div>
-    <div class="expl-text">La déclinaison est l'angle entre l'équateur céleste et la direction du Soleil. Elle varie de −23,45° (solstice d'hiver, 21 décembre) à +23,45° (solstice d'été, 21 juin), et détermine la durée du jour selon la latitude.</div>
-    <div class="callout">
-      — Solstice d'été (21 juin) : δ = +23,45° → jours très longs aux latitudes nord<br>
-      — Équinoxes (20 mars / 23 sept) : δ = 0° → jour ≈ nuit ≈ 12h partout sur Terre<br>
-      — Solstice d'hiver (21 déc) : δ = −23,45° → jours très courts aux latitudes nord
-    </div>
-    <div class="formula-block">δ = 23,45° × sin(360/365 × (N − 81))</div>
-  </div>
+    <div class="explic-h3">Déclinaison solaire</div>
+    <div class="explic-formula">δ = 23.45° × sin(360/365 × (N−81)°)</div>
+    <p class="explic-p">La déclinaison varie de −23.45° (solstice d'hiver) à +23.45° (solstice d'été), passant par 0° aux équinoxes.</p>
 
-  <div class="expl-section">
-    <div class="expl-title">Azimut du lever et du coucher <span class="info-btn" onclick="showPopup('rise')" role="button">i</span></div>
-    <div class="expl-text">Le Soleil ne se lève pas toujours exactement à l'Est, ni ne se couche exactement à l'Ouest. L'azimut — angle mesuré depuis le Nord géographique, dans le sens des aiguilles d'une montre — varie selon la saison et la latitude :</div>
-    <div class="callout">
-      — Été (déclinaison positive) : lever au <strong>nord-est</strong>, coucher au <strong>nord-ouest</strong><br>
-      — Équinoxes (déclinaison nulle) : lever à <strong>l'Est exact (90°)</strong>, coucher à <strong>l'Ouest exact (270°)</strong><br>
-      — Hiver (déclinaison négative) : lever au <strong>sud-est</strong>, coucher au <strong>sud-ouest</strong>
-    </div>
-    <div class="formula-block">cos(Az) = (sin(δ) − sin(φ) · sin(h)) / (cos(φ) · cos(h))</div>
-    <div class="expl-text">où φ = latitude, δ = déclinaison, h = élévation à l'horizon (−0,833° pour la réfraction atmosphérique + rayon apparent du Soleil).</div>
-  </div>
+    <div class="explic-h3">Heure d'été / heure d'hiver (DST)</div>
+    <p class="explic-p">En Europe, le passage à l'heure d'été (UTC+2 pour la France) a lieu le dernier dimanche de mars, et le retour à l'heure d'hiver (UTC+1) le dernier dimanche d'octobre. Cette application détecte automatiquement si la date sélectionnée tombe en période d'heure d'été et ajuste le décalage UTC en conséquence pour les pays européens concernés.</p>
 
-  <div class="expl-section">
-    <div class="expl-title">Passage au méridien — midi solaire <span class="info-btn" onclick="showPopup('noon')" role="button">i</span></div>
-    <div class="expl-text">Le midi solaire vrai est l'instant où le Soleil culmine au méridien du lieu — les ombres sont alors les plus courtes et pointent exactement vers le Nord géographique (dans l'hémisphère nord). Ce moment ne coïncide presque jamais avec 12h00 sur la montre, en raison du fuseau horaire et de l'équation du temps.</div>
-    <div class="formula-block">Midi_solaire = 12 − EqT/60 − Longitude/15 + Décalage_UTC</div>
-    <div class="formula-block">Hauteur maximale = 90° − |φ − δ|</div>
-  </div>
-
-  <div class="expl-section">
-    <div class="expl-title">Sources et références</div>
-    <ul class="source-list">
-      <li class="source-item"><span class="source-num">1</span><span>Jean Meeus, <em>Astronomical Algorithms</em>, Willmann-Bell, 1991 — référence fondamentale pour tous les algorithmes de position solaire utilisés ici.</span></li>
-      <li class="source-item"><span class="source-num">2</span><span>NOAA Solar Calculator, National Oceanic and Atmospheric Administration — implémentation de référence des équations de Meeus, validation des formules.</span></li>
-      <li class="source-item"><span class="source-num">3</span><span>US Naval Observatory, <em>The Astronomical Almanac</em> — tables officielles des éphémérides, définitions des angles horaires et de l'heure solaire vraie.</span></li>
-      <li class="source-item"><span class="source-num">4</span><span>Michalsky J.J. (1988), <em>The Astronomical Almanac's algorithm for approximate solar position</em>, Solar Energy 40(3) — algorithme simplifié de position solaire utilisé pour le calcul temps réel.</span></li>
-      <li class="source-item"><span class="source-num">5</span><span>Spencer J.W. (1971), <em>Fourier series representation of the position of the Sun</em>, Search 2(5) — formule de l'équation du temps en série de Fourier tronquée.</span></li>
+    <div class="explic-h3">Sources &amp; références</div>
+    <ul class="explic-sources">
+      <li><a href="https://en.wikipedia.org/wiki/Equation_of_time" target="_blank">Wikipedia — Equation of time</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Solar_declination" target="_blank">Wikipedia — Solar declination</a></li>
+      <li><a href="https://www.timeanddate.com/astronomy/" target="_blank">timeanddate.com — Astronomy calculators</a></li>
+      <li><a href="https://aa.usno.navy.mil/data/RS_OneYear" target="_blank">US Naval Observatory — Sun rise/set tables</a></li>
+      <li><a href="https://www.esrl.noaa.gov/gmd/grad/solcalc/" target="_blank">NOAA Solar Calculator</a></li>
+      <li>Jean Meeus, <em>Astronomical Algorithms</em>, 2nd ed., Willmann-Bell, 1998</li>
     </ul>
   </div>
+</div>
 
-</div><!-- /panel-expl -->
+<div style="height:40px"></div>
 
 <script>
-/* ============================================================
-   STATE & CONSTANTS
-   ============================================================ */
-var state = { lat:null, lon:null, utc:null, name:'', loaded:false };
-var selectedCountry = 'France';
-var clockTimer = null;
-
-/* ============================================================
-   POPUP DATA
-   ============================================================ */
-var POPUPS = {
-  solar: {
-    title: 'Heure solaire vraie (TSV)',
-    body: '<p>L\'heure solaire vraie est l\'heure qu\'indiquerait un <strong>cadran solaire</strong>. Il est exactement midi solaire vrai lorsque le Soleil est aligné avec le méridien du lieu — à son point culminant.</p><div class="popup-callout"><strong>Pourquoi n\'est-elle pas uniforme ?</strong><br>Deux causes physiques s\'additionnent :<br>• L\'<strong>orbite elliptique</strong> de la Terre fait varier sa vitesse angulaire (loi de Kepler).<br>• L\'<strong>obliquité de 23,45°</strong> de l\'axe terrestre crée une irrégularité dans la projection du mouvement solaire sur l\'équateur céleste.<br>La durée des jours solaires vrais peut donc différer jusqu\'à ±30 s/jour, et l\'écart cumulé atteint <strong>±16 minutes</strong> sur l\'année.</div><div class="popup-formula">TSV = UTC + Longitude/15 + EqT (heures)</div>'
-  },
-  watch: {
-    title: 'Heure légale (heure de la montre)',
-    body: '<p>L\'heure légale est une <strong>convention administrative</strong> : les États découpent le globe en fuseaux horaires d\'environ 15° de large (= 1 heure de décalage). En pratique, les frontières politiques distordent fortement ce découpage.</p><p>En France métropolitaine :</p><ul><li>Hiver : UTC+1 — alors que Paris (lon. +2,35°) correspond à UTC+0h09</li><li>Été : UTC+2 — soit environ <strong>1h09 d\'avance solaire à Paris</strong>, et <strong>1h50 à Brest</strong> (lon. −4,49°)</li></ul><p>C\'est pourquoi le soleil se couche parfois après 22h en été en France.</p>'
-  },
-  rise: {
-    title: 'Lever du soleil et azimut',
-    body: '<p>Le Soleil ne se lève pas toujours exactement à l\'Est. L\'<strong>azimut</strong> de lever est mesuré en degrés depuis le <strong>Nord géographique</strong>, dans le sens des aiguilles d\'une montre.</p><ul><li><strong>Été</strong> (déclinaison > 0°) : lever au nord-est (Az &lt; 90°)</li><li><strong>Équinoxes</strong> (déclinaison = 0°) : lever à l\'Est exact, <strong>Az = 90°</strong></li><li><strong>Hiver</strong> (déclinaison &lt; 0°) : lever au sud-est (Az > 90°)</li></ul><div class="popup-formula">cos(Az) = (sin(δ) − sin(φ)·sin(h)) / (cos(φ)·cos(h))</div><p>φ = latitude · δ = déclinaison · h = −0,833° (horizon atmosphérique)</p><p style="margin-top:.5rem">La réfraction atmosphérique et la taille du disque solaire font que le Soleil est visible environ <strong>2 minutes</strong> avant d\'être géométriquement levé.</p>'
-  },
-  set: {
-    title: 'Coucher du soleil',
-    body: '<p>Symétrique au lever par rapport au midi solaire vrai. L\'azimut du coucher est le miroir de celui du lever par rapport à 180° : <strong>Az_coucher = 360° − Az_lever</strong>.</p><p style="margin-top:.5rem">En été, le Soleil se couche au nord-ouest (Az > 270°) ; aux équinoxes, à l\'Ouest exact (270°) ; en hiver, au sud-ouest (Az &lt; 270°).</p><p style="margin-top:.5rem">La réfraction atmosphérique permet de voir le Soleil environ 2 minutes après qu\'il soit passé sous l\'horizon géométrique.</p>'
-  },
-  noon: {
-    title: 'Passage au méridien — midi solaire',
-    body: '<p>C\'est l\'instant où le Soleil est au <strong>point culminant</strong> de sa course : il passe exactement au méridien du lieu. Les ombres pointent alors vers le <strong>Nord géographique</strong> (dans l\'hémisphère nord).</p><div class="popup-formula">Midi = 12 − EqT/60 − Longitude/15 + UTC_offset</div><p>À Paris en novembre, le vrai midi solaire peut être à <strong>13h50</strong> sur la montre (UTC+1 + équation du temps −16 min). La hauteur maximale du Soleil détermine l\'intensité lumineuse reçue au sol et la longueur des ombres.</p><div class="popup-formula">Hauteur_max = 90° − |latitude − déclinaison|</div>'
-  },
-  eqt: {
-    title: 'Équation du temps',
-    body: '<p>La durée du jour solaire vrai (de midi solaire à midi solaire) n\'est pas constante : elle varie jusqu\'à ±30 s/jour. Deux causes physiques s\'additionnent :</p><ul><li><strong>Excentricité orbitale</strong> : l\'orbite de la Terre est une ellipse. Près du périhélie (3 janv.), la Terre va plus vite → jours solaires plus longs. Près de l\'aphélie (4 juil.), elle va plus lentement → jours plus courts. Effet : ±8 min sur l\'année.</li><li><strong>Obliquité (23,45°)</strong> : le Soleil se déplace sur l\'écliptique, inclinée par rapport à l\'équateur céleste. La projection de ce mouvement crée une variation sinusoïdale qui s\'annule aux solstices et équinoxes. Effet : ±10 min sur l\'année.</li></ul><p style="margin-top:.5rem">Extremes : <strong>+14 min vers le 12 février</strong> · <strong>−16 min vers le 3 novembre</strong>.</p>'
-  },
-  daylen: {
-    title: 'Durée du jour',
-    body: '<p>La durée du jour dépend de la <strong>latitude</strong> et de la <strong>déclinaison solaire</strong>. Plus on est loin de l\'équateur, plus les variations saisonnières sont marquées.</p><ul><li><strong>Équateur</strong> : ~12h toute l\'année</li><li><strong>Paris (49°N)</strong> : ~16h en juin, ~8h en décembre</li><li><strong>Reykjavik (64°N)</strong> : ~21h en juin, ~5h en décembre</li><li><strong>Cercle polaire (66,5°N)</strong> : soleil de minuit en juin, nuit polaire en décembre</li></ul><p style="margin-top:.5rem">Les jours ne s\'allongent et ne raccourcissent pas à vitesse constante : le changement est maximal autour des équinoxes et quasi nul autour des solstices.</p>'
-  },
-  delta: {
-    title: 'Écart par rapport à l\'équinoxe',
-    body: '<p>Aux équinoxes (vers le 20 mars et le 23 septembre), la déclinaison solaire est nulle et la durée du jour est approximativement de 12h partout sur Terre. Ce n\'est pas exactement 12h car la réfraction atmosphérique et le rayon apparent du Soleil ajoutent quelques minutes de lumière.</p><p style="margin-top:.5rem">Cet indicateur montre combien de minutes de lumière vous avez <strong>en plus</strong> (été) ou <strong>en moins</strong> (hiver) par rapport à cette référence de 12h.</p>'
-  },
-  coords: {
-    title: 'Coordonnées géographiques',
-    body: '<p><strong>Latitude (φ)</strong> : angle entre le plan de l\'équateur et la direction du lieu, mesuré depuis le centre de la Terre. Va de −90° (pôle Sud) à +90° (pôle Nord). Elle détermine la hauteur maximale du Soleil et l\'amplitude des variations saisonnières.</p><p style="margin-top:.5rem"><strong>Longitude (λ)</strong> : angle mesuré depuis le méridien de Greenwich (0°). Chaque degré de longitude correspond à 4 minutes de décalage solaire.</p><div class="popup-formula">Décalage solaire = Longitude × 4 minutes</div><p>Paris (λ = +2,35°) a un midi solaire astronomique à 12h − 9,4 min = ~11h50 UTC, soit 13h50 en heure d\'été (UTC+2).</p>'
-  },
-  decl: {
-    title: 'Déclinaison solaire',
-    body: '<p>La déclinaison est l\'<strong>angle entre le Soleil et l\'équateur céleste</strong>. Elle est causée par l\'inclinaison de l\'axe terrestre (23,45°) par rapport au plan de l\'orbite (l\'écliptique).</p><p style="margin-top:.5rem">Imaginez la Terre comme une toupie légèrement penchée tournant autour du Soleil. En juin, le pôle Nord est incliné <em>vers</em> le Soleil (déclinaison +23,45°, été boréal). En décembre, il est incliné <em>à l\'opposé</em> (déclinaison −23,45°, hiver boréal).</p><div class="popup-formula">δ = 23,45° × sin(360/365 × (N − 81))</div>'
-  }
-};
-
-function showPopup(key) {
-  var p = POPUPS[key]; if (!p) return;
-  document.getElementById('popup-title').textContent = p.title;
-  document.getElementById('popup-body').innerHTML = p.body;
-  document.getElementById('popup-overlay').classList.add('open');
-}
-function closePopup() { document.getElementById('popup-overlay').classList.remove('open'); }
-function closePopupBg(e) { if (e.target === document.getElementById('popup-overlay')) closePopup(); }
-
-/* ============================================================
-   CITIES DATA
-   ============================================================ */
-var CITIES = {
-  'France': [
-    {n:'Paris',lat:48.8566,lon:2.3522,utc:2},{n:'Lyon',lat:45.764,lon:4.8357,utc:2},
-    {n:'Marseille',lat:43.2965,lon:5.3698,utc:2},{n:'Bordeaux',lat:44.8378,lon:-0.5792,utc:2},
-    {n:'Toulouse',lat:43.6047,lon:1.4442,utc:2},{n:'Nice',lat:43.7102,lon:7.262,utc:2},
-    {n:'Nantes',lat:47.2184,lon:-1.5536,utc:2},{n:'Strasbourg',lat:48.5734,lon:7.7521,utc:2},
-    {n:'Montpellier',lat:43.6108,lon:3.8767,utc:2},{n:'Rennes',lat:48.1173,lon:-1.6778,utc:2},
-    {n:'Lille',lat:50.6292,lon:3.0573,utc:2},{n:'Brest',lat:48.3904,lon:-4.4861,utc:2},
-    {n:'Grenoble',lat:45.1885,lon:5.7245,utc:2},{n:'Dijon',lat:47.322,lon:5.0415,utc:2}
-  ],
-  'Allemagne': [
-    {n:'Berlin',lat:52.52,lon:13.405,utc:2},{n:'Munich',lat:48.1351,lon:11.582,utc:2},
-    {n:'Hambourg',lat:53.5753,lon:10.0153,utc:2},{n:'Cologne',lat:50.938,lon:6.9603,utc:2},
-    {n:'Francfort',lat:50.1109,lon:8.6821,utc:2},{n:'Stuttgart',lat:48.7758,lon:9.1829,utc:2},
-    {n:'Dresde',lat:51.0504,lon:13.7373,utc:2},{n:'Nuremberg',lat:49.4521,lon:11.0767,utc:2}
-  ],
-  'Espagne': [
-    {n:'Madrid',lat:40.4168,lon:-3.7038,utc:2},{n:'Barcelone',lat:41.3851,lon:2.1734,utc:2},
-    {n:'Valence',lat:39.4699,lon:-0.3763,utc:2},{n:'Séville',lat:37.3891,lon:-5.9845,utc:2},
-    {n:'Malaga',lat:36.7213,lon:-4.4214,utc:2},{n:'Bilbao',lat:43.263,lon:-2.935,utc:2},
-    {n:'Palma',lat:39.5696,lon:2.6502,utc:2}
-  ],
-  'Italie': [
-    {n:'Rome',lat:41.9028,lon:12.4964,utc:2},{n:'Milan',lat:45.4654,lon:9.1859,utc:2},
-    {n:'Naples',lat:40.8518,lon:14.2681,utc:2},{n:'Turin',lat:45.0703,lon:7.6869,utc:2},
-    {n:'Florence',lat:43.7696,lon:11.2558,utc:2},{n:'Venise',lat:45.4408,lon:12.3155,utc:2},
-    {n:'Bologne',lat:44.4949,lon:11.3426,utc:2},{n:'Palerme',lat:38.1157,lon:13.3615,utc:2}
-  ],
-  'Royaume-Uni': [
-    {n:'Londres',lat:51.5074,lon:-0.1278,utc:1},{n:'Birmingham',lat:52.4862,lon:-1.8904,utc:1},
-    {n:'Manchester',lat:53.4808,lon:-2.2426,utc:1},{n:'Glasgow',lat:55.8642,lon:-4.2518,utc:1},
-    {n:'Edimbourg',lat:55.9533,lon:-3.1883,utc:1},{n:'Cardiff',lat:51.4816,lon:-3.1791,utc:1}
-  ],
-  'Belgique': [
-    {n:'Bruxelles',lat:50.8503,lon:4.3517,utc:2},{n:'Anvers',lat:51.2194,lon:4.4025,utc:2},
-    {n:'Gand',lat:51.0543,lon:3.7174,utc:2},{n:'Liège',lat:50.6326,lon:5.5797,utc:2},{n:'Bruges',lat:51.2093,lon:3.2247,utc:2}
-  ],
-  'Pays-Bas': [
-    {n:'Amsterdam',lat:52.3676,lon:4.9041,utc:2},{n:'Rotterdam',lat:51.9244,lon:4.4777,utc:2},
-    {n:'La Haye',lat:52.0705,lon:4.3007,utc:2},{n:'Utrecht',lat:52.0907,lon:5.1214,utc:2}
-  ],
-  'Portugal': [
-    {n:'Lisbonne',lat:38.7223,lon:-9.1393,utc:1},{n:'Porto',lat:41.1579,lon:-8.6291,utc:1},
-    {n:'Braga',lat:41.5454,lon:-8.4265,utc:1},{n:'Faro',lat:37.0194,lon:-7.9322,utc:1}
-  ],
-  'Suisse': [
-    {n:'Berne',lat:46.948,lon:7.4474,utc:2},{n:'Zurich',lat:47.3769,lon:8.5417,utc:2},
-    {n:'Genève',lat:46.2044,lon:6.1432,utc:2},{n:'Lausanne',lat:46.5197,lon:6.6323,utc:2}
-  ],
-  'Autriche': [
-    {n:'Vienne',lat:48.2082,lon:16.3738,utc:2},{n:'Salzbourg',lat:47.8095,lon:13.055,utc:2},
-    {n:'Graz',lat:47.0707,lon:15.4395,utc:2},{n:'Innsbruck',lat:47.2692,lon:11.4041,utc:2}
-  ],
-  'Pologne': [
-    {n:'Varsovie',lat:52.2297,lon:21.0122,utc:2},{n:'Cracovie',lat:50.0647,lon:19.945,utc:2},
-    {n:'Wroclaw',lat:51.1079,lon:17.0385,utc:2},{n:'Gdansk',lat:54.372,lon:18.6466,utc:2}
-  ],
-  'Suède': [
-    {n:'Stockholm',lat:59.3293,lon:18.0686,utc:2},{n:'Göteborg',lat:57.7089,lon:11.9746,utc:2},
-    {n:'Malmö',lat:55.605,lon:13.0038,utc:2},{n:'Kiruna',lat:67.8558,lon:20.2253,utc:2}
-  ],
-  'Norvège': [
-    {n:'Oslo',lat:59.9139,lon:10.7522,utc:2},{n:'Bergen',lat:60.3913,lon:5.3221,utc:2},
-    {n:'Trondheim',lat:63.4305,lon:10.3951,utc:2},{n:'Tromsø',lat:69.6492,lon:18.9553,utc:2}
-  ],
-  'Danemark': [
-    {n:'Copenhague',lat:55.6761,lon:12.5683,utc:2},{n:'Aarhus',lat:56.1629,lon:10.2039,utc:2},{n:'Odense',lat:55.4038,lon:10.4024,utc:2}
-  ],
-  'Finlande': [
-    {n:'Helsinki',lat:60.1699,lon:24.9384,utc:3},{n:'Tampere',lat:61.4978,lon:23.761,utc:3},
-    {n:'Oulu',lat:65.0121,lon:25.4651,utc:3},{n:'Rovaniemi',lat:66.5039,lon:25.7294,utc:3}
-  ],
-  'Irlande': [
-    {n:'Dublin',lat:53.3498,lon:-6.2603,utc:1},{n:'Cork',lat:51.8985,lon:-8.4756,utc:1},{n:'Galway',lat:53.2707,lon:-9.0568,utc:1}
-  ],
-  'Grèce': [
-    {n:'Athènes',lat:37.9838,lon:23.7275,utc:3},{n:'Thessalonique',lat:40.6401,lon:22.9444,utc:3},
-    {n:'Héraklion',lat:35.3387,lon:25.1442,utc:3},{n:'Rhodes',lat:36.4341,lon:28.2176,utc:3}
-  ],
-  'Tchéquie': [{n:'Prague',lat:50.0755,lon:14.4378,utc:2},{n:'Brno',lat:49.1951,lon:16.6068,utc:2}],
-  'Hongrie': [{n:'Budapest',lat:47.4979,lon:19.0402,utc:2},{n:'Debrecen',lat:47.5316,lon:21.6273,utc:2}],
-  'Roumanie': [{n:'Bucarest',lat:44.4268,lon:26.1025,utc:3},{n:'Cluj',lat:46.7712,lon:23.6236,utc:3},{n:'Iasi',lat:47.1585,lon:27.6014,utc:3}],
-  'Croatie': [{n:'Zagreb',lat:45.815,lon:15.9819,utc:2},{n:'Split',lat:43.5081,lon:16.4402,utc:2},{n:'Dubrovnik',lat:42.6507,lon:18.0944,utc:2}],
-  'Islande': [{n:'Reykjavik',lat:64.1355,lon:-21.8954,utc:0},{n:'Akureyri',lat:65.6835,lon:-18.0878,utc:0}],
-  'Bulgarie': [{n:'Sofia',lat:42.6977,lon:23.3219,utc:3},{n:'Plovdiv',lat:42.1354,lon:24.7453,utc:3}],
-  'Serbie': [{n:'Belgrade',lat:44.7866,lon:20.4489,utc:2},{n:'Novi Sad',lat:45.2671,lon:19.8335,utc:2}],
-  'Ukraine': [{n:'Kiev',lat:50.4501,lon:30.5234,utc:3},{n:'Lviv',lat:49.8397,lon:24.0297,utc:3},{n:'Odessa',lat:46.4825,lon:30.7233,utc:3}],
-  'Slovaquie': [{n:'Bratislava',lat:48.1486,lon:17.1077,utc:2}],
-  'Slovénie': [{n:'Ljubljana',lat:46.0569,lon:14.5058,utc:2}],
-  'Estonie': [{n:'Tallinn',lat:59.437,lon:24.7536,utc:3}],
-  'Lettonie': [{n:'Riga',lat:56.9496,lon:24.1052,utc:3}],
-  'Lituanie': [{n:'Vilnius',lat:54.6872,lon:25.2797,utc:3}],
-  'Luxembourg': [{n:'Luxembourg',lat:49.6116,lon:6.1319,utc:2}],
-  'Malte': [{n:'La Valette',lat:35.8997,lon:14.5147,utc:2}],
-  'Chypre': [{n:'Nicosie',lat:35.1856,lon:33.3823,utc:3}],
-  'Albanie': [{n:'Tirana',lat:41.3275,lon:19.8187,utc:2}],
-  'Moldavie': [{n:'Chisinau',lat:47.0105,lon:28.8638,utc:3}]
-};
-
-/* ============================================================
-   UI — TABS / COUNTRIES / CITIES
-   ============================================================ */
-function switchTab(t) {
-  var names = ['main','lieu','expl'];
-  document.querySelectorAll('.tab-btn').forEach(function(el,i){ el.classList.toggle('active', names[i]===t); });
-  document.querySelectorAll('.panel').forEach(function(el,i){ el.classList.toggle('active', ['panel-main','panel-lieu','panel-expl'][i]==='panel-'+t); });
-}
-
-function buildCountryTabs() {
-  var c = document.getElementById('country-tabs'); c.innerHTML = '';
-  Object.keys(CITIES).forEach(function(country) {
-    var b = document.createElement('button');
-    b.className = 'country-btn' + (country===selectedCountry?' selected':'');
-    b.textContent = country;
-    b.onclick = function(){ selectCountry(country); };
-    c.appendChild(b);
-  });
-  buildCityList(selectedCountry);
-}
-function selectCountry(country) {
-  selectedCountry = country;
-  document.querySelectorAll('.country-btn').forEach(function(b){ b.classList.toggle('selected', b.textContent===country); });
-  buildCityList(country);
-}
-function buildCityList(country, filter) {
-  var cl = document.getElementById('city-list'); cl.innerHTML = '';
-  var cities = CITIES[country] || [];
-  if (filter) cities = cities.filter(function(c){ return c.n.toLowerCase().indexOf(filter.toLowerCase()) > -1; });
-  cities.forEach(function(city) {
-    var b = document.createElement('button');
-    b.className = 'city-btn';
-    b.textContent = city.n;
-    b.onclick = function(){ applyCity(city, country); };
-    cl.appendChild(b);
-  });
-}
-function filterCities() {
-  var q = document.getElementById('city-search').value.trim();
-  if (!q) { buildCityList(selectedCountry); return; }
-  var cl = document.getElementById('city-list'); cl.innerHTML = '';
-  Object.keys(CITIES).forEach(function(country) {
-    CITIES[country].forEach(function(city) {
-      if (city.n.toLowerCase().indexOf(q.toLowerCase()) > -1) {
-        var b = document.createElement('button'); b.className = 'city-btn';
-        b.textContent = city.n + ' (' + country + ')';
-        b.onclick = function(){ applyCity(city, country); };
-        cl.appendChild(b);
-      }
-    });
-  });
-}
-function applyCity(city, country) {
-  state = { lat:city.lat, lon:city.lon, utc:city.utc, name:city.n+', '+country, loaded:true };
-  document.getElementById('lat-input').value = city.lat;
-  document.getElementById('lon-input').value = city.lon;
-  document.getElementById('utc-input').value = city.utc;
-  document.getElementById('name-input').value = city.n+', '+country;
-  compute(); switchTab('main');
-}
-
-/* ============================================================
-   GEO & MANUAL
-   ============================================================ */
-function geolocate() {
-  var gs = document.getElementById('geo-status');
-  gs.textContent = 'Demande de géolocalisation…'; gs.className = 'status-msg';
-  if (!navigator.geolocation) { gs.textContent = 'Géolocalisation non supportée.'; gs.className = 'status-msg status-err'; return; }
-  navigator.geolocation.getCurrentPosition(function(pos) {
-    var lat = pos.coords.latitude, lon = pos.coords.longitude, utc = -new Date().getTimezoneOffset()/60;
-    state = { lat:lat, lon:lon, utc:utc, name:lat.toFixed(3)+'°, '+lon.toFixed(3)+'°', loaded:true };
-    gs.textContent = 'Position obtenue.'; gs.className = 'status-msg status-ok';
-    document.getElementById('lat-input').value = lat.toFixed(4);
-    document.getElementById('lon-input').value = lon.toFixed(4);
-    document.getElementById('utc-input').value = utc;
-    compute(); switchTab('main');
-  }, function(err) {
-    gs.textContent = 'Erreur : ' + err.message; gs.className = 'status-msg status-err';
-  });
-}
-function applyManual() {
-  var lat = parseFloat(document.getElementById('lat-input').value);
-  var lon = parseFloat(document.getElementById('lon-input').value);
-  var utc = parseFloat(document.getElementById('utc-input').value);
-  var name = document.getElementById('name-input').value.trim();
-  var st = document.getElementById('manual-status');
-  if (isNaN(lat)||isNaN(lon)||isNaN(utc)) { st.textContent='Veuillez remplir latitude, longitude et décalage UTC.'; st.className='status-msg status-err'; return; }
-  if (lat<-90||lat>90) { st.textContent='Latitude invalide (−90 à 90).'; st.className='status-msg status-err'; return; }
-  if (lon<-180||lon>180) { st.textContent='Longitude invalide (−180 à 180).'; st.className='status-msg status-err'; return; }
-  state = { lat:lat, lon:lon, utc:utc, name:name||(lat.toFixed(3)+'°, '+lon.toFixed(3)+'°'), loaded:true };
-  st.textContent = 'Lieu appliqué : '+state.name; st.className='status-msg status-ok';
-  compute(); switchTab('main');
-}
-
-/* ============================================================
-   ASTRONOMY
-   ============================================================ */
+/* ═══════════════════════════════════════════════════
+   ASTRONOMY CORE
+═══════════════════════════════════════════════════ */
 function d2r(d){ return d*Math.PI/180; }
 function r2d(r){ return r*180/Math.PI; }
-function doy(date){ return Math.floor((date - new Date(date.getFullYear(),0,0)) / 86400000); }
-function eqt(N){ var B=d2r(360/365*(N-81)); return 9.87*Math.sin(2*B)-4.14*Math.sin(B+d2r(77))-7.53*Math.cos(B); }
+
+function doy(dateStr){
+  var d = dateStr ? new Date(dateStr+'T12:00:00') : new Date();
+  var s = new Date(d.getFullYear(),0,1);
+  return Math.ceil((d-s)/86400000)+1;
+}
+
+function eqt(N){
+  var B = d2r(360/365*(N-81));
+  return 9.87*Math.sin(2*B) - 4.14*Math.sin(B+d2r(77)) - 7.53*Math.cos(B);
+}
+
 function decl(N){ return 23.45*Math.sin(d2r(360/365*(N-81))); }
 
-function getDateInput(){
-  var v = document.getElementById('date-picker').value;
-  return v ? new Date(v+'T12:00:00') : new Date();
-}
-function setToday(){
-  document.getElementById('date-picker').value = new Date().toISOString().split('T')[0];
-  if (state.loaded) compute();
-}
-
-function pad(n){ return String(Math.floor(Math.abs(n))).padStart(2,'0'); }
-function fmtH(h){
-  if (isNaN(h)||h<0||h>=24) return '—';
-  var hh=Math.floor(h), mm=Math.round((h-hh)*60);
-  if(mm===60){hh++;mm=0;} if(hh>=24)hh=0;
-  return pad(hh)+':'+pad(mm);
-}
-function fmtDur(h){
-  if(h<=0)return '0h 00';
-  var hh=Math.floor(h), mm=Math.round((h-hh)*60);
-  if(mm===60){hh++;mm=0;}
-  return hh+'h '+pad(mm);
-}
-function azDir(az){
-  az=((az%360)+360)%360;
-  if(az<22.5||az>=337.5)return 'Nord';
-  if(az<67.5)return 'Nord-Est';
-  if(az<112.5)return 'Est';
-  if(az<157.5)return 'Sud-Est';
-  if(az<202.5)return 'Sud';
-  if(az<247.5)return 'Sud-Ouest';
-  if(az<292.5)return 'Ouest';
-  return 'Nord-Ouest';
+function sunriseSunset(lat, N){
+  var de = decl(N);
+  var cosH = (Math.sin(d2r(-0.833)) - Math.sin(d2r(lat))*Math.sin(d2r(de))) /
+             (Math.cos(d2r(lat))*Math.cos(d2r(de)));
+  if(cosH > 1)  return {polar:'night'};
+  if(cosH < -1) return {polar:'day'};
+  var H0 = r2d(Math.acos(cosH));
+  var rise = 12 - H0/15;
+  var set  = 12 + H0/15;
+  var cosAz = (-Math.sin(d2r(de)) - Math.sin(d2r(-0.833))*Math.sin(d2r(lat))) /
+              (Math.cos(d2r(-0.833))*Math.cos(d2r(lat)));
+  cosAz = Math.min(1,Math.max(-1,cosAz));
+  var azRise = Math.round(r2d(Math.acos(cosAz)));
+  var azSet  = 360 - azRise;
+  return {rise:rise, set:set, azRise:azRise, azSet:azSet, polar:null};
 }
 
-/* ============================================================
-   CLOCK (live update every second)
-   ============================================================ */
-function startClock(){
-  if(clockTimer)clearInterval(clockTimer);
-  clockTimer=setInterval(tickClock, 1000);
-  tickClock();
-}
-function tickClock(){
-  if(!state.loaded)return;
-  var now=new Date();
-  var utcH = now.getUTCHours()+now.getUTCMinutes()/60+now.getUTCSeconds()/3600;
-  var watchH = ((utcH+state.utc)%24+24)%24;
-  document.getElementById('m-watch').textContent = fmtH(watchH);
-  var N = doy(getDateInput());
+function solarNoon(lon, N, utcOffset){
   var EqT = eqt(N);
-  var solar = ((utcH+state.lon/15+EqT/60)%24+24)%24;
-  document.getElementById('m-solar').textContent = fmtH(solar);
+  return 12 - EqT/60 - lon/15 + utcOffset;
 }
 
-/* ============================================================
-   MAIN COMPUTE
-   ============================================================ */
+function fmtH(h){
+  var t = ((h%24)+24)%24;
+  var hh = Math.floor(t);
+  var mm = Math.floor((t-hh)*60);
+  var ss = Math.floor(((t-hh)*60-mm)*60);
+  return pad(hh)+':'+pad(mm)+':'+pad(ss);
+}
+function fmtHm(h){
+  var t = ((h%24)+24)%24;
+  var hh = Math.floor(t);
+  var mm = Math.floor((t-hh)*60);
+  return pad(hh)+'h'+pad(mm);
+}
+function pad(n){ return n<10?'0'+n:''+n; }
+
+function azDir(az){
+  var dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSO','SO','OSO','O','ONO','NO','NNO'];
+  return dirs[Math.round(az/22.5)%16];
+}
+
+/* ═══════════════════════════════════════════════════
+   DST — European auto-detect
+═══════════════════════════════════════════════════ */
+// Returns last sunday of a month in a year
+function lastSunday(year, month /* 0-indexed */){
+  var d = new Date(year, month+1, 0); // last day of month
+  while(d.getDay()!==0) d.setDate(d.getDate()-1);
+  return d;
+}
+
+// DST offsets for European countries (standard UTC, summer UTC)
+var DST_ZONES = {
+  1: {std:1, summer:2, name:'CET'}, // France, Germany, Spain, Italy, etc.
+  0: {std:0, summer:1, name:'GMT'}, // UK, Ireland, Portugal
+  2: {std:2, summer:3, name:'EET'}, // Greece, Romania, Finland, etc.
+};
+
+function getDSTOffset(baseUtc, dateStr){
+  var dt = dateStr ? new Date(dateStr+'T12:00:00') : new Date();
+  var y = dt.getFullYear();
+  // DST: last Sunday March → last Sunday October
+  var dstStart = lastSunday(y, 2); // March
+  var dstEnd   = lastSunday(y, 9); // October
+  var isDST = dt >= dstStart && dt < dstEnd;
+  if(baseUtc===1) return isDST ? 2 : 1;
+  if(baseUtc===0) return isDST ? 1 : 0;
+  if(baseUtc===2) return isDST ? 3 : 2;
+  return baseUtc; // non-EU
+}
+
+/* ═══════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════ */
+var state = {lat:null, lon:null, utc:null, baseUtc:null, name:'', loaded:false};
+var clockTimer = null;
+
+function getDateInput(){
+  return document.getElementById('date-input').value || new Date().toISOString().slice(0,10);
+}
+
+/* ═══════════════════════════════════════════════════
+   COMPUTE (main panel)
+═══════════════════════════════════════════════════ */
 function compute(){
-  if(!state.loaded)return;
-  var date=getDateInput(), N=doy(date);
-  var lat=state.lat, lon=state.lon, utc=state.utc;
-  var EqT=eqt(N), de=decl(N);
-  var solarNoon = 12-EqT/60-lon/15+utc;
-  var cosH=(Math.sin(d2r(-0.833))-Math.sin(d2r(lat))*Math.sin(d2r(de)))/(Math.cos(d2r(lat))*Math.cos(d2r(de)));
-  var rise=null, set=null, dayLen=0, nightLen=24, polar='';
-  if(cosH<-1){ rise=0; set=24; dayLen=24; nightLen=0; polar='Soleil de minuit'; }
-  else if(cosH>1){ rise=null; set=null; dayLen=0; nightLen=24; polar='Nuit polaire'; }
-  else {
-    var H0=r2d(Math.acos(cosH));
-    rise=solarNoon-H0/15; set=solarNoon+H0/15;
-    dayLen=set-rise; nightLen=24-dayLen;
-  }
-  var maxAlt=90-Math.abs(lat-de);
+  if(!state.loaded) return;
 
-  /* Azimuth */
-  var azRise=null, azSet=null;
-  if(rise!==null){
-    var cosAz=(-Math.sin(d2r(de))-Math.sin(d2r(-0.833))*Math.sin(d2r(lat)))/(Math.cos(d2r(-0.833))*Math.cos(d2r(lat)));
-    cosAz=Math.min(1,Math.max(-1,cosAz));
-    azRise=Math.round(r2d(Math.acos(cosAz)));
-    azSet=360-azRise;
-  }
+  // DST auto
+  var dateStr = getDateInput();
+  var effectiveUtc = state.baseUtc !== null
+    ? getDSTOffset(state.baseUtc, dateStr)
+    : state.utc;
+  state.utc = effectiveUtc;
 
-  /* Current solar time for arc */
-  var now=new Date();
-  var utcH=now.getUTCHours()+now.getUTCMinutes()/60+now.getUTCSeconds()/3600;
-  var solarNow=((utcH+lon/15+EqT/60)%24+24)%24;
+  var N   = doy(dateStr);
+  var EqT = eqt(N);
+  var de  = decl(N);
+  var ss  = sunriseSunset(state.lat, N);
+  var lat = state.lat, lon = state.lon;
 
-  /* ── DOM updates ── */
-  document.getElementById('m-rise').textContent = rise!==null ? fmtH(rise) : (polar||'—');
-  document.getElementById('m-set').textContent  = set!==null  ? fmtH(set)  : (polar||'—');
-  document.getElementById('m-noon').textContent = fmtH(solarNoon);
-  document.getElementById('m-noon-alt').textContent = 'élévation max '+Math.round(maxAlt)+'°';
+  // DST badge
+  var badgeEl = document.getElementById('dst-badge-el');
+  if(state.baseUtc!==null){
+    var isDST = effectiveUtc !== state.baseUtc;
+    badgeEl.innerHTML = '<span class="dst-badge">'+(isDST?'🌞 Heure d\'été UTC+'+effectiveUtc:'🌙 Heure d\'hiver UTC+'+effectiveUtc)+'</span>';
+  } else { badgeEl.innerHTML = ''; }
 
-  if(azRise!==null){
-    document.getElementById('m-rise-az').textContent = azRise+'° depuis le Nord';
-    document.getElementById('m-rise-dir').textContent = 'Direction : '+azDir(azRise);
-    document.getElementById('m-set-az').textContent = azSet+'° depuis le Nord';
-    document.getElementById('m-set-dir').textContent = 'Direction : '+azDir(azSet);
+  // Noon
+  var noonH = solarNoon(lon, N, effectiveUtc);
+  var maxAlt = 90 - Math.abs(lat - de);
+  if(maxAlt<0) maxAlt=0;
+
+  // Delta vs 12h equinox
+  var dayLenH = ss.polar==='day' ? 24 : ss.polar==='night' ? 0 : (ss.set-ss.rise);
+  var deltaMin = Math.round((dayLenH - 12)*60);
+
+  // Display
+  document.getElementById('loc-name').textContent = state.name;
+  document.getElementById('m-watch-tz').textContent = 'UTC'+(effectiveUtc>=0?'+':'')+effectiveUtc;
+  document.getElementById('m-eqt-sub').textContent = (EqT>=0?'+':'')+EqT.toFixed(1)+' min';
+  document.getElementById('m-eqt').textContent = (EqT>=0?'+':'')+EqT.toFixed(1);
+
+  if(ss.polar==='night'){
+    ['m-rise','m-set','m-noon','m-daylen'].forEach(id=>{ document.getElementById(id).textContent='Nuit polaire'; });
+    document.getElementById('m-rise-az').textContent='';
+    document.getElementById('m-set-az').textContent='';
+    document.getElementById('m-noon-alt').textContent='';
+    document.getElementById('m-daylen-sub').textContent='';
+  } else if(ss.polar==='day'){
+    ['m-rise','m-set'].forEach(id=>{ document.getElementById(id).textContent='Jour polaire'; });
+    document.getElementById('m-rise-az').textContent='';
+    document.getElementById('m-set-az').textContent='';
+    document.getElementById('m-noon').textContent = fmtHm(noonH);
+    document.getElementById('m-noon-alt').textContent = maxAlt.toFixed(1)+'° au-dessus de l\'horizon';
+    document.getElementById('m-daylen').textContent = '24h';
+    document.getElementById('m-daylen-sub').textContent = '';
   } else {
-    ['m-rise-az','m-rise-dir','m-set-az','m-set-dir'].forEach(function(id){document.getElementById(id).textContent='';});
+    var riseH = ss.rise - ss.rise/15*0 + effectiveUtc - lon/15; // solar time → watch
+    // Display in watch time = solar rise + (utc - lon/15 - EqT/60)
+    // Actually rise is in TSV hours; watch = TSV - EqT/60 - lon/15 + utc... let's keep it simple:
+    // rise/set from sunriseSunset are already in TSV. Convert to watch: watch = TSV - EqT/60 - lon/15 + effectiveUtc
+    var toWatch = function(tsvH){ return ((tsvH - EqT/60 - lon/15 + effectiveUtc)%24+24)%24; };
+    document.getElementById('m-rise').textContent = fmtHm(toWatch(ss.rise));
+    document.getElementById('m-set').textContent  = fmtHm(toWatch(ss.set));
+    document.getElementById('m-rise-az').textContent = ss.azRise+'° – '+azDir(ss.azRise);
+    document.getElementById('m-set-az').textContent  = ss.azSet+'° – '+azDir(ss.azSet);
+    document.getElementById('m-noon').textContent = fmtHm(noonH);
+    document.getElementById('m-noon-alt').textContent = maxAlt.toFixed(1)+'° au-dessus de l\'horizon';
+    var dlH = Math.floor(dayLenH); var dlM = Math.round((dayLenH-dlH)*60);
+    document.getElementById('m-daylen').textContent = dlH+'h'+pad(dlM);
+    document.getElementById('m-daylen-sub').textContent = (deltaMin>=0?'+':'')+deltaMin+' min vs équinoxe';
   }
 
-  document.getElementById('m-day').textContent   = dayLen>0 ? fmtDur(dayLen) : '—';
-  document.getElementById('m-night').textContent = nightLen>0 ? fmtDur(nightLen) : '—';
+  document.getElementById('m-delta').textContent = (deltaMin>=0?'+':'')+deltaMin;
+  document.getElementById('m-decl').textContent = (de>=0?'+':'')+de.toFixed(2)+'°';
 
-  var delta=dayLen-12, deltaMin=Math.round(Math.abs(delta)*60);
-  var dEl=document.getElementById('m-delta');
-  dEl.textContent=(delta>=0?'+':'-')+deltaMin+' min';
-  dEl.className='metric-value '+(delta>=0?'pos':'neg');
-  document.getElementById('m-delta-sub').textContent=delta>=0?'jours plus longs':'jours plus courts';
+  document.getElementById('c-lat').textContent = lat.toFixed(4)+'°';
+  document.getElementById('c-lon').textContent = lon.toFixed(4)+'°';
+  document.getElementById('c-utc').textContent = 'UTC'+(effectiveUtc>=0?'+':'')+effectiveUtc;
 
-  var eqSign=EqT>=0?'+':'';
-  document.getElementById('m-eq').textContent=eqSign+EqT.toFixed(1)+' min';
+  var latDir = lat>=0?'N':'S'; var lonDir = lon>=0?'E':'O';
+  document.getElementById('c-note').textContent =
+    Math.abs(lat).toFixed(2)+'°'+latDir+' — '+Math.abs(lon).toFixed(2)+'°'+lonDir+
+    ' · Jour de l\'année : '+N+'/365 · Déclinaison : '+(de>=0?'+':'')+de.toFixed(2)+'°';
 
-  document.getElementById('c-lat').textContent=lat.toFixed(4)+'° '+(lat>=0?'N':'S');
-  document.getElementById('c-lon').textContent=lon.toFixed(4)+'° '+(lon>=0?'E':'O');
-  document.getElementById('c-utc').textContent='UTC'+(utc>=0?'+':'')+utc;
-  document.getElementById('c-desc').textContent=
-    'Déclinaison : '+de.toFixed(2)+'°  ·  EqT : '+eqSign+EqT.toFixed(1)+' min  ·  Jour J'+N;
+  // Timeline
+  if(ss.rise && ss.set){
+    var rP = toWatch(ss.rise)/24*100;
+    var sP = toWatch(ss.set)/24*100;
+    document.getElementById('tl-n1').style.cssText = 'left:0;width:'+rP+'%';
+    document.getElementById('tl-d').style.cssText  = 'left:'+rP+'%;width:'+(sP-rP)+'%';
+    document.getElementById('tl-n2').style.cssText = 'left:'+sP+'%;width:'+(100-sP)+'%';
+  }
 
-  /* location tag */
-  var tag=document.getElementById('location-tag');
-  tag.innerHTML='<span>📍</span><span class="place">'+state.name+'</span><span>—</span><span>'+
-    date.toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'})+'</span>';
+  // Sundial
+  drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr);
 
-  document.getElementById('m-watch-zone').textContent='UTC'+(utc>=0?'+':'')+utc+' — heure légale';
+  document.getElementById('main-result').style.display='block';
+  document.getElementById('main-prompt').style.display='none';
 
-  drawArc(rise,set,solarNoon,solarNow,maxAlt,azRise,de);
-  drawTimeline(rise,set,solarNow);
-
-  document.getElementById('location-prompt').hidden=true;
-  document.getElementById('results').hidden=false;
   startClock();
 }
 
-/* ============================================================
-   TIMELINE
-   ============================================================ */
-function drawTimeline(rise,set,now){
-  var bar=document.getElementById('timeline-bar');
-  function p(v){ return Math.min(100,Math.max(0,v/24*100)).toFixed(2)+'%'; }
-  var html='';
-  if(rise!==null&&set!==null){
-    html+='<div class="tl-night" style="left:0;width:'+p(rise)+'"></div>';
-    html+='<div class="tl-day" style="left:'+p(rise)+';width:'+p(set-rise)+'"></div>';
-    html+='<div class="tl-night" style="left:'+p(set)+';width:'+p(24-set)+'"></div>';
-  }
-  html+='<div class="tl-now" style="left:'+p(now)+'"></div>';
-  bar.innerHTML=html;
+/* ═══════════════════════════════════════════════════
+   LIVE CLOCK
+═══════════════════════════════════════════════════ */
+function startClock(){
+  if(clockTimer) clearInterval(clockTimer);
+  clockTimer = setInterval(tickClock, 1000);
+  tickClock();
 }
 
-/* ============================================================
-   ARC SVG
-   ============================================================ */
-function drawArc(rise,set,noon,nowSolar,maxAlt,azRise,de){
-  var svg=document.getElementById('arc-svg');
-  var W=600,H=148,cy=H-14,cx=W/2,R=118;
-  var paths='';
+function tickClock(){
+  if(!state.loaded) return;
+  var now = new Date();
+  var utcH = now.getUTCHours() + now.getUTCMinutes()/60 + now.getUTCSeconds()/3600;
 
-  /* Ground */
-  paths+='<line x1="40" y1="'+cy+'" x2="'+(W-40)+'" y2="'+cy+'" stroke="var(--border-md)" stroke-width="1"/>';
-  paths+='<text x="46" y="'+(cy-5)+'" font-size="10" fill="var(--fg-3)" font-family="DM Sans,system-ui">Est</text>';
-  paths+='<text x="'+(W-52)+'" y="'+(cy-5)+'" font-size="10" fill="var(--fg-3)" font-family="DM Sans,system-ui">Ouest</text>';
-  paths+='<text x="'+cx+'" y="'+(H-2)+'" font-size="10" fill="var(--fg-3)" font-family="DM Sans,system-ui" text-anchor="middle">Méridien Sud</text>';
+  // Effective UTC (might have changed if day changed at midnight)
+  var dateStr = getDateInput();
+  var effectiveUtc = state.baseUtc !== null ? getDSTOffset(state.baseUtc, dateStr) : state.utc;
 
-  if(rise!==null&&set!==null&&maxAlt>0){
-    var scaleY=Math.min(1,Math.max(.15,maxAlt/90));
-    function xy(t){
-      var a=((t-noon)/(set-rise))*Math.PI;
-      return { x:cx-R*Math.sin(a), y:cy-R*Math.abs(Math.cos(a))*scaleY };
+  var watchH = ((utcH + effectiveUtc)%24+24)%24;
+  document.getElementById('m-watch').textContent = fmtH(watchH);
+
+  var N = doy(dateStr);
+  var EqT = eqt(N);
+  var solar = ((utcH + state.lon/15 + EqT/60)%24+24)%24;
+  document.getElementById('m-solar').textContent = fmtH(solar);
+
+  // Update now-line on timeline
+  var nowPct = watchH/24*100;
+  document.getElementById('tl-now').style.left = nowPct+'%';
+
+  // Redraw sundial hand position
+  drawSundialHand(solar);
+}
+
+/* ═══════════════════════════════════════════════════
+   CADRAN SOLAIRE ANIMÉ
+═══════════════════════════════════════════════════ */
+var sundialData = {};
+
+function drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr){
+  var canvas = document.getElementById('sundial-canvas');
+  if(!canvas.getContext) return;
+  var W = canvas.offsetWidth * window.devicePixelRatio || 600;
+  var H = 220 * window.devicePixelRatio || 220;
+  canvas.width  = W;
+  canvas.height = H;
+  canvas.style.height = '220px';
+  var ctx = canvas.getContext('2d');
+
+  var dpr = window.devicePixelRatio || 1;
+  var w = canvas.width/dpr, h = canvas.height/dpr;
+  ctx.scale(dpr, dpr);
+
+  var isDark = document.documentElement.getAttribute('data-theme')==='dark' ||
+    (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+  var bg   = isDark ? '#242019' : '#FFFFFF';
+  var skyD = isDark ? '#0E1828' : '#1A3A6A';
+  var skyL = isDark ? '#1A2D4A' : '#5B8FCE';
+  var hrzC = isDark ? '#78716C' : '#A8A29E';
+  var sunC = '#F5BD47';
+  var arcC = isDark ? 'rgba(245,189,71,0.25)' : 'rgba(245,189,71,0.2)';
+  var accC = isDark ? '#D4923F' : '#C47B2B';
+
+  ctx.clearRect(0,0,w,h);
+
+  var cx = w/2, cy = h*0.72, rx = w*0.44, ry = h*0.56;
+
+  // Sky gradient
+  var grad = ctx.createLinearGradient(0,0,0,cy);
+  grad.addColorStop(0, skyD);
+  grad.addColorStop(1, skyL);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,w,cy);
+  ctx.fillStyle = bg;
+  ctx.fillRect(0,cy,w,h-cy);
+
+  // Horizon line
+  ctx.beginPath();
+  ctx.moveTo(0,cy);
+  ctx.lineTo(w,cy);
+  ctx.strokeStyle = hrzC;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Arc of the sun
+  if(ss.polar !== 'night' && ss.rise && ss.set){
+    // Convert rise/set from TSV to fraction 0-1 of day
+    var toWatch = function(tsvH){ return ((tsvH - EqT/60 - state.lon/15 + effectiveUtc)%24+24)%24; };
+    var riseW = toWatch(ss.rise)/24;
+    var setW  = toWatch(ss.set)/24;
+    var noonW = noonH/24;
+
+    // Map hour to angle: 0h=left, noon=top, 24h=right
+    var hourToAngle = function(frac){ return Math.PI + frac*2*Math.PI; }; // 0=bottom-left, noon=top
+    var hourToXY = function(frac){
+      var a = hourToAngle(frac);
+      return { x: cx + rx*Math.cos(a), y: cy - ry*Math.sin(a) };
+    };
+
+    // Max altitude ratio
+    var maxAlt = 90 - Math.abs(state.lat - de);
+    if(maxAlt<0) maxAlt=0;
+    var scaleY = Math.max(0.1, maxAlt/90);
+
+    // Draw arc path
+    ctx.beginPath();
+    var steps = 120;
+    for(var i=0;i<=steps;i++){
+      var frac = riseW + (setW-riseW)*i/steps;
+      var a = Math.PI + frac*2*Math.PI;
+      var px = cx + rx*Math.cos(a);
+      var py = cy - ry*scaleY*Math.sin(a);
+      if(i===0) ctx.moveTo(px,py);
+      else ctx.lineTo(px,py);
     }
-    /* Arc path */
-    var d='';
-    for(var i=0;i<=80;i++){
-      var t=rise+(set-rise)*i/80;
-      var p=xy(t); d+=(i===0?'M':'L')+p.x.toFixed(1)+','+p.y.toFixed(1);
+    ctx.strokeStyle = '#F5BD47';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Fill under arc
+    ctx.beginPath();
+    for(var i=0;i<=steps;i++){
+      var frac = riseW + (setW-riseW)*i/steps;
+      var a = Math.PI + frac*2*Math.PI;
+      var px = cx + rx*Math.cos(a);
+      var py = cy - ry*scaleY*Math.sin(a);
+      if(i===0) ctx.moveTo(px,cy);
+      ctx.lineTo(px,py);
     }
-    paths+='<path d="'+d+'" stroke="var(--accent)" stroke-width="2" fill="none" opacity=".85"/>';
+    ctx.lineTo(cx + rx*Math.cos(Math.PI+setW*2*Math.PI), cy);
+    ctx.closePath();
+    ctx.fillStyle = arcC;
+    ctx.fill();
 
-    var rs=xy(rise),ss=xy(set),nn=xy(noon);
+    // Rise/set labels
+    var rPt = { x: cx + rx*Math.cos(Math.PI+riseW*2*Math.PI), y: cy };
+    var sPt = { x: cx + rx*Math.cos(Math.PI+setW*2*Math.PI),  y: cy };
+    ctx.fillStyle = hrzC;
+    ctx.font = '11px DM Sans, system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText(fmtHm(riseW*24), rPt.x, cy+14);
+    ctx.fillText(fmtHm(setW*24),  sPt.x, cy+14);
 
-    /* Sunrise */
-    paths+='<circle cx="'+rs.x.toFixed(1)+'" cy="'+rs.y.toFixed(1)+'" r="5" fill="var(--accent)" stroke="var(--bg-card)" stroke-width="1.5"/>';
-    paths+='<text x="'+rs.x.toFixed(1)+'" y="'+(rs.y-10).toFixed(1)+'" font-size="10" fill="var(--fg-2)" font-family="DM Sans,system-ui" text-anchor="middle">'+fmtH(rise)+'</text>';
-    if(azRise!==null) paths+='<text x="'+rs.x.toFixed(1)+'" y="'+(rs.y-21).toFixed(1)+'" font-size="9" fill="var(--accent)" font-family="DM Sans,system-ui" text-anchor="middle">'+azRise+'°</text>';
-
-    /* Sunset */
-    paths+='<circle cx="'+ss.x.toFixed(1)+'" cy="'+ss.y.toFixed(1)+'" r="5" fill="var(--accent)" stroke="var(--bg-card)" stroke-width="1.5"/>';
-    paths+='<text x="'+ss.x.toFixed(1)+'" y="'+(ss.y-10).toFixed(1)+'" font-size="10" fill="var(--fg-2)" font-family="DM Sans,system-ui" text-anchor="middle">'+fmtH(set)+'</text>';
-    if(azRise!==null) paths+='<text x="'+ss.x.toFixed(1)+'" y="'+(ss.y-21).toFixed(1)+'" font-size="9" fill="var(--accent)" font-family="DM Sans,system-ui" text-anchor="middle">'+(360-azRise)+'°</text>';
-
-    /* Noon */
-    paths+='<circle cx="'+nn.x.toFixed(1)+'" cy="'+nn.y.toFixed(1)+'" r="5" fill="var(--accent-dk)" stroke="var(--bg-card)" stroke-width="1.5"/>';
-    paths+='<text x="'+nn.x.toFixed(1)+'" y="'+(nn.y-10).toFixed(1)+'" font-size="10" fill="var(--fg-2)" font-family="DM Sans,system-ui" text-anchor="middle">'+fmtH(noon)+'</text>';
-    paths+='<text x="'+nn.x.toFixed(1)+'" y="'+(nn.y-21).toFixed(1)+'" font-size="9" fill="var(--fg-3)" font-family="DM Sans,system-ui" text-anchor="middle">'+Math.round(maxAlt)+'° alt.</text>';
-
-    /* Now */
-    if(nowSolar>=rise&&nowSolar<=set){
-      var nw=xy(nowSolar);
-      paths+='<circle cx="'+nw.x.toFixed(1)+'" cy="'+nw.y.toFixed(1)+'" r="12" fill="var(--accent)" opacity=".18"/>';
-      paths+='<circle cx="'+nw.x.toFixed(1)+'" cy="'+nw.y.toFixed(1)+'" r="7" fill="var(--accent)" opacity=".9"/>';
-      paths+='<text x="'+nw.x.toFixed(1)+'" y="'+(nw.y+19).toFixed(1)+'" font-size="10" fill="var(--accent)" font-family="DM Sans,system-ui" text-anchor="middle">maintenant</text>';
-    }
+    sundialData = {riseW,setW,noonW,scaleY,cx,cy,rx,ry,EqT,effectiveUtc};
+    drawSundialHand(null);
   } else {
-    paths+='<text x="'+cx+'" y="'+(cy-40)+'" font-size="14" fill="var(--fg-2)" font-family="DM Sans,system-ui" text-anchor="middle">Situation polaire</text>';
+    ctx.fillStyle = hrzC;
+    ctx.font = '13px DM Sans, system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText(ss.polar==='night'?'Nuit polaire':'Jour polaire', cx, cy-40);
   }
-  svg.innerHTML=paths;
+
+  // Cardinal directions
+  ctx.fillStyle = hrzC;
+  ctx.font = '11px DM Sans, system-ui';
+  ctx.textAlign = 'left';  ctx.fillText('E', 12, cy-6);
+  ctx.textAlign = 'right'; ctx.fillText('O', w-12, cy-6);
+  ctx.textAlign = 'center';ctx.fillText('S', cx, cy-ry*sundialData.scaleY - 10 > 16 ? cy-ry*sundialData.scaleY-10 : 16);
 }
 
-/* ============================================================
-   INIT
-   ============================================================ */
-(function(){
-  var d=new Date();
-  document.getElementById('date-picker').value=d.toISOString().split('T')[0];
-  document.getElementById('utc-input').value=(-d.getTimezoneOffset()/60);
-  document.getElementById('date-picker').addEventListener('change',function(){ if(state.loaded) compute(); });
-  buildCountryTabs();
+function drawSundialHand(solarOverride){
+  var canvas = document.getElementById('sundial-canvas');
+  if(!canvas.getContext || !sundialData.cx) return;
+  var d = sundialData;
+  var dpr = window.devicePixelRatio||1;
+  var w = canvas.width/dpr, h = canvas.height/dpr;
+  var ctx = canvas.getContext('2d');
+  ctx.save();
+  ctx.scale(dpr,dpr);
 
-  /* keyboard close popup */
-  document.addEventListener('keydown',function(e){ if(e.key==='Escape') closePopup(); });
+  // Redraw sun dot
+  var now = new Date();
+  var utcH = now.getUTCHours()+now.getUTCMinutes()/60+now.getUTCSeconds()/3600;
+  var dateStr = getDateInput();
+  var N = doy(dateStr);
+  var EqTc = eqt(N);
+  var effectiveUtc = state.baseUtc!==null?getDSTOffset(state.baseUtc,dateStr):state.utc;
+  var solarH = solarOverride !== null && solarOverride !== undefined
+    ? solarOverride
+    : ((utcH + state.lon/15 + EqTc/60)%24+24)%24;
+  var frac = solarH/24;
+
+  if(frac >= d.riseW && frac <= d.setW){
+    var a = Math.PI + frac*2*Math.PI;
+    var sx = d.cx + d.rx*Math.cos(a);
+    var sy = d.cy - d.ry*d.scaleY*Math.sin(a);
+
+    // Glow
+    var grd = ctx.createRadialGradient(sx,sy,0,sx,sy,22);
+    grd.addColorStop(0,'rgba(245,189,71,0.35)');
+    grd.addColorStop(1,'rgba(245,189,71,0)');
+    ctx.beginPath(); ctx.arc(sx,sy,22,0,Math.PI*2);
+    ctx.fillStyle=grd; ctx.fill();
+
+    // Sun circle
+    ctx.beginPath(); ctx.arc(sx,sy,9,0,Math.PI*2);
+    ctx.fillStyle='#F5BD47'; ctx.fill();
+    ctx.strokeStyle='#FFFFFF'; ctx.lineWidth=1.5; ctx.stroke();
+
+    // Ray lines
+    ctx.strokeStyle='rgba(245,189,71,0.6)'; ctx.lineWidth=1;
+    for(var i=0;i<8;i++){
+      var ra=Math.PI*2*i/8;
+      ctx.beginPath();
+      ctx.moveTo(sx+11*Math.cos(ra),sy+11*Math.sin(ra));
+      ctx.lineTo(sx+15*Math.cos(ra),sy+15*Math.sin(ra));
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+/* ═══════════════════════════════════════════════════
+   ANNUAL CHART
+═══════════════════════════════════════════════════ */
+function drawAnnual(){
+  var canvas = document.getElementById('annual-canvas');
+  if(!canvas.getContext) return;
+
+  if(!state.loaded){
+    document.getElementById('annual-noloc').style.display='block';
+    return;
+  }
+  document.getElementById('annual-noloc').style.display='none';
+  document.getElementById('annual-loc-name').textContent = state.name;
+
+  var dpr = window.devicePixelRatio||1;
+  canvas.width  = Math.max(canvas.offsetWidth,480)*dpr;
+  canvas.height = 260*dpr;
+  canvas.style.height = '260px';
+  var ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  var w = canvas.width/dpr, h = canvas.height/dpr;
+
+  var isDark = document.documentElement.getAttribute('data-theme')==='dark' ||
+    (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+  var bgC  = isDark ? '#242019' : '#FFFFFF';
+  var fgC  = isDark ? '#78716C' : '#A8A29E';
+  var gridC= isDark ? 'rgba(237,232,224,.07)' : 'rgba(28,25,23,.07)';
+  var fgMain = isDark ? '#EDE8E0' : '#1C1917';
+
+  ctx.fillStyle = bgC; ctx.fillRect(0,0,w,h);
+
+  var pad = {top:28, right:24, bottom:36, left:42};
+  var cw = w-pad.left-pad.right, ch = h-pad.top-pad.bottom;
+
+  // Grid & month labels
+  var months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  ctx.strokeStyle = gridC; ctx.lineWidth = 0.5;
+  for(var m=0;m<=12;m++){
+    var x = pad.left + cw*m/12;
+    ctx.beginPath(); ctx.moveTo(x,pad.top); ctx.lineTo(x,pad.top+ch); ctx.stroke();
+    if(m<12){
+      ctx.fillStyle=fgC; ctx.font='10px DM Sans,system-ui'; ctx.textAlign='center';
+      ctx.fillText(months[m], pad.left+cw*(m+0.5)/12, h-8);
+    }
+  }
+
+  // Collect data
+  var days = [], eqtData = [], daylenData = [], riseData = [], setData = [];
+  var lat = state.lat, lon = state.lon, utcBase = state.baseUtc!==null?state.baseUtc:state.utc;
+  for(var N=1;N<=365;N++){
+    var EqT = eqt(N);
+    var ss = sunriseSunset(lat,N);
+    var dl = ss.polar==='day'?24:ss.polar==='night'?0:(ss.set-ss.rise);
+    var dstDate = new Date(2024,0,N); // approx year
+    var utcEff  = state.baseUtc!==null ? getDSTOffset(state.baseUtc, dstDate.toISOString().slice(0,10)) : utcBase;
+    var toWatch = function(tsvH,utcE,E,l){ return ((tsvH - E/60 - l/15 + utcE)%24+24)%24; };
+    days.push(N);
+    eqtData.push(EqT);
+    daylenData.push(dl);
+    riseData.push(ss.polar?null:toWatch(ss.rise,utcEff,EqT,lon));
+    setData.push(ss.polar?null:toWatch(ss.set,utcEff,EqT,lon));
+  }
+
+  // Scales
+  var eqtMin=-20, eqtMax=20;
+  var dlMin=0, dlMax=24;
+
+  function xOf(N){ return pad.left + cw*(N-1)/364; }
+  function yEqt(v){ return pad.top + ch*(1-(v-eqtMin)/(eqtMax-eqtMin)); }
+  function yDl(v){  return pad.top + ch*(1-(v-dlMin)/(dlMax-dlMin)); }
+
+  // Y-axis labels (dual axis: left=hours, right=minutes)
+  ctx.fillStyle=fgC; ctx.font='10px DM Sans,system-ui';
+  for(var v=0;v<=24;v+=6){
+    var yy = yDl(v);
+    ctx.textAlign='right'; ctx.fillText(v+'h', pad.left-5, yy+3);
+    ctx.strokeStyle=gridC; ctx.lineWidth=0.5;
+    ctx.beginPath(); ctx.moveTo(pad.left,yy); ctx.lineTo(pad.left+cw,yy); ctx.stroke();
+  }
+  for(var vm=-20;vm<=20;vm+=10){
+    var yy = yEqt(vm);
+    ctx.textAlign='left'; ctx.fillText(vm+'\'', pad.left+cw+3, yy+3);
+  }
+
+  // Draw daylen
+  ctx.beginPath(); ctx.strokeStyle='#F5BD47'; ctx.lineWidth=2;
+  days.forEach(function(N,i){ var y=yDl(daylenData[i]); if(i===0)ctx.moveTo(xOf(N),y);else ctx.lineTo(xOf(N),y); });
+  ctx.stroke();
+
+  // Draw rise
+  ctx.beginPath(); ctx.strokeStyle='#5BAD7A'; ctx.lineWidth=1.5;
+  var first=true;
+  days.forEach(function(N,i){ if(riseData[i]===null){first=true;return;} var y=yDl(riseData[i]); if(first){ctx.moveTo(xOf(N),y);first=false;}else ctx.lineTo(xOf(N),y); });
+  ctx.stroke();
+
+  // Draw set
+  ctx.beginPath(); ctx.strokeStyle= isDark?'#5B9DC8':'#2A5F8F'; ctx.lineWidth=1.5;
+  first=true;
+  days.forEach(function(N,i){ if(setData[i]===null){first=true;return;} var y=yDl(setData[i]); if(first){ctx.moveTo(xOf(N),y);first=false;}else ctx.lineTo(xOf(N),y); });
+  ctx.stroke();
+
+  // Draw EqT
+  ctx.beginPath(); ctx.strokeStyle=isDark?'#D4923F':'#C47B2B'; ctx.lineWidth=2; ctx.setLineDash([4,3]);
+  days.forEach(function(N,i){ var y=yEqt(eqtData[i]); if(i===0)ctx.moveTo(xOf(N),y);else ctx.lineTo(xOf(N),y); });
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // Zero line for EqT
+  ctx.beginPath(); ctx.strokeStyle=gridC; ctx.lineWidth=1; ctx.setLineDash([2,4]);
+  ctx.moveTo(pad.left,yEqt(0)); ctx.lineTo(pad.left+cw,yEqt(0)); ctx.stroke(); ctx.setLineDash([]);
+
+  // Axis labels
+  ctx.fillStyle=fgC; ctx.font='10px DM Sans,system-ui';
+  ctx.textAlign='center';
+  ctx.fillText('Durée / Lever / Coucher (h)', pad.left+cw/2, 14);
+  ctx.save(); ctx.translate(w-10, pad.top+ch/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('Éq. du temps (min)', 0, 0); ctx.restore();
+}
+
+/* ═══════════════════════════════════════════════════
+   COMPARATEUR
+═══════════════════════════════════════════════════ */
+var compAllCities = [];
+
+function buildCompSelects(){
+  if(compAllCities.length===0){
+    Object.values(CITIES).forEach(function(arr){ arr.forEach(function(c){ compAllCities.push(c); }); });
+    compAllCities.sort(function(a,b){return a.name.localeCompare(b.name);});
+  }
+  ['a','b'].forEach(function(id){
+    var sel = document.getElementById('comp-select-'+id);
+    sel.innerHTML='';
+    compAllCities.forEach(function(c,i){
+      var opt=document.createElement('option');
+      opt.value=i; opt.textContent=c.name+(c.country?' ('+c.country+')':'');
+      sel.appendChild(opt);
+    });
+    sel.selectedIndex = id==='a'?0:5;
+  });
+  computeComp();
+}
+
+function filterCompCity(id){
+  var q = document.getElementById('comp-search-'+id).value.toLowerCase();
+  var sel = document.getElementById('comp-select-'+id);
+  sel.innerHTML='';
+  compAllCities.forEach(function(c,i){
+    if(!q || c.name.toLowerCase().includes(q) || (c.country&&c.country.toLowerCase().includes(q))){
+      var opt=document.createElement('option');
+      opt.value=i; opt.textContent=c.name+(c.country?' ('+c.country+')':'');
+      sel.appendChild(opt);
+    }
+  });
+  if(sel.options.length) sel.selectedIndex=0;
+  computeComp();
+}
+
+function computeComp(){
+  var selA=document.getElementById('comp-select-a');
+  var selB=document.getElementById('comp-select-b');
+  if(!selA||!selB||!selA.options.length||!selB.options.length) return;
+  var cA = compAllCities[selA.value];
+  var cB = compAllCities[selB.value];
+  if(!cA||!cB) return;
+  var dateStr = getDateInput();
+  ['a','b'].forEach(function(id){
+    var c = id==='a'?cA:cB;
+    var N = doy(dateStr);
+    var EqT = eqt(N);
+    var ss = sunriseSunset(c.lat, N);
+    var utcEff = c.baseUtc!==undefined?getDSTOffset(c.baseUtc,dateStr):c.utc;
+    var noonH = solarNoon(c.lon, N, utcEff);
+    var toWatch = function(tsvH){ return ((tsvH - EqT/60 - c.lon/15 + utcEff)%24+24)%24; };
+    var dl = ss.polar==='day'?24:ss.polar==='night'?0:(ss.set-ss.rise);
+    var dlH=Math.floor(dl), dlM=Math.round((dl-dlH)*60);
+    var riseStr = ss.polar?'—':fmtHm(toWatch(ss.rise));
+    var setStr  = ss.polar?'—':fmtHm(toWatch(ss.set));
+    var dstInfo = c.baseUtc!==undefined?(utcEff!==c.baseUtc?'Heure d\'été':'Heure d\'hiver'):'';
+    document.getElementById('comp-metrics-'+id).innerHTML =
+      '<b style="font-size:14px;color:var(--fg)">'+c.name+'</b>'+(dstInfo?'<br><small style="color:var(--fg-3)">'+dstInfo+' UTC'+(utcEff>=0?'+':'')+utcEff+'</small>':'')+
+      '<br>Lever : <span>'+riseStr+'</span>'+
+      '<br>Coucher : <span>'+setStr+'</span>'+
+      '<br>Midi solaire : <span>'+fmtHm(noonH)+'</span>'+
+      '<br>Durée du jour : <span>'+dlH+'h'+pad(dlM)+'</span>'+
+      '<br>Éq. du temps : <span>'+(EqT>=0?'+':'')+EqT.toFixed(1)+' min</span>'+
+      '<br>Latitude : <span>'+c.lat.toFixed(2)+'°</span>';
+  });
+
+  // Diff
+  var cAD = computeCompData(cA, dateStr);
+  var cBD = computeCompData(cB, dateStr);
+  var dNoon = Math.abs((cAD.noon - cBD.noon)*60).toFixed(0);
+  var dDl   = Math.abs(cAD.dl - cBD.dl).toFixed(2);
+  var dLon  = Math.abs(cA.lon - cB.lon).toFixed(2);
+  document.getElementById('comp-diff').innerHTML =
+    '<strong>Différences :</strong><br>'+
+    '· Décalage de longitude : <strong>'+dLon+'°</strong> → '+Math.abs(cA.lon/15-cB.lon/15).toFixed(1)+' min de décalage solaire<br>'+
+    '· Midi solaire : écart de <strong>'+dNoon+' min</strong><br>'+
+    '· Durée du jour : écart de <strong>'+dDl+' h</strong><br>'+
+    '· Latitude A : '+cA.lat.toFixed(2)+'° — Latitude B : '+cB.lat.toFixed(2)+'°';
+}
+
+function computeCompData(c, dateStr){
+  var N=doy(dateStr), EqT=eqt(N);
+  var ss=sunriseSunset(c.lat,N);
+  var utcEff=c.baseUtc!==undefined?getDSTOffset(c.baseUtc,dateStr):c.utc;
+  var dl=ss.polar==='day'?24:ss.polar==='night'?0:(ss.set-ss.rise);
+  return {noon:solarNoon(c.lon,N,utcEff), dl:dl};
+}
+
+/* ═══════════════════════════════════════════════════
+   WIDGET CODE
+═══════════════════════════════════════════════════ */
+function buildWidgetCode(){
+  var loc = state.loaded ? state : {lat:48.8566,lon:2.3522,utc:1,name:'Paris'};
+  var url = window.location.href.split('#')[0].split('?')[0];
+  var code = '<iframe\n  src="'+url+'?lat='+loc.lat+'&amp;lon='+loc.lon+'&amp;utc='+loc.utc+'&amp;name='+encodeURIComponent(loc.name)+'&amp;embed=1"\n  width="360" height="340"\n  style="border:none;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.15)"\n  title="Éphéméride Solaire — '+loc.name+'"\n></iframe>';
+  var el = document.getElementById('widget-code');
+  el.textContent = code;
+  el.appendChild(Object.assign(document.createElement('button'),{className:'copy-btn',textContent:'Copier',onclick:copyCode}));
+}
+
+function copyCode(){
+  var el = document.getElementById('widget-code');
+  var text = el.textContent.replace('Copier','').trim();
+  try{ navigator.clipboard.writeText(text).then(function(){ showCopyOk(); }); }
+  catch(e){ var ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showCopyOk(); }
+}
+function showCopyOk(){
+  var btn=document.querySelector('.copy-btn');
+  if(btn){var old=btn.textContent;btn.textContent='✓ Copié';setTimeout(function(){btn.textContent=old;},1800);}
+}
+
+/* Check for embed mode */
+function checkEmbed(){
+  var params = new URLSearchParams(window.location.search);
+  if(params.get('embed')==='1'){
+    var lat=parseFloat(params.get('lat')||'48.8566');
+    var lon=parseFloat(params.get('lon')||'2.3522');
+    var utc=parseFloat(params.get('utc')||'1');
+    var name=params.get('name')||'Paris';
+    setLocation(lat,lon,utc,name,null);
+    // Hide header/tabs in embed
+    document.querySelector('.site-header').style.display='none';
+    document.getElementById('main-tabs').style.display='none';
+    document.body.style.paddingTop='8px';
+    switchTab('main');
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   CITIES DATABASE
+═══════════════════════════════════════════════════ */
+var CITIES = {
+  "France":      [{name:"Paris",       lat:48.8566,  lon:2.3522,   utc:1, baseUtc:1, country:"France"},
+                  {name:"Lyon",        lat:45.7640,  lon:4.8357,   utc:1, baseUtc:1, country:"France"},
+                  {name:"Marseille",   lat:43.2965,  lon:5.3698,   utc:1, baseUtc:1, country:"France"},
+                  {name:"Bordeaux",    lat:44.8378,  lon:-0.5792,  utc:1, baseUtc:1, country:"France"},
+                  {name:"Strasbourg",  lat:48.5734,  lon:7.7521,   utc:1, baseUtc:1, country:"France"},
+                  {name:"Nantes",      lat:47.2184,  lon:-1.5536,  utc:1, baseUtc:1, country:"France"},
+                  {name:"Toulouse",    lat:43.6047,  lon:1.4442,   utc:1, baseUtc:1, country:"France"},
+                  {name:"Nice",        lat:43.7102,  lon:7.2620,   utc:1, baseUtc:1, country:"France"},
+                  {name:"Brest",       lat:48.3905,  lon:-4.4860,  utc:1, baseUtc:1, country:"France"},
+                  {name:"Lille",       lat:50.6292,  lon:3.0573,   utc:1, baseUtc:1, country:"France"}],
+  "Belgique":    [{name:"Bruxelles",   lat:50.8503,  lon:4.3517,   utc:1, baseUtc:1, country:"Belgique"},
+                  {name:"Liège",       lat:50.6326,  lon:5.5797,   utc:1, baseUtc:1, country:"Belgique"},
+                  {name:"Gand",        lat:51.0543,  lon:3.7174,   utc:1, baseUtc:1, country:"Belgique"}],
+  "Suisse":      [{name:"Genève",      lat:46.2044,  lon:6.1432,   utc:1, baseUtc:1, country:"Suisse"},
+                  {name:"Zurich",      lat:47.3769,  lon:8.5417,   utc:1, baseUtc:1, country:"Suisse"},
+                  {name:"Berne",       lat:46.9481,  lon:7.4474,   utc:1, baseUtc:1, country:"Suisse"},
+                  {name:"Bâle",        lat:47.5596,  lon:7.5886,   utc:1, baseUtc:1, country:"Suisse"}],
+  "Allemagne":   [{name:"Berlin",      lat:52.5200,  lon:13.4050,  utc:1, baseUtc:1, country:"Allemagne"},
+                  {name:"Munich",      lat:48.1351,  lon:11.5820,  utc:1, baseUtc:1, country:"Allemagne"},
+                  {name:"Hambourg",    lat:53.5753,  lon:10.0153,  utc:1, baseUtc:1, country:"Allemagne"},
+                  {name:"Cologne",     lat:50.9333,  lon:6.9500,   utc:1, baseUtc:1, country:"Allemagne"},
+                  {name:"Francfort",   lat:50.1109,  lon:8.6821,   utc:1, baseUtc:1, country:"Allemagne"}],
+  "Espagne":     [{name:"Madrid",      lat:40.4168,  lon:-3.7038,  utc:1, baseUtc:1, country:"Espagne"},
+                  {name:"Barcelone",   lat:41.3851,  lon:2.1734,   utc:1, baseUtc:1, country:"Espagne"},
+                  {name:"Séville",     lat:37.3891,  lon:-5.9845,  utc:1, baseUtc:1, country:"Espagne"},
+                  {name:"Valence",     lat:39.4699,  lon:-0.3763,  utc:1, baseUtc:1, country:"Espagne"},
+                  {name:"Bilbao",      lat:43.2627,  lon:-2.9253,  utc:1, baseUtc:1, country:"Espagne"}],
+  "Portugal":    [{name:"Lisbonne",    lat:38.7223,  lon:-9.1393,  utc:0, baseUtc:0, country:"Portugal"},
+                  {name:"Porto",       lat:41.1579,  lon:-8.6291,  utc:0, baseUtc:0, country:"Portugal"}],
+  "Italie":      [{name:"Rome",        lat:41.9028,  lon:12.4964,  utc:1, baseUtc:1, country:"Italie"},
+                  {name:"Milan",       lat:45.4642,  lon:9.1900,   utc:1, baseUtc:1, country:"Italie"},
+                  {name:"Venise",      lat:45.4408,  lon:12.3155,  utc:1, baseUtc:1, country:"Italie"},
+                  {name:"Naples",      lat:40.8518,  lon:14.2681,  utc:1, baseUtc:1, country:"Italie"},
+                  {name:"Florence",    lat:43.7696,  lon:11.2558,  utc:1, baseUtc:1, country:"Italie"}],
+  "Pays-Bas":    [{name:"Amsterdam",   lat:52.3676,  lon:4.9041,   utc:1, baseUtc:1, country:"Pays-Bas"},
+                  {name:"Rotterdam",   lat:51.9225,  lon:4.4792,   utc:1, baseUtc:1, country:"Pays-Bas"},
+                  {name:"La Haye",     lat:52.0705,  lon:4.3007,   utc:1, baseUtc:1, country:"Pays-Bas"}],
+  "R-Uni":       [{name:"Londres",     lat:51.5074,  lon:-0.1278,  utc:0, baseUtc:0, country:"R-Uni"},
+                  {name:"Édimbourg",   lat:55.9533,  lon:-3.1883,  utc:0, baseUtc:0, country:"R-Uni"},
+                  {name:"Manchester",  lat:53.4808,  lon:-2.2426,  utc:0, baseUtc:0, country:"R-Uni"}],
+  "Irlande":     [{name:"Dublin",      lat:53.3498,  lon:-6.2603,  utc:0, baseUtc:0, country:"Irlande"}],
+  "Autriche":    [{name:"Vienne",      lat:48.2082,  lon:16.3738,  utc:1, baseUtc:1, country:"Autriche"},
+                  {name:"Innsbruck",   lat:47.2692,  lon:11.4041,  utc:1, baseUtc:1, country:"Autriche"}],
+  "Pologne":     [{name:"Varsovie",    lat:52.2297,  lon:21.0122,  utc:1, baseUtc:1, country:"Pologne"},
+                  {name:"Cracovie",    lat:50.0647,  lon:19.9450,  utc:1, baseUtc:1, country:"Pologne"}],
+  "Grèce":       [{name:"Athènes",     lat:37.9838,  lon:23.7275,  utc:2, baseUtc:2, country:"Grèce"},
+                  {name:"Thessalonique",lat:40.6401, lon:22.9444,  utc:2, baseUtc:2, country:"Grèce"}],
+  "Danemark":    [{name:"Copenhague",  lat:55.6761,  lon:12.5683,  utc:1, baseUtc:1, country:"Danemark"}],
+  "Norvège":     [{name:"Oslo",        lat:59.9139,  lon:10.7522,  utc:1, baseUtc:1, country:"Norvège"},
+                  {name:"Bergen",      lat:60.3913,  lon:5.3221,   utc:1, baseUtc:1, country:"Norvège"},
+                  {name:"Tromsø",      lat:69.6496,  lon:18.9560,  utc:1, baseUtc:1, country:"Norvège"}],
+  "Suède":       [{name:"Stockholm",   lat:59.3293,  lon:18.0686,  utc:1, baseUtc:1, country:"Suède"},
+                  {name:"Göteborg",    lat:57.7089,  lon:11.9746,  utc:1, baseUtc:1, country:"Suède"},
+                  {name:"Malmö",       lat:55.6050,  lon:13.0038,  utc:1, baseUtc:1, country:"Suède"}],
+  "Finlande":    [{name:"Helsinki",    lat:60.1699,  lon:24.9384,  utc:2, baseUtc:2, country:"Finlande"},
+                  {name:"Rovaniemi",   lat:66.5039,  lon:25.7294,  utc:2, baseUtc:2, country:"Finlande"}],
+  "Tchéquie":    [{name:"Prague",      lat:50.0755,  lon:14.4378,  utc:1, baseUtc:1, country:"Tchéquie"}],
+  "Hongrie":     [{name:"Budapest",    lat:47.4979,  lon:19.0402,  utc:1, baseUtc:1, country:"Hongrie"}],
+  "Roumanie":    [{name:"Bucarest",    lat:44.4268,  lon:26.1025,  utc:2, baseUtc:2, country:"Roumanie"},
+                  {name:"Cluj-Napoca", lat:46.7712,  lon:23.6236,  utc:2, baseUtc:2, country:"Roumanie"}],
+  "Islande":     [{name:"Reykjavik",   lat:64.1265,  lon:-21.8174, utc:0, baseUtc:null, country:"Islande"}],
+  "Maroc":       [{name:"Casablanca",  lat:33.5731,  lon:-7.5898,  utc:1, baseUtc:null, country:"Maroc"},
+                  {name:"Marrakech",   lat:31.6295,  lon:-7.9811,  utc:1, baseUtc:null, country:"Maroc"}],
+  "Tunisie":     [{name:"Tunis",       lat:36.8065,  lon:10.1815,  utc:1, baseUtc:null, country:"Tunisie"}],
+  "Canada":      [{name:"Montréal",    lat:45.5017,  lon:-73.5673, utc:-5,baseUtc:null, country:"Canada"},
+                  {name:"Québec",      lat:46.8139,  lon:-71.2080, utc:-5,baseUtc:null, country:"Canada"}],
+  "USA":         [{name:"New York",    lat:40.7128,  lon:-74.0060, utc:-5,baseUtc:null, country:"USA"},
+                  {name:"Chicago",     lat:41.8781,  lon:-87.6298, utc:-6,baseUtc:null, country:"USA"}],
+};
+
+/* ═══════════════════════════════════════════════════
+   UI — CITY SELECTOR
+═══════════════════════════════════════════════════ */
+var activeCountry = null;
+
+function buildCountryGrid(){
+  var grid = document.getElementById('country-grid');
+  Object.keys(CITIES).forEach(function(c){
+    var btn = document.createElement('button');
+    btn.className='country-btn';
+    btn.textContent=c;
+    btn.onclick=function(){
+      document.querySelectorAll('.country-btn').forEach(function(b){b.classList.remove('active');});
+      btn.classList.add('active');
+      activeCountry=c;
+      renderCityList(CITIES[c]);
+    };
+    grid.appendChild(btn);
+  });
+}
+
+function renderCityList(cities){
+  var list=document.getElementById('city-list');
+  list.innerHTML='';
+  cities.forEach(function(c){
+    var btn=document.createElement('button');
+    btn.className='city-btn';
+    btn.textContent=c.name;
+    btn.onclick=function(){ setLocation(c.lat,c.lon,c.utc,c.name,c.baseUtc); switchTab('main'); };
+    list.appendChild(btn);
+  });
+}
+
+function filterCities(){
+  var q=document.getElementById('city-search').value.toLowerCase();
+  if(!q){ if(activeCountry) renderCityList(CITIES[activeCountry]); else document.getElementById('city-list').innerHTML=''; return; }
+  var results=[];
+  Object.values(CITIES).forEach(function(arr){ arr.forEach(function(c){ if(c.name.toLowerCase().includes(q)||(c.country&&c.country.toLowerCase().includes(q))) results.push(c); }); });
+  renderCityList(results);
+}
+
+/* ═══════════════════════════════════════════════════
+   GEOLOCATION
+═══════════════════════════════════════════════════ */
+function geolocate(){
+  var els = ['geo-status','geo-status-lieu'];
+  els.forEach(function(id){ var e=document.getElementById(id); if(e){e.textContent='Localisation en cours…';e.className='status-msg';} });
+  if(!navigator.geolocation){
+    els.forEach(function(id){ var e=document.getElementById(id); if(e){e.textContent='Géolocalisation non disponible.';e.className='status-msg status-err';} });
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(function(pos){
+    var lat=pos.coords.latitude, lon=pos.coords.longitude;
+    var tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    var now=new Date(), offsetH=-(now.getTimezoneOffset()/60);
+    setLocation(lat,lon,offsetH,'Ma position ('+lat.toFixed(2)+'°, '+lon.toFixed(2)+'°)',null);
+    els.forEach(function(id){ var e=document.getElementById(id); if(e){e.textContent='Position trouvée.';e.className='status-msg status-ok';} });
+    switchTab('main');
+  }, function(){
+    els.forEach(function(id){ var e=document.getElementById(id); if(e){e.textContent='Accès refusé. Choisissez un lieu manuellement.';e.className='status-msg status-err';} });
+  });
+}
+
+function applyManual(){
+  var lat=parseFloat(document.getElementById('lat-input').value);
+  var lon=parseFloat(document.getElementById('lon-input').value);
+  var utc=parseFloat(document.getElementById('utc-input').value);
+  var name=document.getElementById('name-input').value.trim();
+  var st=document.getElementById('manual-status');
+  if(isNaN(lat)||isNaN(lon)||isNaN(utc)){ st.textContent='Veuillez remplir latitude, longitude et UTC.'; st.className='status-msg status-err'; return; }
+  if(lat<-90||lat>90){ st.textContent='Latitude invalide (−90 à +90).'; st.className='status-msg status-err'; return; }
+  if(lon<-180||lon>180){ st.textContent='Longitude invalide (−180 à +180).'; st.className='status-msg status-err'; return; }
+  setLocation(lat,lon,utc,name||'Lieu '+lat.toFixed(2)+'°,'+lon.toFixed(2)+'°',null);
+  st.textContent='Lieu appliqué : '+(name||'coordonnées manuelles');
+  st.className='status-msg status-ok';
+  switchTab('main');
+}
+
+function setLocation(lat,lon,utc,name,baseUtc){
+  state={lat:lat,lon:lon,utc:utc,baseUtc:baseUtc!==undefined?baseUtc:null,name:name,loaded:true};
+  compute();
+}
+
+/* ═══════════════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════════════ */
+function switchTab(id){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('panel-'+id).classList.add('active');
+  var idx = {main:0,annuel:1,comparateur:2,widget:3,lieu:4,explication:5}[id];
+  var btns = document.querySelectorAll('.tab-btn');
+  if(btns[idx]) btns[idx].classList.add('active');
+  if(id==='annuel') { setTimeout(drawAnnual,50); }
+  if(id==='comparateur') { buildCompSelects(); }
+  if(id==='widget') { buildWidgetCode(); }
+}
+
+/* ═══════════════════════════════════════════════════
+   THEME
+═══════════════════════════════════════════════════ */
+function toggleTheme(){
+  var r=document.documentElement;
+  var cur=r.getAttribute('data-theme');
+  var next = cur==='dark'?'light':(cur==='light'?null:'dark');
+  if(next) r.setAttribute('data-theme',next); else r.removeAttribute('data-theme');
+  if(state.loaded){ setTimeout(function(){drawSundial(null,null,null,null,null,null);compute();},30); }
+  if(document.getElementById('panel-annuel').classList.contains('active')) setTimeout(drawAnnual,60);
+}
+
+/* ═══════════════════════════════════════════════════
+   POPUPS
+═══════════════════════════════════════════════════ */
+var POPUPS = {
+  solar:{t:'Heure Solaire Vraie (TSV)',b:'<p>L\'heure solaire vraie est l\'heure lue sur un cadran solaire. Elle indique l\'angle horaire du Soleil au-dessus du méridien local.</p><p class="popup-formula">TSV = UTC + Longitude/15 + ÉqT/60</p><p>Elle diffère de l\'heure légale de quelques minutes à plusieurs dizaines de minutes selon la date et la longitude.</p><div class="popup-callout">L\'heure solaire vraie n\'est pas uniforme : la vitesse de la Terre sur son orbite elliptique et l\'inclinaison de son axe (obliquité 23,45°) font que la durée des jours solaires vrais varie légèrement, jusqu\'à ±16 min par an.</div>'},
+  watch:{t:'Heure légale (heure de montre)',b:'<p>L\'heure légale est définie par les fuseaux horaires fixés administrativement. En Europe continentale, elle vaut UTC+1 en hiver et UTC+2 en été (heure d\'été).</p><p>Elle peut s\'écarter de l\'heure solaire vraie de plusieurs dizaines de minutes — voire plus d\'une heure — selon la position dans le fuseau et la date.</p>'},
+  rise:{t:'Lever du soleil',b:'<p>Le Soleil se lève quand son centre atteint −0,833° sous l\'horizon (réfraction atmosphérique + rayon solaire).</p><p class="popup-formula">cos(H₀) = (sin(−0.833°) − sin(φ)·sin(δ)) / (cos(φ)·cos(δ))</p><p>L\'azimut indique la direction depuis le Nord (sens horaire). Aux équinoxes, le lever est plein Est (90°). En été, il se déplace vers le Nord-Est ; en hiver vers le Sud-Est.</p>'},
+  set:{t:'Coucher du soleil',b:'<p>Symétrique du lever par rapport au midi solaire. L\'azimut du coucher est 360° − azimut du lever.</p><p>En France métropolitaine, le coucher varie de ~15h45 (solstice d\'hiver) à ~21h45 heure légale.</p>'},
+  noon:{t:'Midi solaire vrai',b:'<p>Le midi solaire est l\'instant exact où le Soleil culmine au méridien local. C\'est le moment de la journée où les ombres sont les plus courtes (en dehors des régions polaires).</p><p class="popup-formula">Midi_solaire = 12 − ÉqT/60 − Longitude/15 + UTC</p><p>L\'altitude maximale dépend de la latitude et de la déclinaison solaire.</p>'},
+  eqt:{t:'Équation du temps',b:'<p>Différence entre le midi solaire moyen (12h00 UTC exact) et le midi solaire vrai. Elle résulte de deux phénomènes :</p><ul><li><b>Excentricité de l\'orbite</b> : la Terre va plus vite en janvier (périhélie) qu\'en juillet (aphélie) → ±8 min</li><li><b>Obliquité de l\'axe</b> (23,45°) : le Soleil se déplace sur l\'écliptique, pas sur l\'équateur → ±10 min</li></ul><p class="popup-formula">ÉqT ≈ 9.87·sin(2B) − 7.53·cos(B) − 1.5·sin(B)</p><p>La valeur maximale est ~+16 min début novembre, minimale ~−14 min mi-février.</p>'},
+  daylen:{t:'Durée du jour',b:'<p>Temps entre le lever et le coucher du Soleil. Elle varie de 0h (nuit polaire) à 24h (jour polaire) selon la latitude et la saison.</p><p>Aux équinoxes (≈21 mars et 23 sept.), la durée du jour est proche de 12h partout dans le monde — mais pas exactement, en raison de la réfraction atmosphérique.</p>'},
+  delta:{t:'Durée vs équinoxe',b:'<p>Différence en minutes entre la durée du jour actuelle et 12h (durée théorique à l\'équinoxe).</p><p>Valeur positive : le jour dure plus de 12h (été). Valeur négative : moins de 12h (hiver).</p>'},
+  coords:{t:'Coordonnées géographiques',b:'<p><b>Latitude</b> : angle entre l\'équateur et le lieu, de −90° (pôle Sud) à +90° (pôle Nord).</p><p><b>Longitude</b> : angle depuis le méridien de Greenwich, de −180° (Ouest) à +180° (Est). Chaque degré de longitude correspond à 4 minutes de décalage de l\'heure solaire.</p><p><b>Fuseau UTC</b> : décalage horaire administratif par rapport au temps universel coordonné.</p>'},
+  decl:{t:'Déclinaison solaire',b:'<p>Angle entre les rayons du Soleil et le plan de l\'équateur terrestre. Elle varie de −23,45° (solstice d\'hiver, 21 décembre) à +23,45° (solstice d\'été, 21 juin).</p><p class="popup-formula">δ = 23.45° × sin(360/365 × (N − 81)°)</p><p>Quand la déclinaison est positive (printemps/été), le Soleil se lève au nord de l\'Est et se couche au nord de l\'Ouest.</p>'},
+};
+
+function showPopup(key){
+  var p=POPUPS[key];
+  if(!p) return;
+  document.getElementById('popup-title').textContent=p.t;
+  document.getElementById('popup-body').innerHTML=p.b;
+  document.getElementById('popup-overlay').classList.add('open');
+}
+function closePopup(){
+  document.getElementById('popup-overlay').classList.remove('open');
+}
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closePopup(); });
+
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
+function setToday(){
+  document.getElementById('date-input').value = new Date().toISOString().slice(0,10);
+  compute();
+}
+
+(function init(){
+  setToday();
+  buildCountryGrid();
+  checkEmbed();
+
+  // Try auto-geolocate silently
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(pos){
+      if(!state.loaded){
+        var lat=pos.coords.latitude, lon=pos.coords.longitude;
+        var offsetH=-(new Date().getTimezoneOffset()/60);
+        setLocation(lat,lon,offsetH,'Ma position ('+lat.toFixed(2)+'°, '+lon.toFixed(2)+'°)',null);
+      }
+    }, function(){}, {timeout:4000});
+  }
 })();
 </script>
