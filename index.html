@@ -1197,12 +1197,12 @@ function drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr){
   if(riseSumH && setSumH){
     var sumNoonX = xOf(noonSum), sumNoonY = yOf(maxAltSum);
     ctx.fillStyle=isDark?'rgba(255,165,50,1)':'rgba(190,75,0,1)';
-    ctx.fillText('21 juin · '+Math.round(maxAltSum)+'°', sumNoonX, Math.max(padT+14, sumNoonY-4));
+    ctx.fillText('21 juin · '+maxAltSum.toFixed(2)+'°', sumNoonX, Math.max(padT+14, sumNoonY-18));
   }
   if(riseWinH && setWinH && maxAltWin>1){
     var winNoonX = xOf(noonWin), winNoonY = yOf(maxAltWin);
     ctx.fillStyle=isDark?'rgba(130,190,255,1)':'rgba(30,70,190,1)';
-    ctx.fillText('21 déc · '+Math.round(maxAltWin)+'°', winNoonX, Math.max(padT+28, winNoonY-4));
+    ctx.fillText('21 déc · '+maxAltWin.toFixed(2)+'°', winNoonX, Math.max(padT+28, winNoonY-18));
   }
 
   // Noon dashed vertical
@@ -1339,15 +1339,15 @@ function drawSundialHand(solarOverride){
   // Solstice labels — clamped inside sky area
   ctx.font='bold 10px DM Sans,system-ui'; ctx.textAlign='center';
   if(d.riseSumH!=null && d.setSumH!=null){
-    var syS = Math.max(d.padT+14, d.yOf(d.maxAltSum)-4);
+    var syS = Math.max(d.padT+14, d.yOf(d.maxAltSum)-18);
     ctx.fillStyle=d.isDark?'rgba(255,165,50,1)':'rgba(190,75,0,1)';
-    ctx.fillText('21 juin · '+Math.round(d.maxAltSum)+'°', d.xOf(d.noonSum||d.noonWH), syS);
+    ctx.fillText('21 juin · '+d.maxAltSum.toFixed(2)+'°', d.xOf(d.noonSum||d.noonWH), syS);
   }
   if(d.riseWinH!=null && d.setWinH!=null && d.maxAltWin>1){
-    var syW = Math.max(d.padT+28, d.yOf(d.maxAltWin)-4);
-    if(d.riseSumH!=null){ syW = Math.max(syW, Math.max(d.padT+14, d.yOf(d.maxAltSum)-4)+18); }
+    var syW = Math.max(d.padT+28, d.yOf(d.maxAltWin)-18);
+    if(d.riseSumH!=null){ syW = Math.max(syW, Math.max(d.padT+14, d.yOf(d.maxAltSum)-18)+18); }
     ctx.fillStyle=d.isDark?'rgba(130,190,255,1)':'rgba(30,70,190,1)';
-    ctx.fillText('21 déc · '+Math.round(d.maxAltWin)+'°', d.xOf(d.noonWin||d.noonWH), syW);
+    ctx.fillText('21 déc · '+d.maxAltWin.toFixed(2)+'°', d.xOf(d.noonWin||d.noonWH), syW);
   }
 
   // Noon dashed
