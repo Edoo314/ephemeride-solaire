@@ -582,6 +582,21 @@ input[type="date"]:focus, input[type="text"]:focus, input[type="number"]:focus {
 
 <!-- ═══════════════════════════════ PANEL: COMPARATEUR ═══════════════════════════════ -->
 <div class="panel" id="panel-comparateur">
+  <!-- Sélecteur de date avec raccourcis -->
+  <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)">
+    <label style="font-size:12px;color:var(--fg-2);font-weight:600">Date :</label>
+    <input type="date" id="comp-date-input" style="font-family:var(--font-ui);font-size:13px;padding:4px 8px;border:1px solid var(--border-md);border-radius:6px;background:var(--bg-card);color:var(--fg)" onchange="computeComp()">
+    <div style="display:flex;gap:5px;flex-wrap:wrap">
+      <button class="sais-btn" onclick="compSetDate(this,'--01-15')">Jan</button>
+      <button class="sais-btn" onclick="compSetDate(this,'--03-20')">Éq. printemps</button>
+      <button class="sais-btn" onclick="compSetDate(this,'--04-15')">Avr</button>
+      <button class="sais-btn" onclick="compSetDate(this,'--06-21')">Solst. été</button>
+      <button class="sais-btn" onclick="compSetDate(this,'--07-15')">Juil</button>
+      <button class="sais-btn" onclick="compSetDate(this,'--09-23')">Éq. automne</button>
+      <button class="sais-btn" onclick="compSetDate(this,'--10-15')">Oct</button>
+      <button class="sais-btn" onclick="compSetDate(this,'--12-21')">Solst. hiver</button>
+    </div>
+  </div>
   <div class="comparator-row">
     <!-- City A -->
     <div class="comp-col">
@@ -863,6 +878,20 @@ var clockTimer = null;
 function getDateInput(){
   return document.getElementById('date-input').value || new Date().toISOString().slice(0,10);
 }
+function getCompDateInput(){
+  // Use the comparator's own date input if available and filled, else fall back to main date
+  var cd=document.getElementById('comp-date-input');
+  return (cd&&cd.value)?cd.value:getDateInput();
+}
+function compSetDate(btn, suffix){
+  var yr=new Date().getFullYear();
+  var d=new Date(yr+suffix);
+  var el=document.getElementById('comp-date-input');
+  if(el) el.value=d.toISOString().slice(0,10);
+  document.querySelectorAll('#panel-comparateur .sais-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  computeComp();
+}
 
 /* ═══════════════════════════════════════════════════
    COMPUTE (main panel)
@@ -1126,47 +1155,7 @@ function drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr){
   ctx.beginPath(); ctx.moveTo(padL,baseY); ctx.lineTo(padL+areaW,baseY);
   ctx.strokeStyle=hrzC; ctx.lineWidth=1.5; ctx.stroke();
 
-  // Helper: draw a dashed solstice arc
-  var drawSolsticeArc = function(riseWH, setWH, altFn, color, dash){
-    if(!riseWH || !setWH) return;
-    ctx.setLineDash(dash);
-    ctx.strokeStyle=color; ctx.lineWidth=1.5;
-    ctx.beginPath();
-    var started=false;
-    var steps2=200;
-    for(var i=0;i<=steps2;i++){
-      var wh2=riseWH+(setWH-riseWH)*(i/steps2);
-      var a2=altFn(wh2);
-      if(a2<0) continue;
-      var px=xOf(wh2), py=yOf(a2);
-      if(!started){ ctx.moveTo(px,py); started=true; }
-      else ctx.lineTo(px,py);
-    }
-    ctx.stroke();
-    ctx.setLineDash([]);
-  };
-
-  // Summer solstice arc (warm orange, long dash) — opaque enough to see
-  drawSolsticeArc(riseSumH, setSumH, altAtSum,
-    isDark?'rgba(255,140,30,0.85)':'rgba(210,90,10,0.75)', [8,5]);
-  // Winter solstice arc (cool blue, short dash)
-  drawSolsticeArc(riseWinH, setWinH, altAtWin,
-    isDark?'rgba(110,170,255,0.85)':'rgba(50,90,200,0.75)', [4,4]);
-
-  // Solstice labels near the peak of each arc (centered, inside canvas)
-  ctx.font='bold 10px DM Sans,system-ui'; ctx.textAlign='center';
-  if(riseSumH && setSumH){
-    var sumNoonX = xOf(noonSum), sumNoonY = yOf(maxAltSum);
-    ctx.fillStyle=isDark?'rgba(255,150,40,0.95)':'rgba(190,80,10,0.9)';
-    ctx.fillText('21 juin · '+Math.round(maxAltSum)+'°', sumNoonX, sumNoonY-14);
-  }
-  if(riseWinH && setWinH && maxAltWin>1){
-    var winNoonX = xOf(noonWin), winNoonY = yOf(maxAltWin);
-    ctx.fillStyle=isDark?'rgba(110,170,255,0.95)':'rgba(40,80,190,0.9)';
-    ctx.fillText('21 déc · '+Math.round(maxAltWin)+'°', winNoonX, winNoonY-8);
-  }
-
-  // Today's arc fill
+  // Today's arc fill — drawn FIRST so solstice arcs appear on top
   var steps=300, arcPts=[];
   for(var i=0;i<=steps;i++){
     var wh=riseH+(setH-riseH)*(i/steps);
@@ -1182,6 +1171,39 @@ function drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr){
   ctx.beginPath(); ctx.moveTo(arcPts[0].x, arcPts[0].y);
   for(var i=1;i<arcPts.length;i++) ctx.lineTo(arcPts[i].x, arcPts[i].y);
   ctx.strokeStyle='#F5BD47'; ctx.lineWidth=2.5; ctx.stroke();
+
+  // Solstice arcs — drawn AFTER today's arc to stay visible on top
+  var drawSolsticeArc = function(riseWH, setWH, altFn, color, dash){
+    if(!riseWH || !setWH) return;
+    ctx.setLineDash(dash);
+    ctx.strokeStyle=color; ctx.lineWidth=2.2;
+    ctx.beginPath(); var started=false;
+    for(var i=0;i<=300;i++){
+      var wh2=riseWH+(setWH-riseWH)*(i/300);
+      var a2=altFn(wh2); if(a2<0) continue;
+      var px=xOf(wh2), py=yOf(a2);
+      if(!started){ ctx.moveTo(px,py); started=true; }
+      else ctx.lineTo(px,py);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+  };
+  drawSolsticeArc(riseSumH, setSumH, altAtSum,
+    isDark?'rgba(255,160,40,1)':'rgba(200,80,0,0.9)', [9,4]);
+  drawSolsticeArc(riseWinH, setWinH, altAtWin,
+    isDark?'rgba(130,190,255,1)':'rgba(40,80,200,0.9)', [4,4]);
+
+  // Solstice labels
+  ctx.font='bold 10px DM Sans,system-ui'; ctx.textAlign='center';
+  if(riseSumH && setSumH){
+    var sumNoonX = xOf(noonSum), sumNoonY = yOf(maxAltSum);
+    ctx.fillStyle=isDark?'rgba(255,165,50,1)':'rgba(190,75,0,1)';
+    ctx.fillText('21 juin · '+Math.round(maxAltSum)+'°', sumNoonX, Math.max(padT+14, sumNoonY-4));
+  }
+  if(riseWinH && setWinH && maxAltWin>1){
+    var winNoonX = xOf(noonWin), winNoonY = yOf(maxAltWin);
+    ctx.fillStyle=isDark?'rgba(130,190,255,1)':'rgba(30,70,190,1)';
+    ctx.fillText('21 déc · '+Math.round(maxAltWin)+'°', winNoonX, Math.max(padT+28, winNoonY-4));
+  }
 
   // Noon dashed vertical
   var noonX=xOf(noonWH), noonY=yOf(maxAlt);
@@ -1210,16 +1232,23 @@ function drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr){
     if(hh%4===0) ctx.fillText(hh+'h', tx, baseY+30);
   }
 
-  // Y axis ticks (scaled to summer max)
-  ctx.fillStyle=hrzC; ctx.font='10px DM Sans,system-ui'; ctx.textAlign='right';
-  [0,15,30,45,60,75,90].forEach(function(a){
-    if(a>yScale+2) return;
-    var ty=yOf(a);
-    if(ty < padT) return;
-    ctx.beginPath(); ctx.moveTo(padL-4,ty); ctx.lineTo(padL,ty);
+  // Y axis — ticks up to yScale (summer solstice), with faint horizontal grid lines
+  ctx.font='10px DM Sans,system-ui'; ctx.textAlign='right';
+  var yStep2 = yScale>60?15:10;
+  for(var ya=0; ya<=Math.ceil(yScale/yStep2)*yStep2; ya+=yStep2){
+    if(ya > yScale+2) break;
+    var ty=yOf(ya);
+    if(ty < padT-2) break;
+    // faint horizontal grid line inside sky area
+    ctx.beginPath(); ctx.moveTo(padL,ty); ctx.lineTo(padL+areaW,ty);
+    ctx.strokeStyle=isDark?'rgba(255,255,255,0.06)':'rgba(0,0,60,0.06)';
+    ctx.lineWidth=1; ctx.setLineDash([3,4]); ctx.stroke(); ctx.setLineDash([]);
+    // tick mark
+    ctx.beginPath(); ctx.moveTo(padL-5,ty); ctx.lineTo(padL,ty);
     ctx.strokeStyle=hrzC; ctx.lineWidth=1; ctx.stroke();
-    if(a%15===0) ctx.fillText(a+'°', padL-7, ty+4);
-  });
+    ctx.fillStyle=hrzC;
+    ctx.fillText(ya+'°', padL-7, ty+4);
+  }
 
   sundialData = {riseH,setH,noonWH,noonSum,noonWin,maxAlt,yScale,xOf,yOf,altAt,altAtSum,altAtWin,
     riseSumH,setSumH,riseWinH,setWinH,maxAltSum,maxAltWin,
@@ -1275,38 +1304,7 @@ function drawSundialHand(solarOverride){
   ctx.strokeStyle=d.hrzC; ctx.lineWidth=1.5; ctx.stroke();
 
   // Solstice reference arcs (drawn before today so they appear behind)
-  var drawSolArc = function(rWH, sWH, altFn, color, dash){
-    if(rWH==null || sWH==null) return;
-    ctx.setLineDash(dash); ctx.strokeStyle=color; ctx.lineWidth=1.8;
-    ctx.beginPath(); var started=false;
-    for(var k=0;k<=200;k++){
-      var wk=rWH+(sWH-rWH)*(k/200);
-      var ak=altFn(wk); if(ak<0) continue;
-      var px=d.xOf(wk), py=d.yOf(ak);
-      if(!started){ctx.moveTo(px,py);started=true;} else ctx.lineTo(px,py);
-    }
-    ctx.stroke(); ctx.setLineDash([]);
-  };
-  drawSolArc(d.riseSumH, d.setSumH, d.altAtSum,
-    d.isDark?'rgba(255,140,30,0.85)':'rgba(210,90,10,0.75)', [8,5]);
-  drawSolArc(d.riseWinH, d.setWinH, d.altAtWin,
-    d.isDark?'rgba(110,170,255,0.85)':'rgba(50,90,200,0.75)', [4,4]);
-  // Solstice labels — always inside sky area (clamped to padT+14)
-  ctx.font='bold 10px DM Sans,system-ui'; ctx.textAlign='center';
-  if(d.riseSumH!=null && d.setSumH!=null){
-    var syS = Math.max(d.padT+14, d.yOf(d.maxAltSum)+14);
-    ctx.fillStyle=d.isDark?'rgba(255,150,40,0.95)':'rgba(190,80,10,0.9)';
-    ctx.fillText('21 juin · '+Math.round(d.maxAltSum)+'°', d.xOf(d.noonSum||d.noonWH), syS);
-  }
-  if(d.riseWinH!=null && d.setWinH!=null && d.maxAltWin>1){
-    var syW = Math.max(d.padT+14, d.yOf(d.maxAltWin)+14);
-    // keep winter label at least 16px below summer label
-    if(d.riseSumH!=null){ syW = Math.max(syW, Math.max(d.padT+14, d.yOf(d.maxAltSum)+14)+16); }
-    ctx.fillStyle=d.isDark?'rgba(110,170,255,0.95)':'rgba(40,80,190,0.9)';
-    ctx.fillText('21 déc · '+Math.round(d.maxAltWin)+'°', d.xOf(d.noonWin||d.noonWH), syW);
-  }
-
-  // Arc fill + stroke
+  // Arc fill + stroke — drawn FIRST so solstice arcs appear on top
   var steps=300, arcPts=[];
   for(var i=0;i<=steps;i++){
     var wh2=d.riseH+(d.setH-d.riseH)*(i/steps);
@@ -1320,6 +1318,37 @@ function drawSundialHand(solarOverride){
   ctx.beginPath(); ctx.moveTo(arcPts[0].x,arcPts[0].y);
   for(var i=1;i<arcPts.length;i++) ctx.lineTo(arcPts[i].x,arcPts[i].y);
   ctx.strokeStyle='#F5BD47'; ctx.lineWidth=2.5; ctx.stroke();
+
+  // Solstice reference arcs — drawn AFTER today's arc so they stay visible
+  var drawSolArc = function(rWH, sWH, altFn, color, dash){
+    if(rWH==null || sWH==null) return;
+    ctx.setLineDash(dash); ctx.strokeStyle=color; ctx.lineWidth=2.2;
+    ctx.beginPath(); var started=false;
+    for(var k=0;k<=300;k++){
+      var wk=rWH+(sWH-rWH)*(k/300);
+      var ak=altFn(wk); if(ak<0) continue;
+      var px=d.xOf(wk), py=d.yOf(ak);
+      if(!started){ctx.moveTo(px,py);started=true;} else ctx.lineTo(px,py);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+  };
+  drawSolArc(d.riseSumH, d.setSumH, d.altAtSum,
+    d.isDark?'rgba(255,160,40,1)':'rgba(200,80,0,0.9)', [9,4]);
+  drawSolArc(d.riseWinH, d.setWinH, d.altAtWin,
+    d.isDark?'rgba(130,190,255,1)':'rgba(40,80,200,0.9)', [4,4]);
+  // Solstice labels — clamped inside sky area
+  ctx.font='bold 10px DM Sans,system-ui'; ctx.textAlign='center';
+  if(d.riseSumH!=null && d.setSumH!=null){
+    var syS = Math.max(d.padT+14, d.yOf(d.maxAltSum)-4);
+    ctx.fillStyle=d.isDark?'rgba(255,165,50,1)':'rgba(190,75,0,1)';
+    ctx.fillText('21 juin · '+Math.round(d.maxAltSum)+'°', d.xOf(d.noonSum||d.noonWH), syS);
+  }
+  if(d.riseWinH!=null && d.setWinH!=null && d.maxAltWin>1){
+    var syW = Math.max(d.padT+28, d.yOf(d.maxAltWin)-4);
+    if(d.riseSumH!=null){ syW = Math.max(syW, Math.max(d.padT+14, d.yOf(d.maxAltSum)-4)+18); }
+    ctx.fillStyle=d.isDark?'rgba(130,190,255,1)':'rgba(30,70,190,1)';
+    ctx.fillText('21 déc · '+Math.round(d.maxAltWin)+'°', d.xOf(d.noonWin||d.noonWH), syW);
+  }
 
   // Noon dashed
   var noonX=d.xOf(d.noonWH), noonY=d.yOf(d.maxAlt);
@@ -1348,15 +1377,23 @@ function drawSundialHand(solarOverride){
     if(hh%4===0) ctx.fillText(hh+'h', tx, d.baseY+30);
   }
 
-  // Y axis ticks
-  ctx.fillStyle=d.hrzC; ctx.font='10px DM Sans,system-ui'; ctx.textAlign='right';
-  [0,30,60,90].forEach(function(a){
-    if(a>d.maxAlt) return;
-    var ty=d.yOf(a);
-    ctx.beginPath(); ctx.moveTo(d.padL-4,ty); ctx.lineTo(d.padL,ty);
+  // Y axis — ticks up to yScale (summer solstice max), with horizontal grid lines
+  ctx.font='10px DM Sans,system-ui'; ctx.textAlign='right';
+  var yStep = d.yScale>60?15:10; // 15° steps when tall enough
+  for(var ya=0; ya<=Math.ceil(d.yScale/yStep)*yStep; ya+=yStep){
+    if(ya > d.yScale+2) break;
+    var ty=d.yOf(ya);
+    if(ty < d.padT-2) break;
+    // horizontal grid line
+    ctx.beginPath(); ctx.moveTo(d.padL,ty); ctx.lineTo(d.padL+d.areaW,ty);
+    ctx.strokeStyle=d.isDark?'rgba(255,255,255,0.06)':'rgba(0,0,60,0.06)';
+    ctx.lineWidth=1; ctx.setLineDash([3,4]); ctx.stroke(); ctx.setLineDash([]);
+    // tick + label
+    ctx.beginPath(); ctx.moveTo(d.padL-5,ty); ctx.lineTo(d.padL,ty);
     ctx.strokeStyle=d.hrzC; ctx.lineWidth=1; ctx.stroke();
-    ctx.fillText(a+'°', d.padL-7, ty+4);
-  });
+    ctx.fillStyle=d.hrzC;
+    ctx.fillText(ya+'°', d.padL-7, ty+4);
+  }
 
   // --- Draw sun ---
   var alt = d.altAt(watchH);
@@ -1550,7 +1587,7 @@ function computeComp(){
   var cA = compAllCities[selA.value];
   var cB = compAllCities[selB.value];
   if(!cA||!cB) return;
-  var dateStr = getDateInput();
+  var dateStr = getCompDateInput();
   ['a','b'].forEach(function(id){
     var c = id==='a'?cA:cB;
     var N = doy(dateStr);
@@ -1804,7 +1841,11 @@ function switchTab(id){
   var btns = document.querySelectorAll('.tab-btn');
   if(btns[idx]) btns[idx].classList.add('active');
   if(id==='annuel') { setTimeout(drawAnnual,50); }
-  if(id==='comparateur') { buildCompSelects(); }
+  if(id==='comparateur') {
+    var cd=document.getElementById('comp-date-input');
+    if(cd&&!cd.value) cd.value=getDateInput();
+    buildCompSelects();
+  }
   if(id==='widget') { buildWidgetCode(); }
 }
 
