@@ -1012,29 +1012,34 @@ function drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr){
   var maxAlt = altAt(noonWH);
   if(maxAlt<1) maxAlt=1;
 
-  // Solstices — use same EqT-adjusted noon offset
-  // Summer solstice: N=172 (~21 juin), Winter: N=355 (~21 déc)
-  var decSum = decl(172);   // +23.45°
-  var decWin = decl(355);   // −23.45°
+  // Solstices — inline calculation, no dependency on sunriseSunset()
+  var decSum = decl(172);   // +23.45° (21 juin)
+  var decWin = decl(355);   // −23.45° (21 déc)
   var eqtSum = eqt(172);
   var eqtWin = eqt(355);
-  // Noon watch-hour for each solstice (simplified: use same lon/utc, noon TSV≈12)
   var noonSum = ((12 - eqtSum/60 - state.lon/15 + effectiveUtc)%24+24)%24;
   var noonWin = ((12 - eqtWin/60 - state.lon/15 + effectiveUtc)%24+24)%24;
   var altAtSum = function(wh){ return altAtDec(wh, decSum, noonSum); };
   var altAtWin = function(wh){ return altAtDec(wh, decWin, noonWin); };
-  var maxAltSum = altAtSum(noonSum); // absolute maximum = scale reference
+  var maxAltSum = altAtSum(noonSum);
   if(maxAltSum<1) maxAltSum=1;
   var maxAltWin = altAtWin(noonWin);
 
-  // Sunrise/set for solstices (TSV, convert to watch)
-  var ssSum = sunriseSunset(state.lat, 172);
-  var ssWin = sunriseSunset(state.lat, 355);
-  var toWatchS = function(tsvH, eqtV){ return ((tsvH - eqtV/60 - state.lon/15 + effectiveUtc)%24+24)%24; };
-  var riseSumH = ssSum.rise ? toWatchS(ssSum.rise, eqtSum) : null;
-  var setSumH  = ssSum.set  ? toWatchS(ssSum.set,  eqtSum) : null;
-  var riseWinH = ssWin.rise ? toWatchS(ssWin.rise, eqtWin) : null;
-  var setWinH  = ssWin.set  ? toWatchS(ssWin.set,  eqtWin) : null;
+  // Compute solstice rise/set directly from hour angle
+  var cosHsum = (Math.sin(d2r(-0.833)) - Math.sin(latR)*Math.sin(d2r(decSum))) /
+                (Math.cos(latR)*Math.cos(d2r(decSum)));
+  var cosHwin = (Math.sin(d2r(-0.833)) - Math.sin(latR)*Math.sin(d2r(decWin))) /
+                (Math.cos(latR)*Math.cos(d2r(decWin)));
+  var toW = function(tsvH, eqtV){ return ((tsvH - eqtV/60 - state.lon/15 + effectiveUtc)%24+24)%24; };
+  var riseSumH=null, setSumH=null, riseWinH=null, setWinH=null;
+  if(cosHsum>=-1 && cosHsum<=1){
+    var H0s=r2d(Math.acos(cosHsum));
+    riseSumH=toW(12-H0s/15, eqtSum); setSumH=toW(12+H0s/15, eqtSum);
+  }
+  if(cosHwin>=-1 && cosHwin<=1){
+    var H0w=r2d(Math.acos(cosHwin));
+    riseWinH=toW(12-H0w/15, eqtWin); setWinH=toW(12+H0w/15, eqtWin);
+  }
 
   // Y axis scaled to summer solstice max (so arc of today fits inside)
   var yScale = maxAltSum;
