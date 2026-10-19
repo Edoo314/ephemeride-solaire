@@ -173,7 +173,7 @@ input[type="date"]:focus, input[type="text"]:focus, input[type="number"]:focus {
   border-radius: var(--radius-lg); padding: 1rem 1.25rem .75rem;
   margin-bottom: 16px; box-shadow: var(--shadow);
 }
-.sundial-canvas { width: 100%; height: 220px; display: block; cursor: default; }
+.sundial-canvas { width: 100%; height: 300px; display: block; cursor: default; max-width: 700px; margin: 0 auto; }
 .sundial-legend {
   display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px;
   font-size: 11px; color: var(--fg-3);
@@ -950,10 +950,10 @@ function drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr){
   var canvas = document.getElementById('sundial-canvas');
   if(!canvas.getContext) return;
   var W = canvas.offsetWidth * window.devicePixelRatio || 600;
-  var H = 220 * window.devicePixelRatio || 220;
+  var H = 300 * window.devicePixelRatio || 300;
   canvas.width  = W;
   canvas.height = H;
-  canvas.style.height = '220px';
+  canvas.style.height = '300px';
   var ctx = canvas.getContext('2d');
 
   var dpr = window.devicePixelRatio || 1;
@@ -973,7 +973,7 @@ function drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr){
 
   ctx.clearRect(0,0,w,h);
 
-  var cx = w/2, cy = h*0.72, rx = w*0.44, ry = h*0.56;
+  var cx = w/2, cy = h*0.78, rx = w*0.42, ry = h*0.68;
 
   // Sky gradient
   var grad = ctx.createLinearGradient(0,0,0,cy);
@@ -1060,12 +1060,6 @@ function drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr){
     ctx.fillText(ss.polar==='night'?'Nuit polaire':'Jour polaire', cx, cy-40);
   }
 
-  // Cardinal directions
-  ctx.fillStyle = hrzC;
-  ctx.font = '11px DM Sans, system-ui';
-  ctx.textAlign = 'left';  ctx.fillText('E', 12, cy-6);
-  ctx.textAlign = 'right'; ctx.fillText('O', w-12, cy-6);
-  ctx.textAlign = 'center';ctx.fillText('S', cx, cy-ry*sundialData.scaleY - 10 > 16 ? cy-ry*sundialData.scaleY-10 : 16);
 }
 
 function drawSundialHand(solarOverride){
@@ -1075,16 +1069,77 @@ function drawSundialHand(solarOverride){
   var dpr = window.devicePixelRatio||1;
   var w = canvas.width/dpr, h = canvas.height/dpr;
   var ctx = canvas.getContext('2d');
+
+  var isDark = document.documentElement.getAttribute('data-theme')==='dark' ||
+    (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  var bg   = isDark ? '#242019' : '#FFFFFF';
+  var skyD = isDark ? '#0E1828' : '#1A3A6A';
+  var skyL = isDark ? '#1A2D4A' : '#5B8FCE';
+  var hrzC = isDark ? '#78716C' : '#A8A29E';
+  var arcC = isDark ? 'rgba(245,189,71,0.25)' : 'rgba(245,189,71,0.2)';
+
+  // Full redraw to avoid ghost trail
   ctx.save();
   ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,w,h);
 
-  // Redraw sun dot
+  // Sky
+  var grad = ctx.createLinearGradient(0,0,0,d.cy);
+  grad.addColorStop(0, skyD);
+  grad.addColorStop(1, skyL);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,w,d.cy);
+  ctx.fillStyle = bg;
+  ctx.fillRect(0,d.cy,w,h-d.cy);
+
+  // Horizon
+  ctx.beginPath(); ctx.moveTo(0,d.cy); ctx.lineTo(w,d.cy);
+  ctx.strokeStyle=hrzC; ctx.lineWidth=1.5; ctx.stroke();
+
+  // Arc
+  var steps=120;
+  ctx.beginPath();
+  for(var i=0;i<=steps;i++){
+    var frc=d.riseW+(d.setW-d.riseW)*i/steps;
+    var aa=Math.PI+frc*2*Math.PI;
+    var px=d.cx+d.rx*Math.cos(aa);
+    var py=d.cy-d.ry*d.scaleY*Math.sin(aa);
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.strokeStyle='#F5BD47'; ctx.lineWidth=2.5; ctx.stroke();
+
+  // Fill under arc
+  ctx.beginPath();
+  for(var i=0;i<=steps;i++){
+    var frc=d.riseW+(d.setW-d.riseW)*i/steps;
+    var aa=Math.PI+frc*2*Math.PI;
+    var px=d.cx+d.rx*Math.cos(aa);
+    var py=d.cy-d.ry*d.scaleY*Math.sin(aa);
+    if(i===0) ctx.moveTo(px,d.cy);
+    ctx.lineTo(px,py);
+  }
+  ctx.lineTo(d.cx+d.rx*Math.cos(Math.PI+d.setW*2*Math.PI),d.cy);
+  ctx.closePath(); ctx.fillStyle=arcC; ctx.fill();
+
+  // Rise/set labels
+  var rPtx=d.cx+d.rx*Math.cos(Math.PI+d.riseW*2*Math.PI);
+  var sPtx=d.cx+d.rx*Math.cos(Math.PI+d.setW*2*Math.PI);
+  ctx.fillStyle=hrzC; ctx.font='11px DM Sans,system-ui'; ctx.textAlign='center';
+  ctx.fillText(fmtHm(d.riseW*24), rPtx, d.cy+16);
+  ctx.fillText(fmtHm(d.setW*24),  sPtx, d.cy+16);
+
+  // Cardinals
+  ctx.textAlign='left';  ctx.fillText('E', 12, d.cy-8);
+  ctx.textAlign='right'; ctx.fillText('O', w-12, d.cy-8);
+  var sLabelY = d.cy-d.ry*d.scaleY-12;
+  ctx.textAlign='center'; ctx.fillText('S', d.cx, sLabelY > 16 ? sLabelY : 16);
+
+  // Sun position
   var now = new Date();
   var utcH = now.getUTCHours()+now.getUTCMinutes()/60+now.getUTCSeconds()/3600;
   var dateStr = getDateInput();
   var N = doy(dateStr);
   var EqTc = eqt(N);
-  var effectiveUtc = state.baseUtc!==null?getDSTOffset(state.baseUtc,dateStr):state.utc;
   var solarH = solarOverride !== null && solarOverride !== undefined
     ? solarOverride
     : ((utcH + state.lon/15 + EqTc/60)%24+24)%24;
@@ -1096,26 +1151,26 @@ function drawSundialHand(solarOverride){
     var sy = d.cy - d.ry*d.scaleY*Math.sin(a);
 
     // Glow
-    var grd = ctx.createRadialGradient(sx,sy,0,sx,sy,22);
-    grd.addColorStop(0,'rgba(245,189,71,0.35)');
-    grd.addColorStop(1,'rgba(245,189,71,0)');
-    ctx.beginPath(); ctx.arc(sx,sy,22,0,Math.PI*2);
-    ctx.fillStyle=grd; ctx.fill();
-
-    // Sun circle
-    ctx.beginPath(); ctx.arc(sx,sy,9,0,Math.PI*2);
-    ctx.fillStyle='#F5BD47'; ctx.fill();
-    ctx.strokeStyle='#FFFFFF'; ctx.lineWidth=1.5; ctx.stroke();
+    var grd2 = ctx.createRadialGradient(sx,sy,0,sx,sy,24);
+    grd2.addColorStop(0,'rgba(245,189,71,0.45)');
+    grd2.addColorStop(1,'rgba(245,189,71,0)');
+    ctx.beginPath(); ctx.arc(sx,sy,24,0,Math.PI*2);
+    ctx.fillStyle=grd2; ctx.fill();
 
     // Ray lines
-    ctx.strokeStyle='rgba(245,189,71,0.6)'; ctx.lineWidth=1;
+    ctx.strokeStyle='rgba(245,189,71,0.7)'; ctx.lineWidth=1.5;
     for(var i=0;i<8;i++){
       var ra=Math.PI*2*i/8;
       ctx.beginPath();
-      ctx.moveTo(sx+11*Math.cos(ra),sy+11*Math.sin(ra));
-      ctx.lineTo(sx+15*Math.cos(ra),sy+15*Math.sin(ra));
+      ctx.moveTo(sx+13*Math.cos(ra),sy+13*Math.sin(ra));
+      ctx.lineTo(sx+19*Math.cos(ra),sy+19*Math.sin(ra));
       ctx.stroke();
     }
+
+    // Sun circle
+    ctx.beginPath(); ctx.arc(sx,sy,10,0,Math.PI*2);
+    ctx.fillStyle='#F5BD47'; ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.9)'; ctx.lineWidth=1.5; ctx.stroke();
   }
   ctx.restore();
 }
