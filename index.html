@@ -963,215 +963,263 @@ function drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr){
   var isDark = document.documentElement.getAttribute('data-theme')==='dark' ||
     (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-  var bg   = isDark ? '#242019' : '#FFFFFF';
-  var skyD = isDark ? '#0E1828' : '#1A3A6A';
-  var skyL = isDark ? '#1A2D4A' : '#5B8FCE';
+  var bg   = isDark ? '#242019' : '#F7F4EE';
+  var skyT = isDark ? '#0A1525' : '#0D2B5E';
+  var skyB = isDark ? '#1E3A5F' : '#4A80C4';
   var hrzC = isDark ? '#78716C' : '#A8A29E';
-  var sunC = '#F5BD47';
-  var arcC = isDark ? 'rgba(245,189,71,0.25)' : 'rgba(245,189,71,0.2)';
-  var accC = isDark ? '#D4923F' : '#C47B2B';
+  var arcC = isDark ? 'rgba(245,189,71,0.22)' : 'rgba(245,189,71,0.18)';
+
+  // Layout margins
+  var padL=52, padR=20, padT=32, padB=48;
+  var areaW = w - padL - padR;
+  var areaH = h - padT - padB;
+  var baseY = padT + areaH; // horizon Y
 
   ctx.clearRect(0,0,w,h);
 
-  var cx = w/2, cy = h*0.78, rx = w*0.42, ry = h*0.68;
-
-  // Sky gradient
-  var grad = ctx.createLinearGradient(0,0,0,cy);
-  grad.addColorStop(0, skyD);
-  grad.addColorStop(1, skyL);
-  ctx.fillStyle = grad;
-  ctx.fillRect(0,0,w,cy);
-  ctx.fillStyle = bg;
-  ctx.fillRect(0,cy,w,h-cy);
-
-  // Horizon line
-  ctx.beginPath();
-  ctx.moveTo(0,cy);
-  ctx.lineTo(w,cy);
-  ctx.strokeStyle = hrzC;
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-
-  // Arc of the sun
-  if(ss.polar !== 'night' && ss.rise && ss.set){
-    // Convert rise/set from TSV to fraction 0-1 of day
-    var toWatch = function(tsvH){ return ((tsvH - EqT/60 - state.lon/15 + effectiveUtc)%24+24)%24; };
-    var riseW = toWatch(ss.rise)/24;
-    var setW  = toWatch(ss.set)/24;
-    var noonW = noonH/24;
-
-    // Map hour to angle: 0h=left, noon=top, 24h=right
-    var hourToAngle = function(frac){ return Math.PI + frac*2*Math.PI; }; // 0=bottom-left, noon=top
-    var hourToXY = function(frac){
-      var a = hourToAngle(frac);
-      return { x: cx + rx*Math.cos(a), y: cy - ry*Math.sin(a) };
-    };
-
-    // Max altitude ratio
-    var maxAlt = 90 - Math.abs(state.lat - de);
-    if(maxAlt<0) maxAlt=0;
-    var scaleY = Math.max(0.1, maxAlt/90);
-
-    // Draw arc path
-    ctx.beginPath();
-    var steps = 120;
-    for(var i=0;i<=steps;i++){
-      var frac = riseW + (setW-riseW)*i/steps;
-      var a = Math.PI + frac*2*Math.PI;
-      var px = cx + rx*Math.cos(a);
-      var py = cy - ry*scaleY*Math.sin(a);
-      if(i===0) ctx.moveTo(px,py);
-      else ctx.lineTo(px,py);
-    }
-    ctx.strokeStyle = '#F5BD47';
-    ctx.lineWidth = 2.5;
-    ctx.stroke();
-
-    // Fill under arc
-    ctx.beginPath();
-    for(var i=0;i<=steps;i++){
-      var frac = riseW + (setW-riseW)*i/steps;
-      var a = Math.PI + frac*2*Math.PI;
-      var px = cx + rx*Math.cos(a);
-      var py = cy - ry*scaleY*Math.sin(a);
-      if(i===0) ctx.moveTo(px,cy);
-      ctx.lineTo(px,py);
-    }
-    ctx.lineTo(cx + rx*Math.cos(Math.PI+setW*2*Math.PI), cy);
-    ctx.closePath();
-    ctx.fillStyle = arcC;
-    ctx.fill();
-
-    // Rise/set labels
-    var rPt = { x: cx + rx*Math.cos(Math.PI+riseW*2*Math.PI), y: cy };
-    var sPt = { x: cx + rx*Math.cos(Math.PI+setW*2*Math.PI),  y: cy };
-    ctx.fillStyle = hrzC;
-    ctx.font = '11px DM Sans, system-ui';
-    ctx.textAlign = 'center';
-    ctx.fillText(fmtHm(riseW*24), rPt.x, cy+14);
-    ctx.fillText(fmtHm(setW*24),  sPt.x, cy+14);
-
-    sundialData = {riseW,setW,noonW,scaleY,cx,cy,rx,ry,EqT,effectiveUtc};
-    drawSundialHand(null);
-  } else {
-    ctx.fillStyle = hrzC;
-    ctx.font = '13px DM Sans, system-ui';
-    ctx.textAlign = 'center';
-    ctx.fillText(ss.polar==='night'?'Nuit polaire':'Jour polaire', cx, cy-40);
+  if(ss.polar==='night' || !ss.rise || !ss.set){
+    var gn = ctx.createLinearGradient(0,0,0,h);
+    gn.addColorStop(0,skyT); gn.addColorStop(1,skyB);
+    ctx.fillStyle=gn; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.font='14px DM Sans,system-ui'; ctx.textAlign='center';
+    ctx.fillText(ss.polar==='night'?'Nuit polaire':'Jour polaire', w/2, h/2);
+    sundialData = {};
+    return;
   }
 
+  // Convert TSV hours to watch-time
+  var toWatch = function(tsvH){ return ((tsvH - EqT/60 - state.lon/15 + effectiveUtc)%24+24)%24; };
+  var riseH = toWatch(ss.rise);
+  var setH  = toWatch(ss.set);
+  var noonWH = noonH; // already in watch time
+
+  // X axis: 0–24h across padded area
+  var xOf = function(wh){ return padL + (wh/24)*areaW; };
+
+  // Real altitude at a given watch-hour
+  var latR = state.lat * Math.PI/180;
+  var decR = de * Math.PI/180;
+  var altAt = function(wh){
+    var HA = (wh - noonWH)*15*Math.PI/180;
+    var sinA = Math.sin(latR)*Math.sin(decR)+Math.cos(latR)*Math.cos(decR)*Math.cos(HA);
+    return Math.asin(Math.max(-1,Math.min(1,sinA)))*180/Math.PI;
+  };
+  var maxAlt = altAt(noonWH);
+  if(maxAlt<1) maxAlt=1;
+
+  // Y axis: 0°=baseY, maxAlt=padT+8
+  var yOf = function(altDeg){ return baseY - Math.max(0,altDeg/maxAlt)*(areaH-8); };
+
+  // Background: sky above horizon, ground below
+  var skyGrad = ctx.createLinearGradient(0,padT,0,baseY);
+  skyGrad.addColorStop(0,skyT); skyGrad.addColorStop(1,skyB);
+  ctx.fillStyle=skyGrad; ctx.fillRect(padL,padT,areaW,areaH);
+  ctx.fillStyle=bg; ctx.fillRect(0,baseY,w,h-baseY+1);
+  ctx.fillStyle=bg; ctx.fillRect(0,0,padL,h);
+  ctx.fillStyle=bg; ctx.fillRect(w-padR,0,padR,h);
+  ctx.fillStyle=bg; ctx.fillRect(0,0,w,padT);
+
+  // Subtle vertical grid every 2h
+  ctx.strokeStyle=isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.06)';
+  ctx.lineWidth=1;
+  for(var hh=0;hh<=24;hh+=2){
+    var gx=xOf(hh);
+    ctx.beginPath(); ctx.moveTo(gx,padT); ctx.lineTo(gx,baseY); ctx.stroke();
+  }
+
+  // Horizon line
+  ctx.beginPath(); ctx.moveTo(padL,baseY); ctx.lineTo(padL+areaW,baseY);
+  ctx.strokeStyle=hrzC; ctx.lineWidth=1.5; ctx.stroke();
+
+  // Build arc points rise→set
+  var steps=300;
+  var arcPts=[];
+  for(var i=0;i<=steps;i++){
+    var wh=riseH+(setH-riseH)*(i/steps);
+    var alt=altAt(wh);
+    arcPts.push({x:xOf(wh), y:yOf(Math.max(0,alt))});
+  }
+
+  // Fill under arc
+  ctx.beginPath();
+  ctx.moveTo(arcPts[0].x, baseY);
+  for(var i=0;i<arcPts.length;i++) ctx.lineTo(arcPts[i].x, arcPts[i].y);
+  ctx.lineTo(arcPts[arcPts.length-1].x, baseY);
+  ctx.closePath(); ctx.fillStyle=arcC; ctx.fill();
+
+  // Arc stroke
+  ctx.beginPath();
+  ctx.moveTo(arcPts[0].x, arcPts[0].y);
+  for(var i=1;i<arcPts.length;i++) ctx.lineTo(arcPts[i].x, arcPts[i].y);
+  ctx.strokeStyle='#F5BD47'; ctx.lineWidth=2.5; ctx.stroke();
+
+  // Solar noon dashed vertical
+  var noonX=xOf(noonWH), noonY=yOf(maxAlt);
+  ctx.setLineDash([3,4]);
+  ctx.strokeStyle=isDark?'rgba(245,189,71,0.45)':'rgba(196,123,43,0.45)';
+  ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(noonX,noonY); ctx.lineTo(noonX,baseY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Labels rise/set/noon on horizon
+  ctx.font='bold 11px DM Sans,system-ui'; ctx.textAlign='center';
+  ctx.fillStyle=hrzC;
+  ctx.fillText(fmtHm(riseH), xOf(riseH), baseY+16);
+  ctx.fillText(fmtHm(setH),  xOf(setH),  baseY+16);
+  ctx.fillStyle=isDark?'#D4923F':'#C47B2B';
+  ctx.fillText(fmtHm(noonWH), noonX, baseY+16);
+  // Max altitude label at top of arc
+  ctx.font='11px DM Sans,system-ui';
+  ctx.fillText(Math.round(maxAlt)+'°', noonX, noonY-10);
+
+  // Hour ticks bottom axis
+  ctx.fillStyle=hrzC; ctx.font='10px DM Sans,system-ui'; ctx.textAlign='center';
+  for(var hh=0;hh<=24;hh+=2){
+    var tx=xOf(hh);
+    ctx.beginPath(); ctx.moveTo(tx,baseY); ctx.lineTo(tx,baseY+4);
+    ctx.strokeStyle=hrzC; ctx.lineWidth=1; ctx.stroke();
+    if(hh%4===0){ ctx.fillText(hh+'h', tx, baseY+30); }
+  }
+
+  // Y axis altitude ticks (left)
+  ctx.fillStyle=hrzC; ctx.font='10px DM Sans,system-ui'; ctx.textAlign='right';
+  var altSteps=[0,30,60,90];
+  altSteps.forEach(function(a){
+    if(a>maxAlt) return;
+    var ty=yOf(a);
+    ctx.beginPath(); ctx.moveTo(padL-4,ty); ctx.lineTo(padL,ty);
+    ctx.strokeStyle=hrzC; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillText(a+'°', padL-7, ty+4);
+  });
+
+  sundialData = {riseH,setH,noonWH,maxAlt,xOf,yOf,altAt,EqT,effectiveUtc,w,h,padL,padR,padT,padB,areaW,areaH,baseY,bg,skyT,skyB,hrzC,arcC,isDark};
+  drawSundialHand(null);
 }
 
 function drawSundialHand(solarOverride){
   var canvas = document.getElementById('sundial-canvas');
-  if(!canvas.getContext || !sundialData.cx) return;
+  if(!canvas.getContext || !sundialData.xOf) return;
   var d = sundialData;
   var dpr = window.devicePixelRatio||1;
-  var w = canvas.width/dpr, h = canvas.height/dpr;
   var ctx = canvas.getContext('2d');
 
-  var isDark = document.documentElement.getAttribute('data-theme')==='dark' ||
-    (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  var bg   = isDark ? '#242019' : '#FFFFFF';
-  var skyD = isDark ? '#0E1828' : '#1A3A6A';
-  var skyL = isDark ? '#1A2D4A' : '#5B8FCE';
-  var hrzC = isDark ? '#78716C' : '#A8A29E';
-  var arcC = isDark ? 'rgba(245,189,71,0.25)' : 'rgba(245,189,71,0.2)';
-
-  // Full redraw to avoid ghost trail
-  ctx.save();
-  ctx.scale(dpr,dpr);
-  ctx.clearRect(0,0,w,h);
-
-  // Sky
-  var grad = ctx.createLinearGradient(0,0,0,d.cy);
-  grad.addColorStop(0, skyD);
-  grad.addColorStop(1, skyL);
-  ctx.fillStyle = grad;
-  ctx.fillRect(0,0,w,d.cy);
-  ctx.fillStyle = bg;
-  ctx.fillRect(0,d.cy,w,h-d.cy);
-
-  // Horizon
-  ctx.beginPath(); ctx.moveTo(0,d.cy); ctx.lineTo(w,d.cy);
-  ctx.strokeStyle=hrzC; ctx.lineWidth=1.5; ctx.stroke();
-
-  // Arc
-  var steps=120;
-  ctx.beginPath();
-  for(var i=0;i<=steps;i++){
-    var frc=d.riseW+(d.setW-d.riseW)*i/steps;
-    var aa=Math.PI+frc*2*Math.PI;
-    var px=d.cx+d.rx*Math.cos(aa);
-    var py=d.cy-d.ry*d.scaleY*Math.sin(aa);
-    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
-  }
-  ctx.strokeStyle='#F5BD47'; ctx.lineWidth=2.5; ctx.stroke();
-
-  // Fill under arc
-  ctx.beginPath();
-  for(var i=0;i<=steps;i++){
-    var frc=d.riseW+(d.setW-d.riseW)*i/steps;
-    var aa=Math.PI+frc*2*Math.PI;
-    var px=d.cx+d.rx*Math.cos(aa);
-    var py=d.cy-d.ry*d.scaleY*Math.sin(aa);
-    if(i===0) ctx.moveTo(px,d.cy);
-    ctx.lineTo(px,py);
-  }
-  ctx.lineTo(d.cx+d.rx*Math.cos(Math.PI+d.setW*2*Math.PI),d.cy);
-  ctx.closePath(); ctx.fillStyle=arcC; ctx.fill();
-
-  // Rise/set labels
-  var rPtx=d.cx+d.rx*Math.cos(Math.PI+d.riseW*2*Math.PI);
-  var sPtx=d.cx+d.rx*Math.cos(Math.PI+d.setW*2*Math.PI);
-  ctx.fillStyle=hrzC; ctx.font='11px DM Sans,system-ui'; ctx.textAlign='center';
-  ctx.fillText(fmtHm(d.riseW*24), rPtx, d.cy+16);
-  ctx.fillText(fmtHm(d.setW*24),  sPtx, d.cy+16);
-
-  // Cardinals
-  ctx.textAlign='left';  ctx.fillText('E', 12, d.cy-8);
-  ctx.textAlign='right'; ctx.fillText('O', w-12, d.cy-8);
-  var sLabelY = d.cy-d.ry*d.scaleY-12;
-  ctx.textAlign='center'; ctx.fillText('S', d.cx, sLabelY > 16 ? sLabelY : 16);
-
-  // Sun position
+  // Compute current watch hour
   var now = new Date();
   var utcH = now.getUTCHours()+now.getUTCMinutes()/60+now.getUTCSeconds()/3600;
   var dateStr = getDateInput();
   var N = doy(dateStr);
   var EqTc = eqt(N);
-  var solarH = solarOverride !== null && solarOverride !== undefined
-    ? solarOverride
-    : ((utcH + state.lon/15 + EqTc/60)%24+24)%24;
-  var frac = solarH/24;
-
-  if(frac >= d.riseW && frac <= d.setW){
-    var a = Math.PI + frac*2*Math.PI;
-    var sx = d.cx + d.rx*Math.cos(a);
-    var sy = d.cy - d.ry*d.scaleY*Math.sin(a);
-
-    // Glow
-    var grd2 = ctx.createRadialGradient(sx,sy,0,sx,sy,24);
-    grd2.addColorStop(0,'rgba(245,189,71,0.45)');
-    grd2.addColorStop(1,'rgba(245,189,71,0)');
-    ctx.beginPath(); ctx.arc(sx,sy,24,0,Math.PI*2);
-    ctx.fillStyle=grd2; ctx.fill();
-
-    // Ray lines
-    ctx.strokeStyle='rgba(245,189,71,0.7)'; ctx.lineWidth=1.5;
-    for(var i=0;i<8;i++){
-      var ra=Math.PI*2*i/8;
-      ctx.beginPath();
-      ctx.moveTo(sx+13*Math.cos(ra),sy+13*Math.sin(ra));
-      ctx.lineTo(sx+19*Math.cos(ra),sy+19*Math.sin(ra));
-      ctx.stroke();
-    }
-
-    // Sun circle
-    ctx.beginPath(); ctx.arc(sx,sy,10,0,Math.PI*2);
-    ctx.fillStyle='#F5BD47'; ctx.fill();
-    ctx.strokeStyle='rgba(255,255,255,0.9)'; ctx.lineWidth=1.5; ctx.stroke();
+  var watchH;
+  if(solarOverride !== null && solarOverride !== undefined){
+    watchH = ((solarOverride - EqTc/60 - state.lon/15 + d.effectiveUtc)%24+24)%24;
+  } else {
+    watchH = ((utcH + d.effectiveUtc)%24+24)%24;
   }
+
+  // --- Full background redraw to eliminate ghost trail ---
+  ctx.save();
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,d.w,d.h);
+
+  // Sky
+  var skyGrad = ctx.createLinearGradient(0,d.padT,0,d.baseY);
+  skyGrad.addColorStop(0,d.skyT); skyGrad.addColorStop(1,d.skyB);
+  ctx.fillStyle=skyGrad; ctx.fillRect(d.padL,d.padT,d.areaW,d.areaH);
+  ctx.fillStyle=d.bg;
+  ctx.fillRect(0,d.baseY,d.w,d.h-d.baseY+1);
+  ctx.fillRect(0,0,d.padL,d.h);
+  ctx.fillRect(d.w-d.padR,0,d.padR,d.h);
+  ctx.fillRect(0,0,d.w,d.padT);
+
+  // Grid
+  ctx.strokeStyle=d.isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.06)';
+  ctx.lineWidth=1;
+  for(var hh=0;hh<=24;hh+=2){
+    var gx=d.xOf(hh);
+    ctx.beginPath(); ctx.moveTo(gx,d.padT); ctx.lineTo(gx,d.baseY); ctx.stroke();
+  }
+
+  // Horizon
+  ctx.beginPath(); ctx.moveTo(d.padL,d.baseY); ctx.lineTo(d.padL+d.areaW,d.baseY);
+  ctx.strokeStyle=d.hrzC; ctx.lineWidth=1.5; ctx.stroke();
+
+  // Arc fill + stroke
+  var steps=300, arcPts=[];
+  for(var i=0;i<=steps;i++){
+    var wh2=d.riseH+(d.setH-d.riseH)*(i/steps);
+    var alt2=d.altAt(wh2);
+    arcPts.push({x:d.xOf(wh2),y:d.yOf(Math.max(0,alt2))});
+  }
+  ctx.beginPath(); ctx.moveTo(arcPts[0].x,d.baseY);
+  for(var i=0;i<arcPts.length;i++) ctx.lineTo(arcPts[i].x,arcPts[i].y);
+  ctx.lineTo(arcPts[arcPts.length-1].x,d.baseY);
+  ctx.closePath(); ctx.fillStyle=d.arcC; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(arcPts[0].x,arcPts[0].y);
+  for(var i=1;i<arcPts.length;i++) ctx.lineTo(arcPts[i].x,arcPts[i].y);
+  ctx.strokeStyle='#F5BD47'; ctx.lineWidth=2.5; ctx.stroke();
+
+  // Noon dashed
+  var noonX=d.xOf(d.noonWH), noonY=d.yOf(d.maxAlt);
+  ctx.setLineDash([3,4]);
+  ctx.strokeStyle=d.isDark?'rgba(245,189,71,0.45)':'rgba(196,123,43,0.45)';
+  ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(noonX,noonY); ctx.lineTo(noonX,d.baseY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Labels
+  ctx.font='bold 11px DM Sans,system-ui'; ctx.textAlign='center';
+  ctx.fillStyle=d.hrzC;
+  ctx.fillText(fmtHm(d.riseH), d.xOf(d.riseH), d.baseY+16);
+  ctx.fillText(fmtHm(d.setH),  d.xOf(d.setH),  d.baseY+16);
+  ctx.fillStyle=d.isDark?'#D4923F':'#C47B2B';
+  ctx.fillText(fmtHm(d.noonWH), noonX, d.baseY+16);
+  ctx.font='11px DM Sans,system-ui';
+  ctx.fillText(Math.round(d.maxAlt)+'°', noonX, noonY-10);
+
+  // Hour ticks
+  ctx.fillStyle=d.hrzC; ctx.font='10px DM Sans,system-ui'; ctx.textAlign='center';
+  for(var hh=0;hh<=24;hh+=2){
+    var tx=d.xOf(hh);
+    ctx.beginPath(); ctx.moveTo(tx,d.baseY); ctx.lineTo(tx,d.baseY+4);
+    ctx.strokeStyle=d.hrzC; ctx.lineWidth=1; ctx.stroke();
+    if(hh%4===0) ctx.fillText(hh+'h', tx, d.baseY+30);
+  }
+
+  // Y axis ticks
+  ctx.fillStyle=d.hrzC; ctx.font='10px DM Sans,system-ui'; ctx.textAlign='right';
+  [0,30,60,90].forEach(function(a){
+    if(a>d.maxAlt) return;
+    var ty=d.yOf(a);
+    ctx.beginPath(); ctx.moveTo(d.padL-4,ty); ctx.lineTo(d.padL,ty);
+    ctx.strokeStyle=d.hrzC; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillText(a+'°', d.padL-7, ty+4);
+  });
+
+  // --- Draw sun ---
+  var alt = d.altAt(watchH);
+  if(alt >= 0){
+    var sx = d.xOf(watchH);
+    var sy = d.yOf(alt);
+    if(sx >= d.padL && sx <= d.padL+d.areaW){
+      var grd = ctx.createRadialGradient(sx,sy,0,sx,sy,26);
+      grd.addColorStop(0,'rgba(245,189,71,0.5)');
+      grd.addColorStop(1,'rgba(245,189,71,0)');
+      ctx.beginPath(); ctx.arc(sx,sy,26,0,Math.PI*2);
+      ctx.fillStyle=grd; ctx.fill();
+      ctx.strokeStyle='rgba(245,189,71,0.75)'; ctx.lineWidth=1.5;
+      for(var i=0;i<8;i++){
+        var ra=Math.PI*2*i/8;
+        ctx.beginPath();
+        ctx.moveTo(sx+13*Math.cos(ra),sy+13*Math.sin(ra));
+        ctx.lineTo(sx+20*Math.cos(ra),sy+20*Math.sin(ra));
+        ctx.stroke();
+      }
+      ctx.beginPath(); ctx.arc(sx,sy,10,0,Math.PI*2);
+      ctx.fillStyle='#F5BD47'; ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,0.9)'; ctx.lineWidth=1.5; ctx.stroke();
+    }
+  }
+
   ctx.restore();
 }
 
