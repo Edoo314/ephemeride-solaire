@@ -435,6 +435,7 @@ input[type="date"]:focus, input[type="text"]:focus, input[type="number"]:focus {
   <button class="tab-btn" onclick="switchTab('comparateur')">Comparateur</button>
   <button class="tab-btn" onclick="switchTab('widget')">Widget</button>
   <button class="tab-btn" onclick="switchTab('lieu')">Lieu</button>
+  <button class="tab-btn" onclick="switchTab('saisons')">Saisons</button>
   <button class="tab-btn" onclick="switchTab('explication')">Explications</button>
 </nav>
 
@@ -653,6 +654,170 @@ input[type="date"]:focus, input[type="text"]:focus, input[type="number"]:focus {
     </div>
     <button class="btn primary" onclick="applyManual()">Rechercher le temps solaire de ce lieu</button>
     <div id="manual-status" class="status-msg"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PANEL: SAISONS ═══════════════════════════════ -->
+<div class="panel" id="panel-saisons">
+  <div class="explic-section">
+
+    <div class="explic-h2">La Terre, le Soleil et les saisons</div>
+    <p class="explic-p">Les saisons ne sont <strong>pas</strong> causées par la distance Terre–Soleil (la Terre est même plus proche du Soleil en janvier !). Elles sont la conséquence de l'<strong>inclinaison de l'axe terrestre</strong> — 23,45° par rapport au plan de l'orbite — qui reste fixe dans l'espace pendant que la Terre tourne autour du Soleil.</p>
+
+    <!-- SVG: orbite terrestre avec 4 positions -->
+    <div style="text-align:center;margin:24px 0">
+    <svg viewBox="0 0 520 320" width="100%" style="max-width:520px;font-family:DM Sans,system-ui">
+      <defs>
+        <radialGradient id="sunG" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#FFE066"/>
+          <stop offset="100%" stop-color="#F5A623"/>
+        </radialGradient>
+      </defs>
+      <!-- Orbite -->
+      <ellipse cx="260" cy="160" rx="200" ry="110" fill="none" stroke="var(--border-md)" stroke-width="1.5" stroke-dasharray="5,4"/>
+      <!-- Soleil -->
+      <circle cx="260" cy="160" r="26" fill="url(#sunG)"/>
+      <text x="260" y="165" text-anchor="middle" font-size="11" fill="#7A4500" font-weight="600">Soleil</text>
+      <!-- Positions: haut=juin, droite=sept, bas=déc, gauche=mars -->
+      <!-- JUIN: solstice été NH -->
+      <line x1="260" y1="52" x2="245" y2="38" stroke="#E07B20" stroke-width="2"/>
+      <line x1="260" y1="52" x2="275" y2="38" stroke="#E07B20" stroke-width="2"/>
+      <circle cx="260" cy="52" r="13" fill="var(--blue)" opacity=".85"/>
+      <text x="260" y="56" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">Terre</text>
+      <text x="260" y="28" text-anchor="middle" font-size="11" fill="var(--accent)" font-weight="700">Solstice été</text>
+      <text x="260" y="18" text-anchor="middle" font-size="10" fill="var(--fg-2)">21 juin</text>
+      <!-- DÉCEMBRE: solstice hiver NH -->
+      <line x1="260" y1="268" x2="275" y2="282" stroke="#E07B20" stroke-width="2"/>
+      <line x1="260" y1="268" x2="245" y2="282" stroke="#E07B20" stroke-width="2"/>
+      <circle cx="260" cy="268" r="13" fill="var(--blue)" opacity=".85"/>
+      <text x="260" y="272" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">Terre</text>
+      <text x="260" y="300" text-anchor="middle" font-size="11" fill="#5B9DC8" font-weight="700">Solstice hiver</text>
+      <text x="260" y="312" text-anchor="middle" font-size="10" fill="var(--fg-2)">21 décembre</text>
+      <!-- MARS: équinoxe printemps -->
+      <line x1="62" y1="160" x2="50" y2="147" stroke="#888" stroke-width="1.5"/>
+      <line x1="62" y1="160" x2="50" y2="173" stroke="#888" stroke-width="1.5"/>
+      <circle cx="62" cy="160" r="13" fill="var(--blue)" opacity=".85"/>
+      <text x="62" y="164" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">Terre</text>
+      <text x="30" y="146" text-anchor="middle" font-size="10" fill="var(--fg-2)">Équinoxe</text>
+      <text x="30" y="158" text-anchor="middle" font-size="10" fill="var(--fg-2)">printemps</text>
+      <text x="30" y="170" text-anchor="middle" font-size="10" fill="var(--fg-2)">20 mars</text>
+      <!-- SEPTEMBRE: équinoxe automne -->
+      <line x1="458" y1="160" x2="470" y2="147" stroke="#888" stroke-width="1.5"/>
+      <line x1="458" y1="160" x2="470" y2="173" stroke="#888" stroke-width="1.5"/>
+      <circle cx="458" cy="160" r="13" fill="var(--blue)" opacity=".85"/>
+      <text x="458" y="164" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">Terre</text>
+      <text x="490" y="146" text-anchor="middle" font-size="10" fill="var(--fg-2)">Équinoxe</text>
+      <text x="490" y="158" text-anchor="middle" font-size="10" fill="var(--fg-2)">automne</text>
+      <text x="490" y="170" text-anchor="middle" font-size="10" fill="var(--fg-2)">22 sept.</text>
+    </svg>
+    </div>
+
+    <div class="explic-callout">🔑 L'axe terrestre pointe toujours vers l'étoile Polaire, quelle que soit la position sur l'orbite. C'est cette fixité qui crée les saisons.</div>
+
+    <div class="explic-h3">Hémisphère Nord vs Hémisphère Sud</div>
+    <p class="explic-p">Quand l'axe nord est incliné <em>vers</em> le Soleil (juin), l'hémisphère nord reçoit les rayons plus verticalement et bénéficie de journées longues → <strong>été au nord, hiver au sud</strong>. Six mois plus tard (décembre), c'est l'inverse.</p>
+
+    <!-- Tableau comparatif saisons -->
+    <div style="overflow-x:auto;margin:16px 0">
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead>
+        <tr style="background:var(--bg-muted)">
+          <th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border-md)">Date</th>
+          <th style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-md)">🌍 Hémisphère Nord</th>
+          <th style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-md)">🌏 Hémisphère Sud</th>
+          <th style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-md)">Déclinaison solaire</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><strong>20 mars</strong> — Équinoxe</td>
+          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">🌸 Printemps</td>
+          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">🍂 Automne</td>
+          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">0°</td>
+        </tr>
+        <tr style="background:var(--bg-muted)">
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><strong>21 juin</strong> — Solstice</td>
+          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">☀️ Été (jour le + long)</td>
+          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">❄️ Hiver (nuit la + longue)</td>
+          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">+23,45°</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><strong>22 sept.</strong> — Équinoxe</td>
+          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">🍂 Automne</td>
+          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">🌸 Printemps</td>
+          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">0°</td>
+        </tr>
+        <tr style="background:var(--bg-muted)">
+          <td style="padding:8px 12px"><strong>21 déc.</strong> — Solstice</td>
+          <td style="padding:8px 12px;text-align:center">❄️ Hiver (nuit la + longue)</td>
+          <td style="padding:8px 12px;text-align:center">☀️ Été (jour le + long)</td>
+          <td style="padding:8px 12px;text-align:center">−23,45°</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="explic-h3">La durée du jour varie selon la latitude</div>
+    <p class="explic-p">Plus on s'éloigne de l'équateur, plus la variation saisonnière de la durée du jour est prononcée. À l'équateur, le jour dure presque toujours 12h. En France (48°N), elle varie de ~8h en hiver à ~16h en été. Au cercle polaire arctique (66,5°N), on atteint le soleil de minuit et la nuit polaire.</p>
+
+    <!-- SVG: durée du jour selon latitude -->
+    <div style="text-align:center;margin:24px 0">
+    <svg viewBox="0 0 480 220" width="100%" style="max-width:480px;font-family:DM Sans,system-ui">
+      <!-- Axes -->
+      <line x1="60" y1="10" x2="60" y2="180" stroke="var(--fg-3)" stroke-width="1"/>
+      <line x1="60" y1="180" x2="460" y2="180" stroke="var(--fg-3)" stroke-width="1"/>
+      <!-- Y labels -->
+      <text x="52" y="184" text-anchor="end" font-size="10" fill="var(--fg-2)">0h</text>
+      <text x="52" y="137" text-anchor="end" font-size="10" fill="var(--fg-2)">8h</text>
+      <text x="52" y="90" text-anchor="end" font-size="10" fill="var(--fg-2)">16h</text>
+      <text x="52" y="43" text-anchor="end" font-size="10" fill="var(--fg-2)">24h</text>
+      <line x1="58" y1="137" x2="460" y2="137" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="58" y1="90" x2="460" y2="90" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="58" y1="43" x2="460" y2="43" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3"/>
+      <!-- X labels (mois) -->
+      <text x="84"  y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Jan</text>
+      <text x="117" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Fév</text>
+      <text x="150" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Mar</text>
+      <text x="183" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Avr</text>
+      <text x="216" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Mai</text>
+      <text x="249" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Juin</text>
+      <text x="282" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Juil</text>
+      <text x="315" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Aoû</text>
+      <text x="348" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Sep</text>
+      <text x="381" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Oct</text>
+      <text x="414" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Nov</text>
+      <text x="447" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Déc</text>
+      <!-- Courbes calculées (valeurs précalculées pour 3 latitudes) -->
+      <!-- Équateur 0° : ~12h toute l'année -->
+      <polyline points="60,90 460,90" fill="none" stroke="#2ECC71" stroke-width="2"/>
+      <!-- Paris 48°N : 8h en jan, 16h en juin -->
+      <polyline points="60,137 84,133 117,122 150,105 183,86 216,68 249,61 282,66 315,83 348,100 381,118 414,131 447,138 460,139"
+        fill="none" stroke="#F5A623" stroke-width="2"/>
+      <!-- Cercle polaire 66°N : soleil de minuit + nuit polaire -->
+      <polyline points="60,162 84,152 117,127 150,95 183,58 216,25 249,10 282,23 315,55 348,92 381,128 414,155 447,164 460,165"
+        fill="none" stroke="#5B9DC8" stroke-width="2"/>
+      <!-- Légendes -->
+      <circle cx="80" cy="210" r="5" fill="#2ECC71"/>
+      <text x="90" y="214" font-size="10" fill="var(--fg-2)">Équateur (0°)</text>
+      <circle cx="180" cy="210" r="5" fill="#F5A623"/>
+      <text x="190" y="214" font-size="10" fill="var(--fg-2)">Paris (48°N)</text>
+      <circle cx="290" cy="210" r="5" fill="#5B9DC8"/>
+      <text x="300" y="214" font-size="10" fill="var(--fg-2)">Cercle polaire (66°N)</text>
+    </svg>
+    </div>
+
+    <div class="explic-h3">Les cercles polaires et les tropiques</div>
+    <p class="explic-p">Ces parallèles remarquables sont définis par l'obliquité de 23,45° :</p>
+    <ul class="explic-sources" style="list-style:none;padding:0">
+      <li style="padding:6px 0;border-bottom:1px solid var(--border)">🔵 <strong>Cercle polaire arctique (66,5°N)</strong> — Au moins un jour sans coucher du soleil et un jour sans lever par an.</li>
+      <li style="padding:6px 0;border-bottom:1px solid var(--border)">🟡 <strong>Tropique du Cancer (23,45°N)</strong> — Le Soleil passe exactement au zénith le 21 juin.</li>
+      <li style="padding:6px 0;border-bottom:1px solid var(--border)">🟢 <strong>Équateur (0°)</strong> — Jours et nuits quasiment égaux toute l'année.</li>
+      <li style="padding:6px 0;border-bottom:1px solid var(--border)">🟡 <strong>Tropique du Capricorne (23,45°S)</strong> — Le Soleil passe au zénith le 21 décembre.</li>
+      <li style="padding:6px 0">🔵 <strong>Cercle polaire antarctique (66,5°S)</strong> — Symétrique de l'arctique, six mois décalés.</li>
+    </ul>
+
+    <div class="explic-callout">💡 La Terre est au <strong>périhélie</strong> (point le plus proche du Soleil) vers le 3 janvier — en plein hiver dans l'hémisphère nord. La distance ne fait pas les saisons : c'est l'angle d'incidence des rayons qui compte.</div>
+
   </div>
 </div>
 
@@ -947,6 +1112,7 @@ function tickClock(){
 var sundialData = {};
 
 function drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr){
+  if(!ss) { drawSundialHand(null); return; }
   var canvas = document.getElementById('sundial-canvas');
   if(!canvas.getContext) return;
   var W = canvas.offsetWidth * window.devicePixelRatio || 600;
@@ -1231,15 +1397,19 @@ function drawSundialHand(solarOverride){
     d.isDark?'rgba(255,140,30,0.85)':'rgba(210,90,10,0.75)', [8,5]);
   drawSolArc(d.riseWinH, d.setWinH, d.altAtWin,
     d.isDark?'rgba(110,170,255,0.85)':'rgba(50,90,200,0.75)', [4,4]);
-  // Solstice labels at peak
+  // Solstice labels — always inside sky area (clamped to padT+14)
   ctx.font='bold 10px DM Sans,system-ui'; ctx.textAlign='center';
   if(d.riseSumH!=null && d.setSumH!=null){
+    var syS = Math.max(d.padT+14, d.yOf(d.maxAltSum)+14);
     ctx.fillStyle=d.isDark?'rgba(255,150,40,0.95)':'rgba(190,80,10,0.9)';
-    ctx.fillText('21 juin · '+Math.round(d.maxAltSum)+'°', d.xOf(d.noonSum||d.noonWH), d.yOf(d.maxAltSum)-6);
+    ctx.fillText('21 juin · '+Math.round(d.maxAltSum)+'°', d.xOf(d.noonSum||d.noonWH), syS);
   }
   if(d.riseWinH!=null && d.setWinH!=null && d.maxAltWin>1){
+    var syW = Math.max(d.padT+14, d.yOf(d.maxAltWin)+14);
+    // keep winter label at least 16px below summer label
+    if(d.riseSumH!=null){ syW = Math.max(syW, Math.max(d.padT+14, d.yOf(d.maxAltSum)+14)+16); }
     ctx.fillStyle=d.isDark?'rgba(110,170,255,0.95)':'rgba(40,80,190,0.9)';
-    ctx.fillText('21 déc · '+Math.round(d.maxAltWin)+'°', d.xOf(d.noonWin||d.noonWH), d.yOf(d.maxAltWin)-6);
+    ctx.fillText('21 déc · '+Math.round(d.maxAltWin)+'°', d.xOf(d.noonWin||d.noonWH), syW);
   }
 
   // Arc fill + stroke
@@ -1736,7 +1906,7 @@ function switchTab(id){
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
   document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
   document.getElementById('panel-'+id).classList.add('active');
-  var idx = {main:0,annuel:1,comparateur:2,widget:3,lieu:4,explication:5}[id];
+  var idx = {main:0,annuel:1,comparateur:2,widget:3,lieu:4,saisons:5,explication:6}[id];
   var btns = document.querySelectorAll('.tab-btn');
   if(btns[idx]) btns[idx].classList.add('active');
   if(id==='annuel') { setTimeout(drawAnnual,50); }
@@ -1752,7 +1922,7 @@ function toggleTheme(){
   var cur=r.getAttribute('data-theme');
   var next = cur==='dark'?'light':(cur==='light'?null:'dark');
   if(next) r.setAttribute('data-theme',next); else r.removeAttribute('data-theme');
-  if(state.loaded){ setTimeout(function(){drawSundial(null,null,null,null,null,null);compute();},30); }
+  if(state.loaded){ setTimeout(function(){compute();},30); }
   if(document.getElementById('panel-annuel').classList.contains('active')) setTimeout(drawAnnual,60);
 }
 
