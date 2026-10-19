@@ -1156,7 +1156,7 @@ function drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr){
     if(a%15===0) ctx.fillText(a+'°', padL-7, ty+4);
   });
 
-  sundialData = {riseH,setH,noonWH,maxAlt,yScale,xOf,yOf,altAt,altAtSum,altAtWin,
+  sundialData = {riseH,setH,noonWH,noonSum,noonWin,maxAlt,yScale,xOf,yOf,altAt,altAtSum,altAtWin,
     riseSumH,setSumH,riseWinH,setWinH,maxAltSum,maxAltWin,
     EqT,effectiveUtc,w,h,padL,padR,padT,padB,areaW,areaH,baseY,bg,skyT,skyB,hrzC,arcC,isDark};
   drawSundialHand(null);
@@ -1208,6 +1208,34 @@ function drawSundialHand(solarOverride){
   // Horizon
   ctx.beginPath(); ctx.moveTo(d.padL,d.baseY); ctx.lineTo(d.padL+d.areaW,d.baseY);
   ctx.strokeStyle=d.hrzC; ctx.lineWidth=1.5; ctx.stroke();
+
+  // Solstice reference arcs (drawn before today so they appear behind)
+  var drawSolArc = function(rWH, sWH, altFn, color, dash){
+    if(rWH==null || sWH==null) return;
+    ctx.setLineDash(dash); ctx.strokeStyle=color; ctx.lineWidth=1.8;
+    ctx.beginPath(); var started=false;
+    for(var k=0;k<=200;k++){
+      var wk=rWH+(sWH-rWH)*(k/200);
+      var ak=altFn(wk); if(ak<0) continue;
+      var px=d.xOf(wk), py=d.yOf(ak);
+      if(!started){ctx.moveTo(px,py);started=true;} else ctx.lineTo(px,py);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+  };
+  drawSolArc(d.riseSumH, d.setSumH, d.altAtSum,
+    d.isDark?'rgba(255,140,30,0.85)':'rgba(210,90,10,0.75)', [8,5]);
+  drawSolArc(d.riseWinH, d.setWinH, d.altAtWin,
+    d.isDark?'rgba(110,170,255,0.85)':'rgba(50,90,200,0.75)', [4,4]);
+  // Solstice labels at peak
+  ctx.font='bold 10px DM Sans,system-ui'; ctx.textAlign='center';
+  if(d.riseSumH!=null && d.setSumH!=null){
+    ctx.fillStyle=d.isDark?'rgba(255,150,40,0.95)':'rgba(190,80,10,0.9)';
+    ctx.fillText('21 juin · '+Math.round(d.maxAltSum)+'°', d.xOf(d.noonSum||d.noonWH), d.yOf(d.maxAltSum)-6);
+  }
+  if(d.riseWinH!=null && d.setWinH!=null && d.maxAltWin>1){
+    ctx.fillStyle=d.isDark?'rgba(110,170,255,0.95)':'rgba(40,80,190,0.9)';
+    ctx.fillText('21 déc · '+Math.round(d.maxAltWin)+'°', d.xOf(d.noonWin||d.noonWH), d.yOf(d.maxAltWin)-6);
+  }
 
   // Arc fill + stroke
   var steps=300, arcPts=[];
