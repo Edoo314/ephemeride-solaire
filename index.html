@@ -996,21 +996,51 @@ function drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr){
   // X axis: 0–24h across padded area
   var xOf = function(wh){ return padL + (wh/24)*areaW; };
 
-  // Real altitude at a given watch-hour
   var latR = state.lat * Math.PI/180;
   var decR = de * Math.PI/180;
-  var altAt = function(wh){
-    var HA = (wh - noonWH)*15*Math.PI/180;
-    var sinA = Math.sin(latR)*Math.sin(decR)+Math.cos(latR)*Math.cos(decR)*Math.cos(HA);
+
+  // Generic altitude function for any declination and noon hour
+  var altAtDec = function(wh, decDeg, noonH_){
+    var decRad = decDeg*Math.PI/180;
+    var HA = (wh - noonH_)*15*Math.PI/180;
+    var sinA = Math.sin(latR)*Math.sin(decRad)+Math.cos(latR)*Math.cos(decRad)*Math.cos(HA);
     return Math.asin(Math.max(-1,Math.min(1,sinA)))*180/Math.PI;
   };
+
+  // Today
+  var altAt = function(wh){ return altAtDec(wh, de, noonWH); };
   var maxAlt = altAt(noonWH);
   if(maxAlt<1) maxAlt=1;
 
-  // Y axis: 0°=baseY, maxAlt=padT+8
-  var yOf = function(altDeg){ return baseY - Math.max(0,altDeg/maxAlt)*(areaH-8); };
+  // Solstices — use same EqT-adjusted noon offset
+  // Summer solstice: N=172 (~21 juin), Winter: N=355 (~21 déc)
+  var decSum = decl(172);   // +23.45°
+  var decWin = decl(355);   // −23.45°
+  var eqtSum = eqt(172);
+  var eqtWin = eqt(355);
+  // Noon watch-hour for each solstice (simplified: use same lon/utc, noon TSV≈12)
+  var noonSum = ((12 - eqtSum/60 - state.lon/15 + effectiveUtc)%24+24)%24;
+  var noonWin = ((12 - eqtWin/60 - state.lon/15 + effectiveUtc)%24+24)%24;
+  var altAtSum = function(wh){ return altAtDec(wh, decSum, noonSum); };
+  var altAtWin = function(wh){ return altAtDec(wh, decWin, noonWin); };
+  var maxAltSum = altAtSum(noonSum); // absolute maximum = scale reference
+  if(maxAltSum<1) maxAltSum=1;
+  var maxAltWin = altAtWin(noonWin);
 
-  // Background: sky above horizon, ground below
+  // Sunrise/set for solstices (TSV, convert to watch)
+  var ssSum = sunriseSunset(state.lat, 172);
+  var ssWin = sunriseSunset(state.lat, 355);
+  var toWatchS = function(tsvH, eqtV){ return ((tsvH - eqtV/60 - state.lon/15 + effectiveUtc)%24+24)%24; };
+  var riseSumH = ssSum.rise ? toWatchS(ssSum.rise, eqtSum) : null;
+  var setSumH  = ssSum.set  ? toWatchS(ssSum.set,  eqtSum) : null;
+  var riseWinH = ssWin.rise ? toWatchS(ssWin.rise, eqtWin) : null;
+  var setWinH  = ssWin.set  ? toWatchS(ssWin.set,  eqtWin) : null;
+
+  // Y axis scaled to summer solstice max (so arc of today fits inside)
+  var yScale = maxAltSum;
+  var yOf = function(altDeg){ return baseY - Math.max(0,altDeg/yScale)*(areaH-8); };
+
+  // Background
   var skyGrad = ctx.createLinearGradient(0,padT,0,baseY);
   skyGrad.addColorStop(0,skyT); skyGrad.addColorStop(1,skyB);
   ctx.fillStyle=skyGrad; ctx.fillRect(padL,padT,areaW,areaH);
@@ -1019,7 +1049,7 @@ function drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr){
   ctx.fillStyle=bg; ctx.fillRect(w-padR,0,padR,h);
   ctx.fillStyle=bg; ctx.fillRect(0,0,w,padT);
 
-  // Subtle vertical grid every 2h
+  // Grid
   ctx.strokeStyle=isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.06)';
   ctx.lineWidth=1;
   for(var hh=0;hh<=24;hh+=2){
@@ -1027,33 +1057,66 @@ function drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr){
     ctx.beginPath(); ctx.moveTo(gx,padT); ctx.lineTo(gx,baseY); ctx.stroke();
   }
 
-  // Horizon line
+  // Horizon
   ctx.beginPath(); ctx.moveTo(padL,baseY); ctx.lineTo(padL+areaW,baseY);
   ctx.strokeStyle=hrzC; ctx.lineWidth=1.5; ctx.stroke();
 
-  // Build arc points rise→set
-  var steps=300;
-  var arcPts=[];
+  // Helper: draw a dashed solstice arc
+  var drawSolsticeArc = function(riseWH, setWH, altFn, color, dash){
+    if(!riseWH || !setWH) return;
+    ctx.setLineDash(dash);
+    ctx.strokeStyle=color; ctx.lineWidth=1.5;
+    ctx.beginPath();
+    var started=false;
+    var steps2=200;
+    for(var i=0;i<=steps2;i++){
+      var wh2=riseWH+(setWH-riseWH)*(i/steps2);
+      var a2=altFn(wh2);
+      if(a2<0) continue;
+      var px=xOf(wh2), py=yOf(a2);
+      if(!started){ ctx.moveTo(px,py); started=true; }
+      else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+  };
+
+  // Summer solstice arc (warm orange, long dash)
+  drawSolsticeArc(riseSumH, setSumH, altAtSum,
+    isDark?'rgba(255,160,50,0.45)':'rgba(200,100,20,0.35)', [6,5]);
+  // Winter solstice arc (cool blue, short dash)
+  drawSolsticeArc(riseWinH, setWinH, altAtWin,
+    isDark?'rgba(130,180,240,0.5)':'rgba(60,100,180,0.4)', [3,4]);
+
+  // Solstice max labels (right side, small)
+  ctx.font='10px DM Sans,system-ui'; ctx.textAlign='left';
+  if(riseSumH && setSumH){
+    ctx.fillStyle=isDark?'rgba(255,160,50,0.7)':'rgba(180,90,20,0.75)';
+    ctx.fillText('été '+Math.round(maxAltSum)+'°', padL+areaW+3, yOf(maxAltSum)+4);
+  }
+  if(riseWinH && setWinH && maxAltWin>0){
+    ctx.fillStyle=isDark?'rgba(130,180,240,0.7)':'rgba(60,100,180,0.75)';
+    ctx.fillText('hiver '+Math.round(maxAltWin)+'°', padL+areaW+3, yOf(maxAltWin)+4);
+  }
+
+  // Today's arc fill
+  var steps=300, arcPts=[];
   for(var i=0;i<=steps;i++){
     var wh=riseH+(setH-riseH)*(i/steps);
     var alt=altAt(wh);
     arcPts.push({x:xOf(wh), y:yOf(Math.max(0,alt))});
   }
-
-  // Fill under arc
-  ctx.beginPath();
-  ctx.moveTo(arcPts[0].x, baseY);
+  ctx.beginPath(); ctx.moveTo(arcPts[0].x, baseY);
   for(var i=0;i<arcPts.length;i++) ctx.lineTo(arcPts[i].x, arcPts[i].y);
   ctx.lineTo(arcPts[arcPts.length-1].x, baseY);
   ctx.closePath(); ctx.fillStyle=arcC; ctx.fill();
 
-  // Arc stroke
-  ctx.beginPath();
-  ctx.moveTo(arcPts[0].x, arcPts[0].y);
+  // Today's arc stroke
+  ctx.beginPath(); ctx.moveTo(arcPts[0].x, arcPts[0].y);
   for(var i=1;i<arcPts.length;i++) ctx.lineTo(arcPts[i].x, arcPts[i].y);
   ctx.strokeStyle='#F5BD47'; ctx.lineWidth=2.5; ctx.stroke();
 
-  // Solar noon dashed vertical
+  // Noon dashed vertical
   var noonX=xOf(noonWH), noonY=yOf(maxAlt);
   ctx.setLineDash([3,4]);
   ctx.strokeStyle=isDark?'rgba(245,189,71,0.45)':'rgba(196,123,43,0.45)';
@@ -1061,38 +1124,39 @@ function drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr){
   ctx.beginPath(); ctx.moveTo(noonX,noonY); ctx.lineTo(noonX,baseY); ctx.stroke();
   ctx.setLineDash([]);
 
-  // Labels rise/set/noon on horizon
+  // Labels
   ctx.font='bold 11px DM Sans,system-ui'; ctx.textAlign='center';
   ctx.fillStyle=hrzC;
   ctx.fillText(fmtHm(riseH), xOf(riseH), baseY+16);
   ctx.fillText(fmtHm(setH),  xOf(setH),  baseY+16);
   ctx.fillStyle=isDark?'#D4923F':'#C47B2B';
   ctx.fillText(fmtHm(noonWH), noonX, baseY+16);
-  // Max altitude label at top of arc
   ctx.font='11px DM Sans,system-ui';
   ctx.fillText(Math.round(maxAlt)+'°', noonX, noonY-10);
 
-  // Hour ticks bottom axis
+  // Hour ticks
   ctx.fillStyle=hrzC; ctx.font='10px DM Sans,system-ui'; ctx.textAlign='center';
   for(var hh=0;hh<=24;hh+=2){
     var tx=xOf(hh);
     ctx.beginPath(); ctx.moveTo(tx,baseY); ctx.lineTo(tx,baseY+4);
     ctx.strokeStyle=hrzC; ctx.lineWidth=1; ctx.stroke();
-    if(hh%4===0){ ctx.fillText(hh+'h', tx, baseY+30); }
+    if(hh%4===0) ctx.fillText(hh+'h', tx, baseY+30);
   }
 
-  // Y axis altitude ticks (left)
+  // Y axis ticks (scaled to summer max)
   ctx.fillStyle=hrzC; ctx.font='10px DM Sans,system-ui'; ctx.textAlign='right';
-  var altSteps=[0,30,60,90];
-  altSteps.forEach(function(a){
-    if(a>maxAlt) return;
+  [0,15,30,45,60,75,90].forEach(function(a){
+    if(a>yScale+2) return;
     var ty=yOf(a);
+    if(ty < padT) return;
     ctx.beginPath(); ctx.moveTo(padL-4,ty); ctx.lineTo(padL,ty);
     ctx.strokeStyle=hrzC; ctx.lineWidth=1; ctx.stroke();
-    ctx.fillText(a+'°', padL-7, ty+4);
+    if(a%15===0) ctx.fillText(a+'°', padL-7, ty+4);
   });
 
-  sundialData = {riseH,setH,noonWH,maxAlt,xOf,yOf,altAt,EqT,effectiveUtc,w,h,padL,padR,padT,padB,areaW,areaH,baseY,bg,skyT,skyB,hrzC,arcC,isDark};
+  sundialData = {riseH,setH,noonWH,maxAlt,yScale,xOf,yOf,altAt,altAtSum,altAtWin,
+    riseSumH,setSumH,riseWinH,setWinH,maxAltSum,maxAltWin,
+    EqT,effectiveUtc,w,h,padL,padR,padT,padB,areaW,areaH,baseY,bg,skyT,skyB,hrzC,arcC,isDark};
   drawSundialHand(null);
 }
 
