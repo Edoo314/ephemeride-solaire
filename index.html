@@ -393,6 +393,9 @@ input[type="date"]:focus, input[type="text"]:focus, input[type="number"]:focus {
   .clock-time { font-size: 28px; }
   .metric-grid { grid-template-columns: 1fr 1fr; }
 }
+.sais-btn { font-family:var(--font-ui);font-size:12px;padding:4px 10px;border:1px solid var(--border-md);border-radius:6px;background:var(--bg-card);color:var(--fg);cursor:pointer;transition:background .15s; }
+.sais-btn:hover { background:var(--bg-muted); }
+.sais-btn.active { background:var(--accent);color:#fff;border-color:var(--accent); }
 </style>
 
 <!-- POPUP OVERLAY -->
@@ -662,161 +665,52 @@ input[type="date"]:focus, input[type="text"]:focus, input[type="number"]:focus {
   <div class="explic-section">
 
     <div class="explic-h2">La Terre, le Soleil et les saisons</div>
-    <p class="explic-p">Les saisons ne sont <strong>pas</strong> causées par la distance Terre–Soleil (la Terre est même plus proche du Soleil en janvier !). Elles sont la conséquence de l'<strong>inclinaison de l'axe terrestre</strong> — 23,45° par rapport au plan de l'orbite — qui reste fixe dans l'espace pendant que la Terre tourne autour du Soleil.</p>
+    <p class="explic-p">Les saisons résultent de l'<strong>inclinaison de l'axe terrestre</strong> (23,45°), pas de la distance au Soleil. Choisissez une date ci-dessous : le globe montre l'angle d'éclairage, et le tableau compare deux villes en temps réel.</p>
 
-    <!-- SVG: orbite terrestre avec 4 positions -->
-    <div style="text-align:center;margin:24px 0">
-    <svg viewBox="0 0 520 320" width="100%" style="max-width:520px;font-family:DM Sans,system-ui">
-      <defs>
-        <radialGradient id="sunG" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#FFE066"/>
-          <stop offset="100%" stop-color="#F5A623"/>
-        </radialGradient>
-      </defs>
-      <!-- Orbite -->
-      <ellipse cx="260" cy="160" rx="200" ry="110" fill="none" stroke="var(--border-md)" stroke-width="1.5" stroke-dasharray="5,4"/>
-      <!-- Soleil -->
-      <circle cx="260" cy="160" r="26" fill="url(#sunG)"/>
-      <text x="260" y="165" text-anchor="middle" font-size="11" fill="#7A4500" font-weight="600">Soleil</text>
-      <!-- Positions: haut=juin, droite=sept, bas=déc, gauche=mars -->
-      <!-- JUIN: solstice été NH -->
-      <line x1="260" y1="52" x2="245" y2="38" stroke="#E07B20" stroke-width="2"/>
-      <line x1="260" y1="52" x2="275" y2="38" stroke="#E07B20" stroke-width="2"/>
-      <circle cx="260" cy="52" r="13" fill="var(--blue)" opacity=".85"/>
-      <text x="260" y="56" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">Terre</text>
-      <text x="260" y="28" text-anchor="middle" font-size="11" fill="var(--accent)" font-weight="700">Solstice été</text>
-      <text x="260" y="18" text-anchor="middle" font-size="10" fill="var(--fg-2)">21 juin</text>
-      <!-- DÉCEMBRE: solstice hiver NH -->
-      <line x1="260" y1="268" x2="275" y2="282" stroke="#E07B20" stroke-width="2"/>
-      <line x1="260" y1="268" x2="245" y2="282" stroke="#E07B20" stroke-width="2"/>
-      <circle cx="260" cy="268" r="13" fill="var(--blue)" opacity=".85"/>
-      <text x="260" y="272" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">Terre</text>
-      <text x="260" y="300" text-anchor="middle" font-size="11" fill="#5B9DC8" font-weight="700">Solstice hiver</text>
-      <text x="260" y="312" text-anchor="middle" font-size="10" fill="var(--fg-2)">21 décembre</text>
-      <!-- MARS: équinoxe printemps -->
-      <line x1="62" y1="160" x2="50" y2="147" stroke="#888" stroke-width="1.5"/>
-      <line x1="62" y1="160" x2="50" y2="173" stroke="#888" stroke-width="1.5"/>
-      <circle cx="62" cy="160" r="13" fill="var(--blue)" opacity=".85"/>
-      <text x="62" y="164" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">Terre</text>
-      <text x="30" y="146" text-anchor="middle" font-size="10" fill="var(--fg-2)">Équinoxe</text>
-      <text x="30" y="158" text-anchor="middle" font-size="10" fill="var(--fg-2)">printemps</text>
-      <text x="30" y="170" text-anchor="middle" font-size="10" fill="var(--fg-2)">20 mars</text>
-      <!-- SEPTEMBRE: équinoxe automne -->
-      <line x1="458" y1="160" x2="470" y2="147" stroke="#888" stroke-width="1.5"/>
-      <line x1="458" y1="160" x2="470" y2="173" stroke="#888" stroke-width="1.5"/>
-      <circle cx="458" cy="160" r="13" fill="var(--blue)" opacity=".85"/>
-      <text x="458" y="164" text-anchor="middle" font-size="9" fill="#fff" font-weight="600">Terre</text>
-      <text x="490" y="146" text-anchor="middle" font-size="10" fill="var(--fg-2)">Équinoxe</text>
-      <text x="490" y="158" text-anchor="middle" font-size="10" fill="var(--fg-2)">automne</text>
-      <text x="490" y="170" text-anchor="middle" font-size="10" fill="var(--fg-2)">22 sept.</text>
-    </svg>
+    <!-- Sélecteur de date interactif -->
+    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:16px 0">
+      <label style="font-size:13px;color:var(--fg-2)">Date :</label>
+      <input type="date" id="sais-date" style="font-family:var(--font-ui);font-size:13px;padding:5px 10px;border:1px solid var(--border-md);border-radius:6px;background:var(--bg-card);color:var(--fg);cursor:pointer">
+      <div style="display:flex;gap:6px;flex-wrap:wrap" id="sais-presets">
+        <button class="sais-btn" onclick="saisSetDate('--03-20')">20 mars</button>
+        <button class="sais-btn" onclick="saisSetDate('--06-21')">21 juin</button>
+        <button class="sais-btn" onclick="saisSetDate('--09-23')">23 sept.</button>
+        <button class="sais-btn" onclick="saisSetDate('--12-21')">21 déc.</button>
+      </div>
     </div>
 
-    <div class="explic-callout">🔑 L'axe terrestre pointe toujours vers l'étoile Polaire, quelle que soit la position sur l'orbite. C'est cette fixité qui crée les saisons.</div>
-
-    <div class="explic-h3">Hémisphère Nord vs Hémisphère Sud</div>
-    <p class="explic-p">Quand l'axe nord est incliné <em>vers</em> le Soleil (juin), l'hémisphère nord reçoit les rayons plus verticalement et bénéficie de journées longues → <strong>été au nord, hiver au sud</strong>. Six mois plus tard (décembre), c'est l'inverse.</p>
-
-    <!-- Tableau comparatif saisons -->
-    <div style="overflow-x:auto;margin:16px 0">
-    <table style="width:100%;border-collapse:collapse;font-size:13px">
-      <thead>
-        <tr style="background:var(--bg-muted)">
-          <th style="padding:8px 12px;text-align:left;border-bottom:1px solid var(--border-md)">Date</th>
-          <th style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-md)">🌍 Hémisphère Nord</th>
-          <th style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-md)">🌏 Hémisphère Sud</th>
-          <th style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-md)">Déclinaison solaire</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><strong>20 mars</strong> — Équinoxe</td>
-          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">🌸 Printemps</td>
-          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">🍂 Automne</td>
-          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">0°</td>
-        </tr>
-        <tr style="background:var(--bg-muted)">
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><strong>21 juin</strong> — Solstice</td>
-          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">☀️ Été (jour le + long)</td>
-          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">❄️ Hiver (nuit la + longue)</td>
-          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">+23,45°</td>
-        </tr>
-        <tr>
-          <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><strong>22 sept.</strong> — Équinoxe</td>
-          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">🍂 Automne</td>
-          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">🌸 Printemps</td>
-          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border)">0°</td>
-        </tr>
-        <tr style="background:var(--bg-muted)">
-          <td style="padding:8px 12px"><strong>21 déc.</strong> — Solstice</td>
-          <td style="padding:8px 12px;text-align:center">❄️ Hiver (nuit la + longue)</td>
-          <td style="padding:8px 12px;text-align:center">☀️ Été (jour le + long)</td>
-          <td style="padding:8px 12px;text-align:center">−23,45°</td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Globe + orbite -->
+    <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin:16px 0">
+      <canvas id="sais-globe" width="260" height="260" style="border-radius:50%;max-width:260px"></canvas>
+      <canvas id="sais-orbit" width="340" height="220" style="max-width:340px;align-self:center"></canvas>
     </div>
 
-    <div class="explic-h3">La durée du jour varie selon la latitude</div>
-    <p class="explic-p">Plus on s'éloigne de l'équateur, plus la variation saisonnière de la durée du jour est prononcée. À l'équateur, le jour dure presque toujours 12h. En France (48°N), elle varie de ~8h en hiver à ~16h en été. Au cercle polaire arctique (66,5°N), on atteint le soleil de minuit et la nuit polaire.</p>
+    <!-- Info saison courante -->
+    <div id="sais-info" style="background:var(--bg-muted);border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:16px;line-height:1.7"></div>
 
-    <!-- SVG: durée du jour selon latitude -->
-    <div style="text-align:center;margin:24px 0">
-    <svg viewBox="0 0 480 220" width="100%" style="max-width:480px;font-family:DM Sans,system-ui">
-      <!-- Axes -->
-      <line x1="60" y1="10" x2="60" y2="180" stroke="var(--fg-3)" stroke-width="1"/>
-      <line x1="60" y1="180" x2="460" y2="180" stroke="var(--fg-3)" stroke-width="1"/>
-      <!-- Y labels -->
-      <text x="52" y="184" text-anchor="end" font-size="10" fill="var(--fg-2)">0h</text>
-      <text x="52" y="137" text-anchor="end" font-size="10" fill="var(--fg-2)">8h</text>
-      <text x="52" y="90" text-anchor="end" font-size="10" fill="var(--fg-2)">16h</text>
-      <text x="52" y="43" text-anchor="end" font-size="10" fill="var(--fg-2)">24h</text>
-      <line x1="58" y1="137" x2="460" y2="137" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3"/>
-      <line x1="58" y1="90" x2="460" y2="90" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3"/>
-      <line x1="58" y1="43" x2="460" y2="43" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,3"/>
-      <!-- X labels (mois) -->
-      <text x="84"  y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Jan</text>
-      <text x="117" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Fév</text>
-      <text x="150" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Mar</text>
-      <text x="183" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Avr</text>
-      <text x="216" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Mai</text>
-      <text x="249" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Juin</text>
-      <text x="282" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Juil</text>
-      <text x="315" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Aoû</text>
-      <text x="348" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Sep</text>
-      <text x="381" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Oct</text>
-      <text x="414" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Nov</text>
-      <text x="447" y="196" text-anchor="middle" font-size="9" fill="var(--fg-2)">Déc</text>
-      <!-- Courbes calculées (valeurs précalculées pour 3 latitudes) -->
-      <!-- Équateur 0° : ~12h toute l'année -->
-      <polyline points="60,90 460,90" fill="none" stroke="#2ECC71" stroke-width="2"/>
-      <!-- Paris 48°N : 8h en jan, 16h en juin -->
-      <polyline points="60,137 84,133 117,122 150,105 183,86 216,68 249,61 282,66 315,83 348,100 381,118 414,131 447,138 460,139"
-        fill="none" stroke="#F5A623" stroke-width="2"/>
-      <!-- Cercle polaire 66°N : soleil de minuit + nuit polaire -->
-      <polyline points="60,162 84,152 117,127 150,95 183,58 216,25 249,10 282,23 315,55 348,92 381,128 414,155 447,164 460,165"
-        fill="none" stroke="#5B9DC8" stroke-width="2"/>
-      <!-- Légendes -->
-      <circle cx="80" cy="210" r="5" fill="#2ECC71"/>
-      <text x="90" y="214" font-size="10" fill="var(--fg-2)">Équateur (0°)</text>
-      <circle cx="180" cy="210" r="5" fill="#F5A623"/>
-      <text x="190" y="214" font-size="10" fill="var(--fg-2)">Paris (48°N)</text>
-      <circle cx="290" cy="210" r="5" fill="#5B9DC8"/>
-      <text x="300" y="214" font-size="10" fill="var(--fg-2)">Cercle polaire (66°N)</text>
-    </svg>
+    <!-- Comparateur villes -->
+    <div class="explic-h3">Comparer deux villes</div>
+    <p class="explic-p" style="font-size:12px;color:var(--fg-2)">La <strong>latitude</strong> détermine l'amplitude de variation saisonnière. La <strong>longitude</strong> décale l'heure du lever/coucher à l'intérieur d'un même fuseau.</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+      <select id="sais-city1" style="font-family:var(--font-ui);font-size:13px;padding:5px 10px;border:1px solid var(--border-md);border-radius:6px;background:var(--bg-card);color:var(--fg)"></select>
+      <select id="sais-city2" style="font-family:var(--font-ui);font-size:13px;padding:5px 10px;border:1px solid var(--border-md);border-radius:6px;background:var(--bg-card);color:var(--fg)"></select>
     </div>
 
-    <div class="explic-h3">Les cercles polaires et les tropiques</div>
-    <p class="explic-p">Ces parallèles remarquables sont définis par l'obliquité de 23,45° :</p>
-    <ul class="explic-sources" style="list-style:none;padding:0">
-      <li style="padding:6px 0;border-bottom:1px solid var(--border)">🔵 <strong>Cercle polaire arctique (66,5°N)</strong> — Au moins un jour sans coucher du soleil et un jour sans lever par an.</li>
-      <li style="padding:6px 0;border-bottom:1px solid var(--border)">🟡 <strong>Tropique du Cancer (23,45°N)</strong> — Le Soleil passe exactement au zénith le 21 juin.</li>
-      <li style="padding:6px 0;border-bottom:1px solid var(--border)">🟢 <strong>Équateur (0°)</strong> — Jours et nuits quasiment égaux toute l'année.</li>
-      <li style="padding:6px 0;border-bottom:1px solid var(--border)">🟡 <strong>Tropique du Capricorne (23,45°S)</strong> — Le Soleil passe au zénith le 21 décembre.</li>
-      <li style="padding:6px 0">🔵 <strong>Cercle polaire antarctique (66,5°S)</strong> — Symétrique de l'arctique, six mois décalés.</li>
-    </ul>
+    <div id="sais-comp" style="overflow-x:auto"></div>
 
-    <div class="explic-callout">💡 La Terre est au <strong>périhélie</strong> (point le plus proche du Soleil) vers le 3 janvier — en plein hiver dans l'hémisphère nord. La distance ne fait pas les saisons : c'est l'angle d'incidence des rayons qui compte.</div>
+    <!-- Courbe annuelle durée du jour -->
+    <div class="explic-h3" style="margin-top:20px">Durée du jour selon la latitude</div>
+    <canvas id="sais-annual" width="480" height="200" style="width:100%;max-width:480px;display:block;margin:0 auto"></canvas>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:6px;font-size:11px;color:var(--fg-2)">
+      <span><span style="display:inline-block;width:20px;height:3px;background:#2ECC71;vertical-align:middle;margin-right:4px"></span>Équateur 0°</span>
+      <span><span style="display:inline-block;width:20px;height:3px;background:#F5A623;vertical-align:middle;margin-right:4px"></span>Paris 48°N</span>
+      <span><span style="display:inline-block;width:20px;height:3px;background:#5B9DC8;vertical-align:middle;margin-right:4px"></span>Cercle polaire 66°N</span>
+      <span id="sais-leg-c1" style="display:none"><span id="sais-leg-dot1" style="display:inline-block;width:20px;height:3px;background:#E05C6D;vertical-align:middle;margin-right:4px"></span><span id="sais-leg-name1"></span></span>
+      <span id="sais-leg-c2" style="display:none"><span id="sais-leg-dot2" style="display:inline-block;width:20px;height:3px;background:#9B2335;vertical-align:middle;margin-right:4px"></span><span id="sais-leg-name2"></span></span>
+    </div>
+
+    <div class="explic-callout" style="margin-top:20px">💡 La Terre est au <strong>périhélie</strong> (plus proche du Soleil) vers le 3 janvier — en plein hiver dans l'hémisphère nord. La distance ne fait pas les saisons : c'est l'<strong>angle d'incidence</strong> des rayons qui compte.</div>
 
   </div>
 </div>
@@ -1977,5 +1871,579 @@ function setToday(){
       }
     }, function(){}, {timeout:4000});
   }
+})();
+
+/* ═══════════════════════ MODULE SAISONS INTERACTIF ═══════════════════════ */
+(function(){
+  // ── Catalogue de villes
+  var CITIES = [
+    {name:'Dunkerque',   lat:51.03, lon:2.38,  utc:1, dst:true,  flag:'🇫🇷'},
+    {name:'Toulouse',    lat:43.60, lon:1.44,  utc:1, dst:true,  flag:'🇫🇷'},
+    {name:'Paris',       lat:48.87, lon:2.35,  utc:1, dst:true,  flag:'🇫🇷'},
+    {name:'Bordeaux',    lat:44.84, lon:-0.58, utc:1, dst:true,  flag:'🇫🇷'},
+    {name:'Strasbourg',  lat:48.57, lon:7.75,  utc:1, dst:true,  flag:'🇫🇷'},
+    {name:'Brest',       lat:48.39, lon:-4.49, utc:1, dst:true,  flag:'🇫🇷'},
+    {name:'Lyon',        lat:45.76, lon:4.83,  utc:1, dst:true,  flag:'🇫🇷'},
+    {name:'Marseille',   lat:43.30, lon:5.38,  utc:1, dst:true,  flag:'🇫🇷'},
+    {name:'Reykjavik',   lat:64.13, lon:-21.94,utc:0, dst:false, flag:'🇮🇸'},
+    {name:'Madrid',      lat:40.42, lon:-3.70, utc:1, dst:true,  flag:'🇪🇸'},
+    {name:'Oslo',        lat:59.91, lon:10.75, utc:1, dst:true,  flag:'🇳🇴'},
+    {name:'Helsinki',    lat:60.17, lon:24.94, utc:2, dst:true,  flag:'🇫🇮'},
+    {name:'Alger',       lat:36.74, lon:3.06,  utc:1, dst:false, flag:'🇩🇿'},
+    {name:'Dakar',       lat:14.69, lon:-17.44,utc:0, dst:false, flag:'🇸🇳'},
+    {name:'Cayenne',     lat:4.93,  lon:-52.33,utc:-3,dst:false, flag:'🇬🇫'},
+    {name:'Papeete',     lat:-17.53,lon:-149.56,utc:-10,dst:false,flag:'🇵🇫'},
+    {name:'Melbourne',   lat:-37.81,lon:144.96,utc:10,dst:true,  flag:'🇦🇺'},
+  ];
+
+  // ── Utilitaires trigonométriques (identiques à ceux de la page)
+  function d2r(d){return d*Math.PI/180;}
+  function r2d(r){return r*180/Math.PI;}
+  function sDecl(N){ return 23.45*Math.sin(d2r(360/365*(N-81))); }
+  function sEqt(N){
+    var B=d2r(360/365*(N-81));
+    return 9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B);
+  }
+  function dayLength(lat,N){
+    var dec=sDecl(N), latR=d2r(lat), decR=d2r(dec);
+    var cosH=(Math.sin(d2r(-0.833))-Math.sin(latR)*Math.sin(decR))/(Math.cos(latR)*Math.cos(decR));
+    if(cosH<-1) return 24;
+    if(cosH>1)  return 0;
+    return 2*r2d(Math.acos(cosH))/15;
+  }
+  function sunTimes(lat,lon,utcOff,dst,N){
+    var dec=sDecl(N), latR=d2r(lat), decR=d2r(dec);
+    var eqtMin=sEqt(N);
+    var effUtc=utcOff+(dst?isDstDay(N)?1:0:0);
+    var cosH=(Math.sin(d2r(-0.833))-Math.sin(latR)*Math.sin(decR))/(Math.cos(latR)*Math.cos(decR));
+    var noonW=((12-eqtMin/60-lon/15+effUtc)%24+24)%24;
+    if(cosH<-1) return {rise:null,set:null,noon:noonW,dl:24,polar:'day'};
+    if(cosH>1)  return {rise:null,set:null,noon:noonW,dl:0, polar:'night'};
+    var H0=r2d(Math.acos(cosH));
+    var rise=((noonW-H0/15)%24+24)%24;
+    var set=((noonW+H0/15)%24+24)%24;
+    return {rise:rise,set:set,noon:noonW,dl:set-rise,polar:null};
+  }
+  function isDstDay(N){
+    // Heure d'été FR : dernier dim mars → dernier dim oct
+    // Approx: N entre 85 et 298
+    return N>=85 && N<=298;
+  }
+  function hhmm(h){
+    if(h===null) return '—';
+    var hh=Math.floor(((h%24)+24)%24);
+    var mm=Math.round((((h%24)+24)%24-hh)*60);
+    if(mm===60){hh=(hh+1)%24;mm=0;}
+    return ('0'+hh).slice(-2)+':'+('0'+mm).slice(-2);
+  }
+  function dateToN(dateStr){
+    var d=new Date(dateStr);
+    var start=new Date(d.getFullYear(),0,0);
+    return Math.floor((d-start)/(86400000));
+  }
+
+  // ── Initialisation DOM
+  var dateEl=document.getElementById('sais-date');
+  if(!dateEl) return; // panel absent
+
+  // Date par défaut = aujourd'hui
+  var today=new Date();
+  var todayStr=today.toISOString().slice(0,10);
+  dateEl.value=todayStr;
+
+  // Peupler les sélecteurs de villes
+  function populateCitySelect(selId, defaultName){
+    var sel=document.getElementById(selId); if(!sel) return;
+    CITIES.forEach(function(c){
+      var opt=document.createElement('option');
+      opt.value=c.name; opt.textContent=c.flag+' '+c.name+' ('+c.lat.toFixed(1)+'°, '+c.lon.toFixed(1)+'°)';
+      if(c.name===defaultName) opt.selected=true;
+      sel.appendChild(opt);
+    });
+    sel.onchange=saisUpdate;
+  }
+  populateCitySelect('sais-city1','Dunkerque');
+  populateCitySelect('sais-city2','Toulouse');
+
+  dateEl.addEventListener('change', saisUpdate);
+
+  // Raccourcis dates
+  window.saisSetDate=function(suffix){
+    var yr=new Date().getFullYear();
+    var d=new Date(yr+suffix);
+    if(isNaN(d)) d=new Date(yr+'-'+suffix.slice(2));
+    dateEl.value=d.toISOString().slice(0,10);
+    // marquer le bouton actif
+    document.querySelectorAll('.sais-btn').forEach(function(b){b.classList.remove('active');});
+    event.target.classList.add('active');
+    saisUpdate();
+  };
+
+  // ── Dessin globe
+  function drawGlobe(N){
+    var cnv=document.getElementById('sais-globe'); if(!cnv) return;
+    var ctx=cnv.getContext('2d');
+    var W=cnv.width, H=cnv.height, R=W/2-4;
+    var cx=W/2, cy=H/2;
+    var isDark=document.documentElement.getAttribute('data-theme')==='dark'||
+      (!document.documentElement.getAttribute('data-theme')&&window.matchMedia('(prefers-color-scheme:dark)').matches);
+
+    ctx.clearRect(0,0,W,H);
+
+    // Fond espace
+    var bg=ctx.createRadialGradient(cx,cy,R*0.1,cx,cy,R);
+    bg.addColorStop(0, isDark?'#1a2540':'#e8f4ff');
+    bg.addColorStop(1, isDark?'#0a1020':'#b0d4f0');
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,2*Math.PI);
+    ctx.fillStyle=bg; ctx.fill();
+
+    // Déclinaison solaire
+    var dec=sDecl(N); // en degrés
+    // Angle d'inclinaison de l'axe : 23.45°
+    // La terminatrice est perpendiculaire à la direction Soleil
+    // En projection orthographique vue de côté :
+    // L'axe terrestre : incliné de 23.45° vers le Soleil (si N=172) ou opposé (N=355)
+
+    // On représente la Terre vue depuis l'équateur à 90° de la ligne Terre-Soleil
+    // Axe polaire incliné de (23.45° * sin(dayAngle)) en avant/arrière et toujours 23.45° en N-S
+
+    var tilt=23.45; // degrés
+    var dayAngle=d2r(360/365*(N-81)); // 0 à équinoxe printemps
+    var tiltNS=tilt*Math.sin(dayAngle); // inclinaison N-S visible (vers/depuis nous)
+    // Pour la 2D on montre l'inclinaison N-S directement
+    var tiltPix=d2r(dec); // la déclinaison = projection de l'inclinaison
+
+    // Parallèles et méridiens en projection orthographique
+    // Vue depuis l'est (lon=90E), axe Y=Nord, axe X=vers nous
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,2*Math.PI); ctx.clip();
+
+    // Hémisphères : jour (face soleil) = droite, nuit = gauche
+    // Direction soleil : en haut-droite pour été NH
+    // On projette : le terminateur est un grand cercle incliné
+    // La déclinaison = latitude du point subsolar
+
+    // Dégradé jour/nuit
+    var sunAngleRad=d2r(-dec); // angle du soleil par rapport à l'équateur (en projection)
+    // Terminatrice : ellipse verticale inclinée
+    // Simplifié : on divise le globe avec un gradient centré sur la normale au plan terminateur
+    var sunX=Math.sin(0); // soleil dans le plan de l'écran, direction Est
+    var sunY=-Math.sin(d2r(dec)); // composante N-S
+
+    // Plan de l'écran : axe X = est-ouest, axe Y = nord-sud
+    // La lumière vient de la droite (soleil à droite dans cette vue)
+    // On dessine le globe comme vu depuis le Soleil pour montrer clairement éclairé/non éclairé
+
+    // Coloration lat/lon zones
+    var imgData=ctx.createImageData(W,H);
+    var data=imgData.data;
+    var decR=d2r(dec);
+    for(var py=0;py<H;py++){
+      for(var px=0;px<W;px++){
+        var dx=(px-cx)/R, dy=(cy-py)/R;
+        var dist2=dx*dx+dy*dy;
+        if(dist2>1){
+          data[(py*W+px)*4+3]=0; continue;
+        }
+        var dz=Math.sqrt(1-dist2);
+        // Coordonnées sphériques de ce pixel (vue depuis +Z = face visible)
+        // lat = asin(dy), lon = atan2(dx, dz)
+        var platR=Math.asin(Math.max(-1,Math.min(1,dy)));
+        // Angle entre ce point et le terminateur
+        // Point subsolar : lat=dec, lon=0 (face à nous)
+        // cos(angle_solaire) = sin(plat)*sin(decR) + cos(plat)*cos(decR)*dz
+        // (dz = cos(lon_locale) pour lon_locale = acos(dz/cos(plat)))
+        var cosZen=Math.sin(platR)*Math.sin(decR)+Math.cos(platR)*Math.cos(decR)*dz;
+
+        var r,g,b,a=255;
+        if(cosZen>=0){
+          // Jour
+          if(isDark){r=80+Math.round(cosZen*60);g=120+Math.round(cosZen*50);b=180+Math.round(cosZen*40);}
+          else{r=100+Math.round(cosZen*80);g=160+Math.round(cosZen*60);b=220+Math.round(cosZen*35);}
+          // Tropiques et équateur
+          var latDeg=r2d(platR);
+          if(Math.abs(latDeg)<0.8) {r=Math.min(255,r+30);g=Math.min(255,g+30);b=Math.max(0,b-20);}
+          if(Math.abs(Math.abs(latDeg)-23.45)<0.8){r=Math.min(255,r+40);g=Math.min(255,g+20);b=Math.max(0,b-30);}
+          if(Math.abs(Math.abs(latDeg)-66.55)<0.8){r=Math.max(0,r-20);g=Math.max(0,g-20);b=Math.min(255,b+60);}
+        } else {
+          // Nuit
+          var shade=Math.abs(cosZen);
+          if(isDark){r=10+Math.round(shade*15);g=15+Math.round(shade*20);b=35+Math.round(shade*30);}
+          else{r=30+Math.round(shade*20);g=50+Math.round(shade*25);b=90+Math.round(shade*40);}
+        }
+        // Terminatrice douce
+        if(Math.abs(cosZen)<0.05){
+          var mix=0.5+cosZen/0.1;
+          var darkR=isDark?15:40,darkG=isDark?20:60,darkB=isDark?40:100;
+          r=Math.round(r*mix+darkR*(1-mix));
+          g=Math.round(g*mix+darkG*(1-mix));
+          b=Math.round(b*mix+darkB*(1-mix));
+        }
+        var i=(py*W+px)*4;
+        data[i]=r;data[i+1]=g;data[i+2]=b;data[i+3]=255;
+      }
+    }
+    ctx.putImageData(imgData,0,0);
+
+    // Contour du globe
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,2*Math.PI);
+    ctx.strokeStyle=isDark?'rgba(255,255,255,0.2)':'rgba(0,0,80,0.15)';
+    ctx.lineWidth=1.5; ctx.stroke();
+
+    // Axe terrestre incliné
+    var axAngle=d2r(dec>0?-23.45:23.45)*0; // simplifié : axe toujours vertical visuel
+    // Axe : légèrement incliné selon la saison
+    var axTilt=d2r(dec); // l'inclinaison perçue
+    var ax1x=cx+Math.sin(axTilt)*R*0.9, ax1y=cy-Math.cos(axTilt)*R*0.9;
+    var ax2x=cx-Math.sin(axTilt)*R*0.9, ax2y=cy+Math.cos(axTilt)*R*0.9;
+    ctx.beginPath(); ctx.moveTo(ax1x,ax1y); ctx.lineTo(ax2x,ax2y);
+    ctx.strokeStyle=isDark?'rgba(255,200,100,0.8)':'rgba(180,80,0,0.7)';
+    ctx.lineWidth=2; ctx.setLineDash([4,3]); ctx.stroke(); ctx.setLineDash([]);
+    // Étoile polaire
+    ctx.fillStyle=isDark?'rgba(255,220,100,1)':'rgba(200,100,0,0.9)';
+    ctx.beginPath(); ctx.arc(ax1x,ax1y,3,0,2*Math.PI); ctx.fill();
+    ctx.font='bold 9px sans-serif'; ctx.fillStyle=isDark?'#ffd':  '#864';
+    ctx.fillText('Polaire',ax1x+5,ax1y+4);
+
+    // Villes
+    var cities2=[
+      {name:'Dunkerque',lat:51.03,lon:2.4},
+      {name:'Toulouse',lat:43.6,lon:1.44},
+      {name:'Oslo',lat:59.9,lon:10.7},
+      {name:'Dakar',lat:14.7,lon:-17.4},
+      {name:'Melbourne',lat:-37.8,lon:145}
+    ];
+    // Projection : vue de l'observateur depuis +Z (face au globe depuis devant)
+    // lon=0 = face visible, lat = Y
+    cities2.forEach(function(c){
+      var latR2=d2r(c.lat), lonR=d2r(c.lon);
+      // Rotation autour de Y de -lon pour mettre la ville en face
+      // x = sin(lon)*cos(lat), y = sin(lat), z = cos(lon)*cos(lat)
+      var px2=Math.sin(lonR)*Math.cos(latR2)*R+cx;
+      var py2=-Math.sin(latR2)*R+cy;
+      var vis=Math.cos(lonR)*Math.cos(latR2);
+      if(vis<-0.1) return; // dos de la planète
+      var cosZen2=Math.sin(d2r(c.lat))*Math.sin(decR)+Math.cos(d2r(c.lat))*Math.cos(decR)*Math.cos(lonR);
+      var isDay=cosZen2>-0.05;
+      ctx.beginPath(); ctx.arc(px2,py2,3.5,0,2*Math.PI);
+      ctx.fillStyle=isDay?'#FFD700':'#FF6B6B';
+      ctx.fill();
+      ctx.strokeStyle='#fff'; ctx.lineWidth=0.8; ctx.stroke();
+      ctx.font='bold 8px sans-serif';
+      ctx.fillStyle=isDark?'#fff':'#222';
+      ctx.fillText(c.name,px2+5,py2-3);
+    });
+
+    ctx.restore();
+
+    // Info déclinaison
+    ctx.font='11px sans-serif';
+    ctx.fillStyle=isDark?'rgba(255,255,255,0.7)':'rgba(0,0,80,0.6)';
+    ctx.fillText('Déclinaison : '+(dec>=0?'+':'')+dec.toFixed(1)+'°', 8, H-8);
+  }
+
+  // ── Dessin orbite
+  function drawOrbit(N){
+    var cnv=document.getElementById('sais-orbit'); if(!cnv) return;
+    var ctx=cnv.getContext('2d');
+    var W=cnv.width, H=cnv.height;
+    var isDark=document.documentElement.getAttribute('data-theme')==='dark'||
+      (!document.documentElement.getAttribute('data-theme')&&window.matchMedia('(prefers-color-scheme:dark)').matches);
+    ctx.clearRect(0,0,W,H);
+
+    var cx=W/2, cy=H/2, rx=W/2-28, ry=H/2-20;
+
+    // Orbite
+    ctx.beginPath(); ctx.ellipse(cx,cy,rx,ry,0,0,2*Math.PI);
+    ctx.strokeStyle=isDark?'rgba(255,255,255,0.15)':'rgba(0,0,80,0.12)';
+    ctx.lineWidth=1.5; ctx.setLineDash([4,3]); ctx.stroke(); ctx.setLineDash([]);
+
+    // Soleil au centre
+    var sunG=ctx.createRadialGradient(cx,cy,2,cx,cy,16);
+    sunG.addColorStop(0,'#FFE066'); sunG.addColorStop(1,'#F5A623');
+    ctx.beginPath(); ctx.arc(cx,cy,16,0,2*Math.PI);
+    ctx.fillStyle=sunG; ctx.fill();
+
+    // Position Terre selon N (angle = 2π*(N-80)/365)
+    var angle=2*Math.PI*(N-80)/365 - Math.PI/2; // 0 = mars
+    var tx=cx+Math.cos(angle)*rx;
+    var ty=cy+Math.sin(angle)*ry;
+
+    // Ombre/lumière sur la Terre (petit disque)
+    var TR=11;
+    var dec=sDecl(N);
+    // Côté illuminé = vers le soleil
+    var toSunX=cx-tx, toSunY=cy-ty;
+    var toSunLen=Math.sqrt(toSunX*toSunX+toSunY*toSunY);
+    toSunX/=toSunLen; toSunY/=toSunLen;
+
+    ctx.save();
+    ctx.translate(tx,ty);
+    // Hémisphère nuit
+    ctx.beginPath(); ctx.arc(0,0,TR,0,2*Math.PI);
+    ctx.fillStyle=isDark?'#1a2540':'#c8dff0'; ctx.fill();
+    // Hémisphère jour (arc vers le Soleil)
+    var lightAngle=Math.atan2(toSunY,toSunX);
+    ctx.beginPath(); ctx.moveTo(0,0);
+    ctx.arc(0,0,TR,lightAngle-Math.PI/2,lightAngle+Math.PI/2);
+    ctx.closePath();
+    ctx.fillStyle='#7EC8F8'; ctx.fill();
+    ctx.beginPath(); ctx.arc(0,0,TR,0,2*Math.PI);
+    ctx.strokeStyle=isDark?'rgba(255,255,255,0.3)':'rgba(0,0,80,0.2)'; ctx.lineWidth=1; ctx.stroke();
+
+    // Axe terrestre incliné (23.45° par rapport à la verticale de l'orbite)
+    var axAngle=-Math.PI/2+d2r(23.45)*Math.sin(2*Math.PI*(N-172)/365);
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(axAngle)*TR*1.4, Math.sin(axAngle)*TR*1.4);
+    ctx.lineTo(-Math.cos(axAngle)*TR*1.4, -Math.sin(axAngle)*TR*1.4);
+    ctx.strokeStyle=isDark?'rgba(255,200,80,0.9)':'rgba(150,60,0,0.8)';
+    ctx.lineWidth=1.5; ctx.stroke();
+    ctx.restore();
+
+    // Labels 4 positions
+    var labels=[
+      {N2:80,  txt:'Équinoxe\nprintemps', sub:'19–21 mars'},
+      {N2:172, txt:'Solstice\nété ☀️',    sub:'20–21 juin'},
+      {N2:266, txt:'Équinoxe\nautomne',   sub:'22–23 sept.'},
+      {N2:355, txt:'Solstice\nhiver ❄️',  sub:'21–22 déc.'}
+    ];
+    ctx.font='10px sans-serif';
+    labels.forEach(function(l){
+      var a=2*Math.PI*(l.N2-80)/365-Math.PI/2;
+      var lx=cx+Math.cos(a)*rx, ly=cy+Math.sin(a)*ry;
+      // position texte vers l'extérieur
+      var outX=Math.cos(a)*22, outY=Math.sin(a)*14;
+      ctx.fillStyle=isDark?'rgba(255,255,255,0.7)':'rgba(0,0,80,0.65)';
+      var lines=l.txt.split('\n');
+      lines.forEach(function(line,i){
+        ctx.fillText(line, lx+outX-ctx.measureText(line).width/2, ly+outY+(i-lines.length/2+0.5)*12);
+      });
+      ctx.fillStyle=isDark?'rgba(255,255,255,0.4)':'rgba(0,0,80,0.4)';
+      ctx.font='9px sans-serif';
+      ctx.fillText(l.sub, lx+outX-ctx.measureText(l.sub).width/2, ly+outY+lines.length*12-2);
+      ctx.font='10px sans-serif';
+    });
+
+    // Marqueur position actuelle
+    ctx.beginPath(); ctx.arc(tx,ty,TR+4,0,2*Math.PI);
+    ctx.strokeStyle='#FF6B35'; ctx.lineWidth=2; ctx.stroke();
+  }
+
+  // ── Tableau comparateur
+  function drawComparator(N, city1, city2){
+    var el=document.getElementById('sais-comp'); if(!el) return;
+    var c1=CITIES.find(function(c){return c.name===city1;})||CITIES[0];
+    var c2=CITIES.find(function(c){return c.name===city2;})||CITIES[1];
+    var t1=sunTimes(c1.lat,c1.lon,c1.utc,c1.dst,N);
+    var t2=sunTimes(c2.lat,c2.lon,c2.utc,c2.dst,N);
+
+    function dlStr(h){
+      if(h>=23.9) return '☀️ Soleil de minuit';
+      if(h<=0.1)  return '🌑 Nuit polaire';
+      var hh=Math.floor(h), mm=Math.round((h-hh)*60);
+      return hh+'h'+('0'+mm).slice(-2);
+    }
+    function diff(a,b){
+      if(a===null||b===null) return '—';
+      var d=(a-b+24)%24; if(d>12) d=d-24;
+      var sign=d>=0?'+':'-'; d=Math.abs(d);
+      var hh=Math.floor(d), mm=Math.round((d-hh)*60);
+      if(hh===0&&mm===0) return '=';
+      return sign+(hh>0?hh+'h':'')+(mm>0?('0'+mm).slice(-2)+'min':'');
+    }
+
+    var dec=sDecl(N);
+    var rows=[
+      ['Latitude',     c1.lat.toFixed(2)+'°N', c2.lat.toFixed(2)+'°N', ''],
+      ['Longitude',    c1.lon.toFixed(2)+'°E',  c2.lon.toFixed(2)+'°E',  'Δlong×4min/° = '+Math.round(Math.abs(c1.lon-c2.lon)*4)+'min'],
+      ['Lever ☀️',    hhmm(t1.rise), hhmm(t2.rise), diff(t1.rise,t2.rise)+' ('+c1.name+' vs '+c2.name+')'],
+      ['Coucher 🌙',  hhmm(t1.set),  hhmm(t2.set),  diff(t1.set,t2.set)],
+      ['Midi solaire', hhmm(t1.noon), hhmm(t2.noon), diff(t1.noon,t2.noon)],
+      ['Durée du jour',dlStr(t1.dl),  dlStr(t2.dl),  (t1.dl-t2.dl>=0?'+':'')+dlStr(Math.abs(t1.dl-t2.dl))],
+    ];
+
+    var bg1='var(--bg-muted)', bg2='var(--bg-card)';
+    var html='<table style="width:100%;border-collapse:collapse;font-size:13px">';
+    html+='<thead><tr style="background:var(--bg-muted)">';
+    html+='<th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--border-md)"></th>';
+    html+='<th style="padding:7px 10px;text-align:center;border-bottom:2px solid var(--border-md);color:var(--accent)">'+c1.flag+' '+c1.name+'</th>';
+    html+='<th style="padding:7px 10px;text-align:center;border-bottom:2px solid var(--border-md);color:#5B9DC8">'+c2.flag+' '+c2.name+'</th>';
+    html+='<th style="padding:7px 10px;text-align:left;border-bottom:2px solid var(--border-md);color:var(--fg-2);font-size:11px">Écart / Note</th>';
+    html+='</tr></thead><tbody>';
+    rows.forEach(function(r,i){
+      var bg=i%2===0?bg1:bg2;
+      html+='<tr style="background:'+bg+'">';
+      html+='<td style="padding:7px 10px;font-weight:600;border-bottom:1px solid var(--border)">'+r[0]+'</td>';
+      html+='<td style="padding:7px 10px;text-align:center;border-bottom:1px solid var(--border);color:var(--accent);font-weight:500">'+r[1]+'</td>';
+      html+='<td style="padding:7px 10px;text-align:center;border-bottom:1px solid var(--border);color:#5B9DC8;font-weight:500">'+r[2]+'</td>';
+      html+='<td style="padding:7px 10px;border-bottom:1px solid var(--border);color:var(--fg-2);font-size:11px">'+r[3]+'</td>';
+      html+='</tr>';
+    });
+    html+='</tbody></table>';
+
+    // Explication pédagogique
+    var sunrise1Earlier = t1.rise!==null && t2.rise!==null && t1.rise < t2.rise;
+    var set1Earlier = t1.set!==null && t2.set!==null && t1.set < t2.set;
+    var lonDiff=Math.abs(c1.lon-c2.lon);
+    var lonEffect=Math.round(lonDiff*4);
+    html+='<div style="margin-top:10px;padding:10px 14px;background:var(--bg-muted);border-radius:8px;font-size:12px;line-height:1.8;color:var(--fg-2)">';
+    html+='<strong>📐 Déclinaison solaire :</strong> '+dec.toFixed(1)+'° — ';
+    if(dec>0) html+='Le Soleil favorise l\'hémisphère <strong>Nord</strong> → jours plus longs dans les hautes latitudes nord.';
+    else if(dec<0) html+='Le Soleil favorise l\'hémisphère <strong>Sud</strong> → jours plus courts dans les hautes latitudes nord.';
+    else html+='Équinoxe : jours et nuits égaux partout.';
+    html+='<br><strong>📍 Effet latitude :</strong> ';
+    var latDiff=Math.abs(c1.lat-c2.lat).toFixed(1);
+    html+=c1.name+' est à '+latDiff+'° plus au '+( c1.lat>c2.lat?'nord':'sud')+' que '+c2.name+'. ';
+    if(dec>5) html+='En été (déc. +), les jours sont '+( c1.lat>c2.lat?'plus longs':'plus courts')+' à '+c1.name+'.';
+    else if(dec<-5) html+='En hiver (déc. –), les jours sont '+( c1.lat>c2.lat?'plus courts':'plus longs')+' à '+c1.name+'.';
+    html+='<br><strong>🧭 Effet longitude :</strong> '+c1.name+' et '+c2.name+' sont séparés de '+lonDiff.toFixed(1)+'° en longitude → ';
+    html+='décalage d\'environ <strong>'+lonEffect+' min</strong> sur l\'heure solaire (≈4 min/°), sans changer la durée du jour.';
+    html+='</div>';
+    el.innerHTML=html;
+  }
+
+  // ── Courbe annuelle durée du jour
+  function drawAnnual(city1, city2){
+    var cnv=document.getElementById('sais-annual'); if(!cnv) return;
+    var ctx=cnv.getContext('2d');
+    var W=cnv.width, H=cnv.height;
+    var isDark=document.documentElement.getAttribute('data-theme')==='dark'||
+      (!document.documentElement.getAttribute('data-theme')&&window.matchMedia('(prefers-color-scheme:dark)').matches);
+    ctx.clearRect(0,0,W,H);
+
+    var padL=42, padR=12, padT=14, padB=36;
+    var aW=W-padL-padR, aH=H-padT-padB;
+
+    // Grille
+    ctx.strokeStyle=isDark?'rgba(255,255,255,0.07)':'rgba(0,0,80,0.07)';
+    ctx.lineWidth=1;
+    [0,4,8,12,16,20,24].forEach(function(h){
+      var y=padT+aH*(1-h/24);
+      ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+aW,y); ctx.stroke();
+      ctx.fillStyle=isDark?'rgba(255,255,255,0.4)':'rgba(0,0,80,0.4)';
+      ctx.font='10px sans-serif'; ctx.textAlign='right';
+      ctx.fillText(h+'h',padL-5,y+3);
+    });
+    // Axe X mois
+    var months=['J','F','M','A','M','J','J','A','S','O','N','D'];
+    months.forEach(function(m,i){
+      var x=padL+(i+0.5)/12*aW;
+      ctx.fillStyle=isDark?'rgba(255,255,255,0.4)':'rgba(0,0,80,0.4)';
+      ctx.font='10px sans-serif'; ctx.textAlign='center';
+      ctx.fillText(m,x,H-4);
+    });
+
+    // Axe
+    ctx.strokeStyle=isDark?'rgba(255,255,255,0.2)':'rgba(0,0,80,0.2)';
+    ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,padT+aH); ctx.lineTo(padL+aW,padT+aH); ctx.stroke();
+
+    // Courbes fixes : équateur (0°), Paris (48°), cercle polaire (66°)
+    var fixed=[
+      {lat:0,   color:'#2ECC71', lw:1.8},
+      {lat:48.8, color:'#F5A623', lw:1.8},
+      {lat:66.5, color:'#5B9DC8', lw:1.8},
+    ];
+    fixed.forEach(function(f){
+      ctx.beginPath(); ctx.strokeStyle=f.color; ctx.lineWidth=f.lw;
+      for(var N2=1;N2<=365;N2++){
+        var dl=dayLength(f.lat,N2);
+        if(dl>24) dl=24; if(dl<0) dl=0;
+        var x=padL+(N2-1)/364*aW;
+        var y=padT+aH*(1-dl/24);
+        if(N2===1) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    });
+
+    // Courbes villes sélectionnées
+    var cityCurves=[
+      {name:city1, color:'#E05C6D', lw:2, dash:[5,3]},
+      {name:city2, color:'#9B59B6', lw:2, dash:[3,3]}
+    ];
+    cityCurves.forEach(function(cc){
+      var c=CITIES.find(function(cv){return cv.name===cc.name;}); if(!c) return;
+      ctx.beginPath(); ctx.strokeStyle=cc.color; ctx.lineWidth=cc.lw;
+      ctx.setLineDash(cc.dash);
+      for(var N2=1;N2<=365;N2++){
+        var dl=dayLength(c.lat,N2);
+        if(dl>24) dl=24; if(dl<0) dl=0;
+        var x=padL+(N2-1)/364*aW;
+        var y=padT+aH*(1-dl/24);
+        if(N2===1) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke(); ctx.setLineDash([]);
+    });
+
+    // Légende villes dynamiques
+    var l1=document.getElementById('sais-leg-c1'), l2=document.getElementById('sais-leg-c2');
+    var n1=document.getElementById('sais-leg-name1'), n2=document.getElementById('sais-leg-name2');
+    var d1=document.getElementById('sais-leg-dot1'), d2=document.getElementById('sais-leg-dot2');
+    if(l1){l1.style.display='';n1.textContent=city1+' ('+( CITIES.find(function(c){return c.name===city1;})||{lat:0}).lat.toFixed(1)+'°)';d1.style.background='#E05C6D';}
+    if(l2){l2.style.display='';n2.textContent=city2+' ('+( CITIES.find(function(c){return c.name===city2;})||{lat:0}).lat.toFixed(1)+'°)';d2.style.background='#9B59B6';}
+
+    // Marqueur date courante
+    var cur=saisCurrentN();
+    var cx2=padL+(cur-1)/364*aW;
+    ctx.beginPath(); ctx.moveTo(cx2,padT); ctx.lineTo(cx2,padT+aH);
+    ctx.strokeStyle=isDark?'rgba(255,100,50,0.6)':'rgba(200,60,0,0.5)';
+    ctx.lineWidth=1.5; ctx.setLineDash([4,3]); ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  // ── Info saison
+  function drawInfo(N){
+    var el=document.getElementById('sais-info'); if(!el) return;
+    var dec=sDecl(N);
+    var saison, emoji;
+    if(N<80||N>=355){saison='Hiver (hémisphère Nord)'; emoji='❄️';}
+    else if(N<172){saison='Printemps (hémisphère Nord)'; emoji='🌸';}
+    else if(N<266){saison='Été (hémisphère Nord)'; emoji='☀️';}
+    else{saison='Automne (hémisphère Nord)'; emoji='🍂';}
+
+    var d=new Date(new Date().getFullYear(),0,N-1);
+    var ds=d.toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
+    var eqtMin=sEqt(N);
+
+    el.innerHTML='<strong>'+emoji+' '+saison+'</strong> — Jour n°'+N+' ('+ds+') &nbsp;|&nbsp; '
+      +'Déclinaison solaire : <strong>'+(dec>=0?'+':'')+dec.toFixed(2)+'°</strong> &nbsp;|&nbsp; '
+      +'Équation du temps : <strong>'+(eqtMin>=0?'+':'')+eqtMin.toFixed(1)+' min</strong>';
+  }
+
+  function saisCurrentN(){
+    var ds=dateEl.value||todayStr;
+    return dateToN(ds);
+  }
+
+  function getCitySelections(){
+    var s1=document.getElementById('sais-city1'), s2=document.getElementById('sais-city2');
+    return [s1?s1.value:'Dunkerque', s2?s2.value:'Toulouse'];
+  }
+
+  function saisUpdate(){
+    var N=saisCurrentN();
+    var cities=getCitySelections();
+    drawGlobe(N);
+    drawOrbit(N);
+    drawInfo(N);
+    drawComparator(N,cities[0],cities[1]);
+    drawAnnual(cities[0],cities[1]);
+  }
+
+  // Réagir au changement de thème
+  var origToggle=window.toggleTheme;
+  window.toggleTheme=function(){
+    if(origToggle) origToggle();
+    setTimeout(saisUpdate,50);
+  };
+
+  // Premier rendu au chargement de la page
+  setTimeout(saisUpdate,100);
+
+  // Redessiner si on revient sur l'onglet Saisons
+  var origSwitch=window.switchTab;
+  window.switchTab=function(id){
+    if(origSwitch) origSwitch(id);
+    if(id==='saisons') setTimeout(saisUpdate,50);
+  };
 })();
 </script>
