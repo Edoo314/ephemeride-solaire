@@ -1081,22 +1081,24 @@ function drawSundial(ss, EqT, de, noonH, effectiveUtc, dateStr){
     ctx.setLineDash([]);
   };
 
-  // Summer solstice arc (warm orange, long dash)
+  // Summer solstice arc (warm orange, long dash) — opaque enough to see
   drawSolsticeArc(riseSumH, setSumH, altAtSum,
-    isDark?'rgba(255,160,50,0.45)':'rgba(200,100,20,0.35)', [6,5]);
+    isDark?'rgba(255,140,30,0.85)':'rgba(210,90,10,0.75)', [8,5]);
   // Winter solstice arc (cool blue, short dash)
   drawSolsticeArc(riseWinH, setWinH, altAtWin,
-    isDark?'rgba(130,180,240,0.5)':'rgba(60,100,180,0.4)', [3,4]);
+    isDark?'rgba(110,170,255,0.85)':'rgba(50,90,200,0.75)', [4,4]);
 
-  // Solstice max labels (right side, small)
-  ctx.font='10px DM Sans,system-ui'; ctx.textAlign='left';
+  // Solstice labels near the peak of each arc (centered, inside canvas)
+  ctx.font='bold 10px DM Sans,system-ui'; ctx.textAlign='center';
   if(riseSumH && setSumH){
-    ctx.fillStyle=isDark?'rgba(255,160,50,0.7)':'rgba(180,90,20,0.75)';
-    ctx.fillText('été '+Math.round(maxAltSum)+'°', padL+areaW+3, yOf(maxAltSum)+4);
+    var sumNoonX = xOf(noonSum), sumNoonY = yOf(maxAltSum);
+    ctx.fillStyle=isDark?'rgba(255,150,40,0.95)':'rgba(190,80,10,0.9)';
+    ctx.fillText('21 juin · '+Math.round(maxAltSum)+'°', sumNoonX, sumNoonY-14);
   }
-  if(riseWinH && setWinH && maxAltWin>0){
-    ctx.fillStyle=isDark?'rgba(130,180,240,0.7)':'rgba(60,100,180,0.75)';
-    ctx.fillText('hiver '+Math.round(maxAltWin)+'°', padL+areaW+3, yOf(maxAltWin)+4);
+  if(riseWinH && setWinH && maxAltWin>1){
+    var winNoonX = xOf(noonWin), winNoonY = yOf(maxAltWin);
+    ctx.fillStyle=isDark?'rgba(110,170,255,0.95)':'rgba(40,80,190,0.9)';
+    ctx.fillText('21 déc · '+Math.round(maxAltWin)+'°', winNoonX, winNoonY-8);
   }
 
   // Today's arc fill
